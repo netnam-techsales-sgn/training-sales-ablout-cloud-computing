@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapping Dịch vụ Cloud | Module 06</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#0078D4;--primary-dark:#005A9E;--primary-light:#50B0F0;
+  --secondary:#00BCF2;--accent:#FFB900;--success:#107C10;--danger:#D83B01;
+  --dark:#050F1E;--dark-2:#0D1F3C;--white:#fff;
+  --gray-1:#F5F8FC;--gray-2:#EEF2F7;--gray-3:#D1DCE8;
+  --text:#1A202C;--text-light:#4A5568;--text-muted:#718096;
+  --shadow-sm:0 2px 12px rgba(0,120,212,.07);
+  --shadow-md:0 8px 32px rgba(0,120,212,.13);
+  --radius:16px;--radius-sm:10px;
+  --tr:all .3s cubic-bezier(.4,0,.2,1);
+  /* Column highlight colors */
+  --ucloud:#E67E22; --azure:#0078D4; --aws:#FF9900; --gcp:#4285F4;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--gray-1);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── NAV ── */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(5,15,30,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.07);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-left{display:flex;align-items:center;gap:12px}
+.nav-back{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.6);text-decoration:none;font-size:14px;font-weight:500;padding:6px 12px;border-radius:8px;transition:var(--tr)}
+.nav-back:hover{color:white;background:rgba(255,255,255,.08)}
+.nav-sep{color:rgba(255,255,255,.2)}
+.nav-title{color:rgba(255,255,255,.75);font-size:14px;font-weight:600}
+.nav-right{display:flex;gap:8px}
+.nav-btn{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.55);text-decoration:none;font-size:13px;font-weight:500;padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);transition:var(--tr)}
+.nav-btn:hover{color:white;border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.07)}
+.nav-btn.prim{background:var(--primary);border-color:var(--primary);color:white}
+.nav-btn.prim:hover{background:var(--primary-dark)}
+
+/* ── HERO ── */
+.hero{position:relative;background:linear-gradient(140deg,#050F1E 0%,#0D1F3C 50%,#0A3070 100%);padding:100px 24px 72px;overflow:hidden;text-align:center}
+.hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,120,212,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,120,212,.05) 1px,transparent 1px);background-size:50px 50px}
+.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 600px 400px at 60% 40%,rgba(0,120,212,.22) 0%,transparent 70%),radial-gradient(ellipse 400px 300px at 20% 65%,rgba(0,188,242,.13) 0%,transparent 60%);pointer-events:none}
+.hero-inner{position:relative;z-index:2;max-width:780px;margin:0 auto}
+.module-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,120,212,.2);border:1px solid rgba(0,188,242,.4);border-radius:50px;padding:7px 18px;font-size:12px;font-weight:700;letter-spacing:1px;color:#7DD3FC;margin-bottom:28px;text-transform:uppercase;animation:fadeUp .6s ease both}
+.hero h1{font-size:clamp(26px,4vw,50px);font-weight:900;letter-spacing:-1.5px;line-height:1.1;margin-bottom:20px;background:linear-gradient(90deg,#fff 0%,#A8D4F5 60%,#00BCF2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:fadeUp .6s ease .1s both}
+.hero .subtitle{font-size:16px;color:rgba(255,255,255,.6);line-height:1.65;margin-bottom:36px;animation:fadeUp .6s ease .2s both}
+.hero-meta{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;animation:fadeUp .6s ease .3s both}
+.meta-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:50px;padding:8px 16px;font-size:13px;color:rgba(255,255,255,.7);font-weight:500}
+
+/* Provider legend in hero */
+.provider-legend{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:24px;animation:fadeUp .6s ease .4s both}
+.prov-badge{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700}
+.prov-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* ── PAGE ── */
+.page{max-width:1200px;margin:0 auto;padding:48px 24px 80px}
+.block{margin-bottom:48px}
+
+/* ── DISCLAIMER BOX ── */
+.disclaimer{background:rgba(255,185,0,.08);border:1px solid rgba(255,185,0,.28);border-left:4px solid var(--accent);border-radius:12px;padding:18px 22px;margin-bottom:36px}
+.disclaimer-label{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#8a6000;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.disclaimer p{font-size:13.5px;color:var(--text);line-height:1.7;font-style:italic}
+
+/* ── PLATFORM LEGEND ── */
+.legend-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px;padding:14px 18px;background:white;border-radius:10px;box-shadow:var(--shadow-sm)}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--text)}
+.legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.legend-sep{color:var(--gray-3);font-size:18px;margin:0 2px}
+
+/* ── TAB SWITCHER ── */
+.tab-wrap{background:white;border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden}
+
+.tab-bar{display:grid;grid-template-columns:repeat(3,1fr);background:var(--gray-2);gap:0;border-bottom:1px solid var(--gray-3)}
+.tab-btn{display:flex;align-items:center;gap:8px;padding:13px 16px;border:none;background:transparent;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:var(--tr);border-right:1px solid var(--gray-3);text-align:left;line-height:1.3}
+.tab-btn:nth-child(3n){border-right:none}
+.tab-btn:hover:not(.active){background:rgba(0,120,212,.05);color:var(--text)}
+.tab-btn.active{background:white;color:var(--primary);box-shadow:inset 0 -2px 0 var(--primary)}
+.tab-btn-icon{font-size:18px;flex-shrink:0}
+.tab-btn-text{}
+.tab-btn-sub{font-size:11px;color:var(--text-muted);font-weight:500;display:block;margin-top:1px}
+.tab-btn.active .tab-btn-sub{color:var(--primary-light)}
+
+/* ── TAB PANELS ── */
+.tab-panel{display:none;animation:fadeUp .25s ease both}
+.tab-panel.active{display:block}
+
+.panel-inner{padding:28px 28px 20px}
+
+/* ── MAPPING TABLE ── */
+.map-table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--gray-3)}
+.map-table{width:100%;border-collapse:collapse;font-size:13px;min-width:860px}
+
+/* Header */
+.map-table thead tr{background:var(--dark-2)}
+.map-table thead th{padding:13px 16px;text-align:left;font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;border-right:1px solid rgba(255,255,255,.08)}
+.map-table thead th:last-child{border-right:none}
+.th-onprem{color:#9CA3AF}
+.th-ucloud{color:#FDBA74;background:rgba(230,126,34,.15)}
+.th-azure{color:#93C5FD;background:rgba(0,120,212,.15)}
+.th-aws{color:#FCD34D;background:rgba(255,153,0,.12)}
+.th-gcp{color:#A5B4FC;background:rgba(66,133,244,.12)}
+
+/* Body rows */
+.map-table tbody tr{border-bottom:1px solid var(--gray-2);transition:background .18s}
+.map-table tbody tr:last-child{border-bottom:none}
+.map-table tbody tr:hover{background:rgba(0,120,212,.03)}
+.map-table td{padding:12px 16px;vertical-align:top;line-height:1.55;border-right:1px solid var(--gray-2)}
+.map-table td:last-child{border-right:none}
+
+/* Column 1: On-premises need */
+.td-need{font-size:13px;color:var(--text-light);font-weight:500}
+
+/* Column 2: NetCloudX — highlight */
+.td-ucloud{background:rgba(230,126,34,.04)}
+.td-ucloud .svc{font-weight:700;color:var(--ucloud)}
+.td-ucloud .svc-alt{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+/* Column 3: Azure — light highlight */
+.td-azure{background:rgba(0,120,212,.03)}
+.td-azure .svc{font-weight:600;color:#1e40af}
+
+/* Column 4: AWS */
+.td-aws .svc{font-weight:600;color:#b45309}
+
+/* Column 5: GCP */
+.td-gcp .svc{font-weight:600;color:#1d4ed8}
+
+/* Unknown tag */
+.tag-unknown{display:inline-flex;align-items:center;gap:4px;background:var(--gray-2);border:1px solid var(--gray-3);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--text-muted);font-weight:500;font-style:italic}
+
+/* Sales note */
+.sales-note{margin-top:20px;background:linear-gradient(135deg,rgba(255,185,0,.09),rgba(255,185,0,.04));border:1px solid rgba(255,185,0,.28);border-left:4px solid var(--accent);border-radius:10px;padding:14px 20px}
+.sales-note-label{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:#8a6000;margin-bottom:6px}
+.sales-note p{font-size:13.5px;color:var(--text);line-height:1.7;font-style:italic}
+.sales-note strong{font-style:normal;color:var(--primary-dark)}
+
+/* ── SUMMARY CARD ── */
+.summary-card{background:linear-gradient(135deg,var(--dark) 0%,var(--dark-2) 100%);border-radius:var(--radius);padding:36px;color:white;border:1px solid rgba(255,255,255,.07)}
+.summary-card h3{font-size:19px;font-weight:800;margin-bottom:8px}
+.summary-sub{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:24px;line-height:1.6}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.summary-chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px}
+.summary-chip-num{font-size:22px;font-weight:900;margin-bottom:3px}
+.summary-chip-label{font-size:12px;color:rgba(255,255,255,.55);line-height:1.4}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0 0;border-top:1px solid var(--gray-3);flex-wrap:wrap;gap:12px;margin-top:48px}
+.bnav-btn{display:flex;align-items:center;gap:10px;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:var(--tr);text-decoration:none;border:2px solid var(--gray-3);color:var(--text-light);background:white}
+.bnav-btn:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.bnav-btn.next{background:var(--primary);border-color:var(--primary);color:white}
+.bnav-btn.next:hover{background:var(--primary-dark);box-shadow:0 6px 20px rgba(0,120,212,.4)}
+.bnav-center{font-size:13px;color:var(--text-muted);font-weight:500}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .5s ease,transform .5s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .tab-bar{grid-template-columns:repeat(3,1fr)}
+  .summary-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .top-nav{padding:0 16px}
+  .nav-title{display:none}
+  .hero{padding:90px 16px 56px}
+  .page{padding:36px 16px 60px}
+  .tab-bar{grid-template-columns:1fr 1fr}
+  .tab-btn:nth-child(2n){border-right:none}
+  .tab-btn:nth-child(3n){border-right:1px solid var(--gray-3)}
+  .tab-btn:nth-child(even){border-right:none}
+  .panel-inner{padding:20px 16px 16px}
+  .bottom-nav{flex-direction:column}
+  .bnav-btn{width:100%;justify-content:center}
+  .summary-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-back"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Trang chủ</a>
+    <span class="nav-sep">/</span>
+    <span class="nav-title">Module 06 · Mapping dịch vụ Cloud</span>
+  </div>
+  <div class="nav-right">
+    <a href="section5.html" class="nav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 05</a>
+    <a href="section7.html" class="nav-btn prim">Module 07 <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="module-badge">🗺️ MODULE 06 / 11</div>
+    <h1>Mapping dịch vụ: On-premises → NetCloudX → Azure → AWS → GCP</h1>
+    <p class="subtitle">Khi khách hàng nói "tôi đang dùng thứ này on-premises", Sales cần biết ngay dịch vụ Cloud tương đương là gì — trên từng nền tảng.</p>
+    <div class="hero-meta">
+      <div class="meta-chip">🕐 ~25 phút</div>
+      <div class="meta-chip">📊 9 nhóm dịch vụ · 63 mappings</div>
+      <div class="meta-chip">🔍 4 nền tảng Cloud</div>
+    </div>
+    <div class="provider-legend">
+      <div class="prov-badge"><div class="prov-dot" style="background:#E67E22"></div><span style="color:#FDBA74">NetCloudX</span></div>
+      <div class="prov-badge"><div class="prov-dot" style="background:#0078D4"></div><span style="color:#93C5FD">Microsoft Azure</span></div>
+      <div class="prov-badge"><div class="prov-dot" style="background:#FF9900"></div><span style="color:#FCD34D">Amazon AWS</span></div>
+      <div class="prov-badge"><div class="prov-dot" style="background:#4285F4"></div><span style="color:#A5B4FC">Google Cloud</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer reveal">
+    <div class="disclaimer-label">⚠️ Lưu ý quan trọng trước khi dùng bảng này</div>
+    <p>Bảng dưới đây là mapping theo <strong>chức năng tương đương</strong>, không phải lúc nào cũng tương đương 100% về kiến trúc, tính năng, SLA, license hoặc mô hình giá. Khi làm proposal hoặc BOM chính thức, cần kiểm tra lại theo yêu cầu kỹ thuật cụ thể của khách hàng.</p>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend-bar reveal">
+    <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);margin-right:4px">Màu cột:</span>
+    <div class="legend-item"><div class="legend-dot" style="background:#E67E22"></div>NetCloudX (ưu tiên tư vấn)</div>
+    <span class="legend-sep">·</span>
+    <div class="legend-item"><div class="legend-dot" style="background:#0078D4"></div>Azure</div>
+    <span class="legend-sep">·</span>
+    <div class="legend-item"><div class="legend-dot" style="background:#FF9900"></div>AWS</div>
+    <span class="legend-sep">·</span>
+    <div class="legend-item"><div class="legend-dot" style="background:#4285F4"></div>GCP</div>
+    <span class="legend-sep">·</span>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--gray-3)"></div><span style="font-style:italic">Đang cập nhật</span></div>
+  </div>
+
+  <!-- TAB SECTION -->
+  <div class="block reveal">
+    <div class="tab-wrap">
+
+      <!-- TAB BAR -->
+      <div class="tab-bar" role="tablist">
+        <button class="tab-btn active" data-tab="compute" role="tab">
+          <span class="tab-btn-icon">💻</span>
+          <span class="tab-btn-text">6.1 Compute<span class="tab-btn-sub">Tính toán · 8 services</span></span>
+        </button>
+        <button class="tab-btn" data-tab="storage" role="tab">
+          <span class="tab-btn-icon">💾</span>
+          <span class="tab-btn-text">6.2 Storage<span class="tab-btn-sub">Lưu trữ · 6 services</span></span>
+        </button>
+        <button class="tab-btn" data-tab="database" role="tab">
+          <span class="tab-btn-icon">🗄️</span>
+          <span class="tab-btn-text">6.3 Database<span class="tab-btn-sub">Cơ sở dữ liệu · 7 services</span></span>
+        </button>
+        <button class="tab-btn" data-tab="networking" role="tab">
+          <span class="tab-btn-icon">🌐</span>
+          <span class="tab-btn-text">6.4 Networking<span class="tab-btn-sub">Mạng & Kết nối · 9 services</span></span>
+        </button>
+        <button class="tab-btn" data-tab="security" role="tab">
+          <span class="tab-btn-icon">🛡️</span>
+          <span class="tab-btn-text">6.5 Security<span class="tab-btn-sub">Bảo mật · 7 services</span></span>
+        </button>
+        <button class="tab-btn" data-tab="identity" role="tab">
+          <span class="tab-btn-icon">🔐</span>
+          <span class="tab-btn-text">6.6 Identity<span class="tab-btn-sub">Định danh & Quản trị · 6</span></span>
+        </button>
+        <button class="tab-btn" data-tab="monitoring" role="tab">
+          <span class="tab-btn-icon">📊</span>
+          <span class="tab-btn-text">6.7 Monitoring & DR<span class="tab-btn-sub">Giám sát & Dự phòng · 7</span></span>
+        </button>
+        <button class="tab-btn" data-tab="devops" role="tab">
+          <span class="tab-btn-icon">⚙️</span>
+          <span class="tab-btn-text">6.8 DevOps<span class="tab-btn-sub">Tích hợp & Messaging · 7</span></span>
+        </button>
+        <button class="tab-btn" data-tab="ai" role="tab">
+          <span class="tab-btn-icon">🤖</span>
+          <span class="tab-btn-text">6.9 AI & Data<span class="tab-btn-sub">AI / Analytics / IoT · 6</span></span>
+        </button>
+      </div>
+
+      <!-- ══════════════ 6.1 COMPUTE ══════════════ -->
+      <div class="tab-panel active" id="compute">
+        <div class="panel-inner">
+          <div class="map-table-wrap">
+            <table class="map-table">
+              <thead>
+                <tr>
+                  <th class="th-onprem" style="width:22%">Nhu cầu On-premises</th>
+                  <th class="th-ucloud" style="width:20%">☁️ NetCloudX</th>
+                  <th class="th-azure" style="width:20%">🔷 Microsoft Azure</th>
+                  <th class="th-aws" style="width:19%">🟠 AWS</th>
+                  <th class="th-gcp" style="width:19%">🔵 Google Cloud</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="td-need">Server vật lý / VMware VM / Hyper-V VM</td>
+                  <td class="td-ucloud"><div class="svc">UHost</div><div class="svc-alt">UPHost (Bare Metal)</div></td>
+                  <td class="td-azure"><div class="svc">Azure Virtual Machines</div></td>
+                  <td class="td-aws"><div class="svc">Amazon EC2</div></td>
+                  <td class="td-gcp"><div class="svc">Compute Engine</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Cụm VM tự động scale theo tải</td>
+                  <td class="td-ucloud"><div class="svc">UAS</div><div class="svc-alt">Cloud Auto Scaling</div></td>
+                  <td class="td-azure"><div class="svc">VM Scale Sets</div></td>
+                  <td class="td-aws"><div class="svc">EC2 Auto Scaling</div></td>
+                  <td class="td-gcp"><div class="svc">Managed Instance Groups</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Chạy container đơn giản (không cần K8s)</td>
+                  <td class="td-ucloud"><div class="svc">Cube</div><div class="svc-alt">Serverless Container</div></td>
+                  <td class="td-azure"><div class="svc">Azure Container Instances</div></td>
+                  <td class="td-aws"><div class="svc">Amazon ECS / Fargate</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Run / GKE Autopilot</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Kubernetes cluster quản lý container quy mô lớn</td>
+                  <td class="td-ucloud"><div class="svc">UK8S</div></td>
+                  <td class="td-azure"><div class="svc">Azure Kubernetes Service (AKS)</div></td>
+                  <td class="td-aws"><div class="svc">Amazon EKS</div></td>
+                  <td class="td-gcp"><div class="svc">Google Kubernetes Engine (GKE)</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Web application platform (không quản lý VM)</td>
+                  <td class="td-ucloud"><div class="svc">ULightHost</div></td>
+                  <td class="td-azure"><div class="svc">Azure App Service</div></td>
+                  <td class="td-aws"><div class="svc">Elastic Beanstalk / App Runner</div></td>
+                  <td class="td-gcp"><div class="svc">App Engine / Cloud Run</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Serverless function (chạy code theo sự kiện)</td>
+                  <td class="td-ucloud"><span class="tag-unknown">Đang cập nhật</span></td>
+                  <td class="td-azure"><div class="svc">Azure Functions</div></td>
+                  <td class="td-aws"><div class="svc">AWS Lambda</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Functions</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Batch processing / xử lý song song phân tán</td>
+                  <td class="td-ucloud"><div class="svc">UGC</div><div class="svc-alt">Distributed Parallel Compute / UDDP</div></td>
+                  <td class="td-azure"><div class="svc">Azure Batch</div></td>
+                  <td class="td-aws"><div class="svc">AWS Batch</div></td>
+                  <td class="td-gcp"><div class="svc">Batch</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Desktop ảo / VDI cho nhân viên làm việc từ xa</td>
+                  <td class="td-ucloud"><span class="tag-unknown">Đang cập nhật</span></td>
+                  <td class="td-azure"><div class="svc">Azure Virtual Desktop</div></td>
+                  <td class="td-aws"><div class="svc">Amazon WorkSpaces</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud VMware Engine + partner VDI</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sales-note">
+            <div class="sales-note-label">💬 Sales Talking Point — Compute</div>
+            <p>Khi khách hàng nói "tôi cần server" — hỏi ngay: <strong>"Để chạy ứng dụng gì? Web app, ERP, hay container?"</strong> Câu trả lời quyết định nên chọn VM, App Service hay Kubernetes — và từ đó xác định đúng tier và chi phí ước tính.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ 6.2 STORAGE ══════════════ -->
+      <div class="tab-panel" id="storage">
+        <div class="panel-inner">
+          <div class="map-table-wrap">
+            <table class="map-table">
+              <thead>
+                <tr>
+                  <th class="th-onprem" style="width:22%">Nhu cầu On-premises</th>
+                  <th class="th-ucloud" style="width:20%">☁️ NetCloudX</th>
+                  <th class="th-azure" style="width:20%">🔷 Microsoft Azure</th>
+                  <th class="th-aws" style="width:19%">🟠 AWS</th>
+                  <th class="th-gcp" style="width:19%">🔵 Google Cloud</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="td-need">SAN / LUN / Block disk gắn vào server</td>
+                  <td class="td-ucloud"><div class="svc">UDisk</div></td>
+                  <td class="td-azure"><div class="svc">Azure Managed Disks</div></td>
+                  <td class="td-aws"><div class="svc">Amazon EBS</div></td>
+                  <td class="td-gcp"><div class="svc">Persistent Disk / Hyperdisk</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">NAS / File share dùng SMB / NFS</td>
+                  <td class="td-ucloud"><div class="svc">UFS / UPFS</div></td>
+                  <td class="td-azure"><div class="svc">Azure Files</div></td>
+                  <td class="td-aws"><div class="svc">Amazon EFS / FSx</div></td>
+                  <td class="td-gcp"><div class="svc">Filestore</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Object Storage / S3-compatible (backup, media, log)</td>
+                  <td class="td-ucloud"><div class="svc">US3 (UFile)</div></td>
+                  <td class="td-azure"><div class="svc">Azure Blob Storage</div></td>
+                  <td class="td-aws"><div class="svc">Amazon S3</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Storage</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Archive storage dài hạn (ít truy cập, chi phí thấp)</td>
+                  <td class="td-ucloud"><div class="svc">US3 Archive Storage</div></td>
+                  <td class="td-azure"><div class="svc">Azure Archive Storage</div></td>
+                  <td class="td-aws"><div class="svc">Amazon S3 Glacier</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Storage Archive</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Backup repository cho server / database</td>
+                  <td class="td-ucloud"><div class="svc">USnap / UDataArk</div></td>
+                  <td class="td-azure"><div class="svc">Azure Backup / Blob</div></td>
+                  <td class="td-aws"><div class="svc">AWS Backup / Amazon S3</div></td>
+                  <td class="td-gcp"><div class="svc">Backup and DR / Cloud Storage</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Data lake storage (raw data cho analytics)</td>
+                  <td class="td-ucloud"><span class="tag-unknown">Đang cập nhật</span></td>
+                  <td class="td-azure"><div class="svc">Azure Data Lake Storage</div></td>
+                  <td class="td-aws"><div class="svc">S3 + Lake Formation</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Storage + BigLake</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sales-note">
+            <div class="sales-note-label">💬 Sales Talking Point — Storage</div>
+            <p>Object Storage (US3 / Azure Blob / S3) thường là <strong>điểm migrate dễ nhất và ít rủi ro nhất</strong> — backup và log lên Cloud trước, giảm ngay chi phí storage on-premises mà không cần đụng đến ứng dụng. Đây là cách mở đầu cuộc hành trình Cloud lý tưởng cho khách hàng còn e ngại.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ 6.3 DATABASE ══════════════ -->
+      <div class="tab-panel" id="database">
+        <div class="panel-inner">
+          <div class="map-table-wrap">
+            <table class="map-table">
+              <thead>
+                <tr>
+                  <th class="th-onprem" style="width:22%">Nhu cầu On-premises</th>
+                  <th class="th-ucloud" style="width:20%">☁️ NetCloudX</th>
+                  <th class="th-azure" style="width:20%">🔷 Microsoft Azure</th>
+                  <th class="th-aws" style="width:19%">🟠 AWS</th>
+                  <th class="th-gcp" style="width:19%">🔵 Google Cloud</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="td-need">SQL Server / MySQL / PostgreSQL tự cài trên server</td>
+                  <td class="td-ucloud"><div class="svc">Database trên UHost</div></td>
+                  <td class="td-azure"><div class="svc">Database on Azure VM</div></td>
+                  <td class="td-aws"><div class="svc">Database on EC2</div></td>
+                  <td class="td-gcp"><div class="svc">Database on Compute Engine</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Managed relational database (Cloud lo patch, backup, HA)</td>
+                  <td class="td-ucloud"><div class="svc">UDB</div><div class="svc-alt">MySQL, PostgreSQL, SQL Server</div></td>
+                  <td class="td-azure"><div class="svc">Azure SQL / DB for MySQL / PostgreSQL</div></td>
+                  <td class="td-aws"><div class="svc">Amazon RDS</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud SQL</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Enterprise PostgreSQL hiệu năng cao (NVMe)</td>
+                  <td class="td-ucloud"><div class="svc">UDB PostgreSQL (NVMe)</div></td>
+                  <td class="td-azure"><div class="svc">Azure DB for PostgreSQL</div></td>
+                  <td class="td-aws"><div class="svc">Amazon Aurora PostgreSQL</div></td>
+                  <td class="td-gcp"><div class="svc">AlloyDB for PostgreSQL</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">NoSQL document / key-value (scale cao, phi quan hệ)</td>
+                  <td class="td-ucloud"><div class="svc">UDB MongoDB / UDDB</div></td>
+                  <td class="td-azure"><div class="svc">Azure Cosmos DB</div></td>
+                  <td class="td-aws"><div class="svc">Amazon DynamoDB / DocumentDB</div></td>
+                  <td class="td-gcp"><div class="svc">Firestore / Bigtable</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">In-memory cache / Redis (tăng tốc ứng dụng)</td>
+                  <td class="td-ucloud"><div class="svc">UMem</div><div class="svc-alt">Redis / Memcache</div></td>
+                  <td class="td-azure"><div class="svc">Azure Cache for Redis</div></td>
+                  <td class="td-aws"><div class="svc">Amazon ElastiCache</div></td>
+                  <td class="td-gcp"><div class="svc">Memorystore</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Data warehouse (báo cáo, BI, analytics)</td>
+                  <td class="td-ucloud"><div class="svc">UDW / UClickHouse / MAXIR</div></td>
+                  <td class="td-azure"><div class="svc">Azure Synapse Analytics</div></td>
+                  <td class="td-aws"><div class="svc">Amazon Redshift</div></td>
+                  <td class="td-gcp"><div class="svc">BigQuery</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Database migration (chuyển DB từ on-prem lên Cloud)</td>
+                  <td class="td-ucloud"><div class="svc">UDTS</div><div class="svc-alt">Data Transmission Service</div></td>
+                  <td class="td-azure"><div class="svc">Azure DB Migration Service</div></td>
+                  <td class="td-aws"><div class="svc">AWS DMS</div></td>
+                  <td class="td-gcp"><div class="svc">Database Migration Service</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sales-note">
+            <div class="sales-note-label">💬 Sales Talking Point — Database</div>
+            <p><strong>"Đội IT của anh/chị đang mất bao nhiêu giờ/tuần để patch database và xử lý backup?"</strong> — Managed Database giải phóng toàn bộ thời gian đó. Với khách hàng đang chạy SQL Server tự cài, đây là điểm đau rõ ràng và cơ hội tư vấn managed DB rất thuyết phục.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ 6.4 NETWORKING ══════════════ -->
+      <div class="tab-panel" id="networking">
+        <div class="panel-inner">
+          <div class="map-table-wrap">
+            <table class="map-table">
+              <thead>
+                <tr>
+                  <th class="th-onprem" style="width:22%">Nhu cầu On-premises</th>
+                  <th class="th-ucloud" style="width:20%">☁️ NetCloudX</th>
+                  <th class="th-azure" style="width:20%">🔷 Microsoft Azure</th>
+                  <th class="th-aws" style="width:19%">🟠 AWS</th>
+                  <th class="th-gcp" style="width:19%">🔵 Google Cloud</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="td-need">VLAN / VRF / Subnet nội bộ (mạng riêng ảo)</td>
+                  <td class="td-ucloud"><div class="svc">UVPC</div></td>
+                  <td class="td-azure"><div class="svc">Azure Virtual Network</div></td>
+                  <td class="td-aws"><div class="svc">Amazon VPC</div></td>
+                  <td class="td-gcp"><div class="svc">Virtual Private Cloud (VPC)</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Site-to-Site VPN (kết nối on-prem ↔ Cloud bảo mật)</td>
+                  <td class="td-ucloud"><div class="svc">IPSec VPN / UWAN</div></td>
+                  <td class="td-azure"><div class="svc">Azure VPN Gateway</div></td>
+                  <td class="td-aws"><div class="svc">AWS Site-to-Site VPN</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud VPN</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Leased line / kết nối private riêng (không qua internet)</td>
+                  <td class="td-ucloud"><div class="svc">UDPN / UGN</div></td>
+                  <td class="td-azure"><div class="svc">Azure ExpressRoute</div></td>
+                  <td class="td-aws"><div class="svc">AWS Direct Connect</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Interconnect</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Load balancer layer 4 (TCP/UDP, network level)</td>
+                  <td class="td-ucloud"><div class="svc">ULB4 (CLB)</div><div class="svc-alt">Network Load Balancer</div></td>
+                  <td class="td-azure"><div class="svc">Azure Load Balancer</div></td>
+                  <td class="td-aws"><div class="svc">Network Load Balancer (NLB)</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Load Balancing</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Load balancer layer 7 (HTTP/HTTPS, application level)</td>
+                  <td class="td-ucloud"><div class="svc">ULB7 (ALB)</div><div class="svc-alt">Application Load Balancer</div></td>
+                  <td class="td-azure"><div class="svc">Azure Application Gateway</div></td>
+                  <td class="td-aws"><div class="svc">Application Load Balancer (ALB)</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Load Balancing</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">DNS public / private</td>
+                  <td class="td-ucloud"><div class="svc">UDNS / UDNR</div></td>
+                  <td class="td-azure"><div class="svc">Azure DNS / Private DNS</div></td>
+                  <td class="td-aws"><div class="svc">Amazon Route 53</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud DNS</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">CDN (cache nội dung gần người dùng cuối)</td>
+                  <td class="td-ucloud"><div class="svc">UCDN / UEDN</div></td>
+                  <td class="td-azure"><div class="svc">Azure Front Door / Azure CDN</div></td>
+                  <td class="td-aws"><div class="svc">Amazon CloudFront</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud CDN</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">NAT Gateway (ra internet không lộ IP nội bộ)</td>
+                  <td class="td-ucloud"><div class="svc">NAT Gateway</div></td>
+                  <td class="td-azure"><div class="svc">Azure NAT Gateway</div></td>
+                  <td class="td-aws"><div class="svc">AWS NAT Gateway</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud NAT</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Network Firewall / Security Group</td>
+                  <td class="td-ucloud"><div class="svc">UNet Firewall / Security Group</div></td>
+                  <td class="td-azure"><div class="svc">Azure Firewall</div></td>
+                  <td class="td-aws"><div class="svc">AWS Network Firewall</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud NGFW / Firewall policies</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sales-note">
+            <div class="sales-note-label">💬 Sales Talking Point — Networking</div>
+            <p>Networking thường bị bỏ qua trong giai đoạn đầu tư vấn — nhưng đây là nơi phát sinh <strong>chi phí ẩn lớn nhất</strong> (data transfer, bandwidth, ExpressRoute/Direct Connect). Hỏi sớm về yêu cầu kết nối on-premises và lưu lượng mạng để estimate chính xác tổng chi phí Cloud.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ 6.5 SECURITY ══════════════ -->
+      <div class="tab-panel" id="security">
+        <div class="panel-inner">
+          <div class="map-table-wrap">
+            <table class="map-table">
+              <thead>
+                <tr>
+                  <th class="th-onprem" style="width:22%">Nhu cầu On-premises</th>
+                  <th class="th-ucloud" style="width:20%">☁️ NetCloudX</th>
+                  <th class="th-azure" style="width:20%">🔷 Microsoft Azure</th>
+                  <th class="th-aws" style="width:19%">🟠 AWS</th>
+                  <th class="th-gcp" style="width:19%">🔵 Google Cloud</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="td-need">Firewall biên / network segmentation</td>
+                  <td class="td-ucloud"><div class="svc">UNet Firewall</div></td>
+                  <td class="td-azure"><div class="svc">Azure Firewall</div></td>
+                  <td class="td-aws"><div class="svc">AWS Network Firewall</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud NGFW / VPC firewall rules</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Web Application Firewall (chặn SQLi, XSS, DDoS lớp 7)</td>
+                  <td class="td-ucloud"><div class="svc">UWAF</div></td>
+                  <td class="td-azure"><div class="svc">Azure Web Application Firewall</div></td>
+                  <td class="td-aws"><div class="svc">AWS WAF</div></td>
+                  <td class="td-gcp"><div class="svc">Google Cloud Armor</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">DDoS Protection (chống tấn công từ chối dịch vụ)</td>
+                  <td class="td-ucloud"><div class="svc">UDDoS (UAntiDDoS / UClean)</div></td>
+                  <td class="td-azure"><div class="svc">Azure DDoS Protection</div></td>
+                  <td class="td-aws"><div class="svc">AWS Shield</div></td>
+                  <td class="td-gcp"><div class="svc">Google Cloud Armor</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Key management / HSM (quản lý khóa mã hóa)</td>
+                  <td class="td-ucloud"><div class="svc">UKMS</div></td>
+                  <td class="td-azure"><div class="svc">Azure Key Vault / Managed HSM</div></td>
+                  <td class="td-aws"><div class="svc">AWS KMS / CloudHSM</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud KMS / Cloud HSM</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Security posture management (tổng quan bảo mật toàn hệ thống)</td>
+                  <td class="td-ucloud"><div class="svc">USC</div><div class="svc-alt">Cloud Security Center</div></td>
+                  <td class="td-azure"><div class="svc">Microsoft Defender for Cloud</div></td>
+                  <td class="td-aws"><div class="svc">AWS Security Hub</div></td>
+                  <td class="td-gcp"><div class="svc">Security Command Center</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">SIEM / SOAR (phân tích log bảo mật, phản ứng tự động)</td>
+                  <td class="td-ucloud"><span class="tag-unknown">Đang cập nhật</span></td>
+                  <td class="td-azure"><div class="svc">Microsoft Sentinel</div></td>
+                  <td class="td-aws"><div class="svc">Amazon Security Lake + partner SIEM</div></td>
+                  <td class="td-gcp"><div class="svc">Chronicle Security Operations</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Vulnerability scan / security recommendation</td>
+                  <td class="td-ucloud"><div class="svc">UHIDS / UAuditHost</div></td>
+                  <td class="td-azure"><div class="svc">Defender for Cloud</div></td>
+                  <td class="td-aws"><div class="svc">Amazon Inspector</div></td>
+                  <td class="td-gcp"><div class="svc">Security Command Center / VM Manager</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sales-note">
+            <div class="sales-note-label">💬 Sales Talking Point — Security</div>
+            <p>Khi khách hàng nói <strong>"Cloud không an toàn"</strong> — hỏi: <em>"Hiện tại ai đang lo bảo mật vật lý data center cho anh/chị? Có đội bảo mật 24/7 không?"</em> Các Cloud provider lớn đầu tư hàng tỷ USD/năm vào security. Nhưng lưu ý: bảo mật Cloud là trách nhiệm chia sẻ — khách hàng vẫn cần cấu hình IAM, network, và logging đúng cách.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ 6.6 IDENTITY ══════════════ -->
+      <div class="tab-panel" id="identity">
+        <div class="panel-inner">
+          <div class="map-table-wrap">
+            <table class="map-table">
+              <thead>
+                <tr>
+                  <th class="th-onprem" style="width:22%">Nhu cầu On-premises</th>
+                  <th class="th-ucloud" style="width:20%">☁️ NetCloudX</th>
+                  <th class="th-azure" style="width:20%">🔷 Microsoft Azure</th>
+                  <th class="th-aws" style="width:19%">🟠 AWS</th>
+                  <th class="th-gcp" style="width:19%">🔵 Google Cloud</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="td-need">Active Directory / LDAP / IAM (quản lý user tập trung)</td>
+                  <td class="td-ucloud"><div class="svc">URM (IAM)</div></td>
+                  <td class="td-azure"><div class="svc">Microsoft Entra ID</div></td>
+                  <td class="td-aws"><div class="svc">AWS IAM / IAM Identity Center</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud IAM / Cloud Identity</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">MFA / Conditional Access (xác thực nhiều bước có điều kiện)</td>
+                  <td class="td-ucloud"><span class="tag-unknown">Đang cập nhật</span></td>
+                  <td class="td-azure"><div class="svc">Entra MFA / Conditional Access</div></td>
+                  <td class="td-aws"><div class="svc">IAM Identity Center + MFA policies</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Identity / BeyondCorp Enterprise</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">RBAC — phân quyền theo vai trò</td>
+                  <td class="td-ucloud"><div class="svc">URM (IAM) / Role Management</div></td>
+                  <td class="td-azure"><div class="svc">Azure RBAC</div></td>
+                  <td class="td-aws"><div class="svc">AWS IAM policies / roles</div></td>
+                  <td class="td-gcp"><div class="svc">IAM roles / policies</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Policy governance (đảm bảo tài nguyên tuân thủ chính sách)</td>
+                  <td class="td-ucloud"><span class="tag-unknown">Đang cập nhật</span></td>
+                  <td class="td-azure"><div class="svc">Azure Policy</div></td>
+                  <td class="td-aws"><div class="svc">AWS Organizations / Service Control Policies / Config</div></td>
+                  <td class="td-gcp"><div class="svc">Organization Policy Service</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Resource grouping / phân nhóm tài nguyên theo dự án / team</td>
+                  <td class="td-ucloud"><div class="svc">UProject / Label</div></td>
+                  <td class="td-azure"><div class="svc">Resource Groups / Management Groups</div></td>
+                  <td class="td-aws"><div class="svc">AWS Organizations / Accounts / Tags</div></td>
+                  <td class="td-gcp"><div class="svc">Folders / Projects / Labels</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Cost governance / kiểm soát và phân bổ chi phí</td>
+                  <td class="td-ucloud"><div class="svc">UBill / UMon</div><div class="svc-alt">Billing Management</div></td>
+                  <td class="td-azure"><div class="svc">Microsoft Cost Management</div></td>
+                  <td class="td-aws"><div class="svc">AWS Cost Explorer / Budgets</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Billing / Budgets</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sales-note">
+            <div class="sales-note-label">💬 Sales Talking Point — Identity & Governance</div>
+            <p>IAM là lớp bảo mật quan trọng nhất — hầu hết các sự cố Cloud đều do cấu hình IAM sai, không phải lỗ hổng hạ tầng. Hỏi khách hàng: <strong>"Hiện tại anh/chị quản lý quyền truy cập hệ thống như thế nào? Có biết ai đang có quyền admin không?"</strong> — Câu hỏi này thường mở ra nhu cầu IAM rất rõ ràng.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ 6.7 MONITORING & DR ══════════════ -->
+      <div class="tab-panel" id="monitoring">
+        <div class="panel-inner">
+          <div class="map-table-wrap">
+            <table class="map-table">
+              <thead>
+                <tr>
+                  <th class="th-onprem" style="width:22%">Nhu cầu On-premises</th>
+                  <th class="th-ucloud" style="width:20%">☁️ NetCloudX</th>
+                  <th class="th-azure" style="width:20%">🔷 Microsoft Azure</th>
+                  <th class="th-aws" style="width:19%">🟠 AWS</th>
+                  <th class="th-gcp" style="width:19%">🔵 Google Cloud</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="td-need">Monitoring hệ thống (CPU, RAM, disk, network)</td>
+                  <td class="td-ucloud"><div class="svc">CloudWatch / UMon</div></td>
+                  <td class="td-azure"><div class="svc">Azure Monitor</div></td>
+                  <td class="td-aws"><div class="svc">Amazon CloudWatch</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Monitoring</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Log management (thu thập, lưu trữ, phân tích log)</td>
+                  <td class="td-ucloud"><div class="svc">ULog</div></td>
+                  <td class="td-azure"><div class="svc">Log Analytics</div></td>
+                  <td class="td-aws"><div class="svc">Amazon CloudWatch Logs</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Logging</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Infrastructure as Code (IaC) — tự động hóa deploy hạ tầng</td>
+                  <td class="td-ucloud"><div class="svc">Terraform / CloudShell</div></td>
+                  <td class="td-azure"><div class="svc">Azure Resource Manager / Bicep</div></td>
+                  <td class="td-aws"><div class="svc">AWS CloudFormation / CDK</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Deployment Manager / Terraform</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Backup VM / database (sao lưu định kỳ)</td>
+                  <td class="td-ucloud"><div class="svc">USnap / UDataArk</div></td>
+                  <td class="td-azure"><div class="svc">Azure Backup</div></td>
+                  <td class="td-aws"><div class="svc">AWS Backup</div></td>
+                  <td class="td-gcp"><div class="svc">Backup and DR Service</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Disaster Recovery (khôi phục toàn hệ thống khi thảm họa)</td>
+                  <td class="td-ucloud"><div class="svc">UDataArk / USMC</div></td>
+                  <td class="td-azure"><div class="svc">Azure Site Recovery</div></td>
+                  <td class="td-aws"><div class="svc">AWS Elastic Disaster Recovery</div></td>
+                  <td class="td-gcp"><div class="svc">Backup and DR / partner DR</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Automation (tự động hóa tác vụ vận hành định kỳ)</td>
+                  <td class="td-ucloud"><span class="tag-unknown">Đang cập nhật</span></td>
+                  <td class="td-azure"><div class="svc">Azure Automation</div></td>
+                  <td class="td-aws"><div class="svc">AWS Systems Manager</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Run jobs / Workflows / Scheduler</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Service health (theo dõi trạng thái dịch vụ Cloud)</td>
+                  <td class="td-ucloud"><div class="svc">UNDT</div><div class="svc-alt">Network Probe Testing</div></td>
+                  <td class="td-azure"><div class="svc">Azure Service Health</div></td>
+                  <td class="td-aws"><div class="svc">AWS Health Dashboard</div></td>
+                  <td class="td-gcp"><div class="svc">Personalized Service Health</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sales-note">
+            <div class="sales-note-label">💬 Sales Talking Point — Monitoring & DR</div>
+            <p><strong>"Nếu sáng mai hệ thống bị sập, doanh nghiệp chịu được bao lâu mà không mất doanh thu?"</strong> — Câu hỏi này giúp khách hàng tự nhận ra tầm quan trọng của DR và sẵn sàng đầu tư. Với monitoring, hỏi: "Hiện tại mất bao lâu để phát hiện khi hệ thống chậm?"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ 6.8 DEVOPS ══════════════ -->
+      <div class="tab-panel" id="devops">
+        <div class="panel-inner">
+          <div class="map-table-wrap">
+            <table class="map-table">
+              <thead>
+                <tr>
+                  <th class="th-onprem" style="width:22%">Nhu cầu On-premises</th>
+                  <th class="th-ucloud" style="width:20%">☁️ NetCloudX</th>
+                  <th class="th-azure" style="width:20%">🔷 Microsoft Azure</th>
+                  <th class="th-aws" style="width:19%">🟠 AWS</th>
+                  <th class="th-gcp" style="width:19%">🔵 Google Cloud</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="td-need">Source code repository (lưu trữ mã nguồn)</td>
+                  <td class="td-ucloud"><span class="tag-unknown">Đang cập nhật</span></td>
+                  <td class="td-azure"><div class="svc">Azure Repos / GitHub</div></td>
+                  <td class="td-aws"><div class="svc">AWS CodeCommit / GitHub</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Source Repositories / GitHub</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">CI/CD pipeline (tự động build-test-deploy)</td>
+                  <td class="td-ucloud"><span class="tag-unknown">Đang cập nhật</span></td>
+                  <td class="td-azure"><div class="svc">Azure Pipelines / GitHub Actions</div></td>
+                  <td class="td-aws"><div class="svc">AWS CodePipeline / CodeBuild</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud Build</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Container registry (lưu trữ Docker image)</td>
+                  <td class="td-ucloud"><div class="svc">UHub</div></td>
+                  <td class="td-azure"><div class="svc">Azure Container Registry</div></td>
+                  <td class="td-aws"><div class="svc">Amazon ECR</div></td>
+                  <td class="td-gcp"><div class="svc">Artifact Registry</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">API Gateway / API Management</td>
+                  <td class="td-ucloud"><div class="svc">UAPIGateway</div></td>
+                  <td class="td-azure"><div class="svc">Azure API Management</div></td>
+                  <td class="td-aws"><div class="svc">Amazon API Gateway</div></td>
+                  <td class="td-gcp"><div class="svc">Apigee / API Gateway</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Message queue (hàng đợi tin nhắn giữa các service)</td>
+                  <td class="td-ucloud"><div class="svc">URocketMQ / UKafka</div></td>
+                  <td class="td-azure"><div class="svc">Azure Queue Storage / Service Bus</div></td>
+                  <td class="td-aws"><div class="svc">Amazon SQS</div></td>
+                  <td class="td-gcp"><div class="svc">Pub/Sub</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Event streaming (xử lý luồng dữ liệu real-time)</td>
+                  <td class="td-ucloud"><div class="svc">UKafka</div></td>
+                  <td class="td-azure"><div class="svc">Azure Event Hubs</div></td>
+                  <td class="td-aws"><div class="svc">Amazon Kinesis</div></td>
+                  <td class="td-gcp"><div class="svc">Pub/Sub / Dataflow</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Workflow integration / microservice orchestration</td>
+                  <td class="td-ucloud"><div class="svc">StepFlow</div><div class="svc-alt">Microservice Orchestration</div></td>
+                  <td class="td-azure"><div class="svc">Azure Logic Apps</div></td>
+                  <td class="td-aws"><div class="svc">AWS Step Functions</div></td>
+                  <td class="td-gcp"><div class="svc">Workflows</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sales-note">
+            <div class="sales-note-label">💬 Sales Talking Point — DevOps & Integration</div>
+            <p>DevOps là lý do nhiều đội phát triển phần mềm chọn Cloud — <strong>CI/CD pipeline giúp deploy code từ hàng tuần xuống còn vài phút</strong>. Khi gặp khách hàng có đội dev, hỏi: "Hiện tại từ khi code xong đến khi deploy lên production mất bao lâu?" — Câu trả lời thường mở ra câu chuyện về DevOps trên Cloud.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ 6.9 AI & DATA ══════════════ -->
+      <div class="tab-panel" id="ai">
+        <div class="panel-inner">
+          <div class="map-table-wrap">
+            <table class="map-table">
+              <thead>
+                <tr>
+                  <th class="th-onprem" style="width:22%">Nhu cầu On-premises</th>
+                  <th class="th-ucloud" style="width:20%">☁️ NetCloudX</th>
+                  <th class="th-azure" style="width:20%">🔷 Microsoft Azure</th>
+                  <th class="th-aws" style="width:19%">🟠 AWS</th>
+                  <th class="th-gcp" style="width:19%">🔵 Google Cloud</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="td-need">Machine learning platform (train &amp; deploy AI model)</td>
+                  <td class="td-ucloud"><div class="svc">UModelVerse</div><div class="svc-alt">UAI-Train / UAI-Inference</div></td>
+                  <td class="td-azure"><div class="svc">Azure Machine Learning</div></td>
+                  <td class="td-aws"><div class="svc">Amazon SageMaker</div></td>
+                  <td class="td-gcp"><div class="svc">Vertex AI</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">AI API nhận diện / ngôn ngữ (dùng AI có sẵn, không cần train)</td>
+                  <td class="td-ucloud"><div class="svc">UDI / UContent Review</div><div class="svc-alt">Intelligent Media Management</div></td>
+                  <td class="td-azure"><div class="svc">Azure AI Services</div></td>
+                  <td class="td-aws"><div class="svc">AWS AI Services</div></td>
+                  <td class="td-gcp"><div class="svc">Vertex AI / Cloud AI APIs</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Data analytics platform (xử lý và phân tích dữ liệu lớn)</td>
+                  <td class="td-ucloud"><div class="svc">UHadoop / USDP / UDDP</div></td>
+                  <td class="td-azure"><div class="svc">Azure Synapse Analytics / Microsoft Fabric</div></td>
+                  <td class="td-aws"><div class="svc">Redshift / Athena / EMR</div></td>
+                  <td class="td-gcp"><div class="svc">BigQuery / Dataproc</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">IoT device ingestion (thu thập dữ liệu từ thiết bị, sensor)</td>
+                  <td class="td-ucloud"><div class="svc">UIoT Core / UIoT Edge</div></td>
+                  <td class="td-azure"><div class="svc">Azure IoT Hub</div></td>
+                  <td class="td-aws"><div class="svc">AWS IoT Core</div></td>
+                  <td class="td-gcp"><div class="svc">Cloud IoT / Pub/Sub-based architecture</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">Stream analytics (phân tích dữ liệu real-time)</td>
+                  <td class="td-ucloud"><div class="svc">UFlink</div></td>
+                  <td class="td-azure"><div class="svc">Azure Stream Analytics</div></td>
+                  <td class="td-aws"><div class="svc">Kinesis Data Analytics</div></td>
+                  <td class="td-gcp"><div class="svc">Dataflow</div></td>
+                </tr>
+                <tr>
+                  <td class="td-need">BI / Dashboard (trực quan hóa dữ liệu, báo cáo quản trị)</td>
+                  <td class="td-ucloud"><span class="tag-unknown">Đang cập nhật</span></td>
+                  <td class="td-azure"><div class="svc">Power BI</div></td>
+                  <td class="td-aws"><div class="svc">Amazon QuickSight</div></td>
+                  <td class="td-gcp"><div class="svc">Looker / Looker Studio</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sales-note">
+            <div class="sales-note-label">💬 Sales Talking Point — AI & Data</div>
+            <p>Đây là nhóm dịch vụ giúp Cloud khác hẳn so với chỉ thuê server. <strong>On-premises mất 6–18 tháng và ngân sách GPU lớn để build nền tảng AI</strong> — trên Cloud, khách hàng có thể thử nghiệm Azure AI Services hoặc SageMaker trong ngày với chi phí gần như bằng 0. Đây là lập luận mạnh nhất khi nói chuyện với CTO hoặc đội Data.</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end tab-wrap -->
+  </div>
+
+  <!-- SUMMARY CARD -->
+  <div class="block reveal">
+    <div class="summary-card">
+      <h3>📋 Tóm tắt — 9 nhóm dịch vụ đã mapping</h3>
+      <p class="summary-sub">Dùng bảng này như một "cheat sheet" khi tư vấn — nhận ra nhu cầu on-premises của khách hàng và tra ngay dịch vụ Cloud tương đương</p>
+      <div class="summary-grid">
+        <div class="summary-chip">
+          <div class="summary-chip-num" style="color:#FDBA74">8</div>
+          <div class="summary-chip-label">Compute services<br>VM → Serverless → VDI</div>
+        </div>
+        <div class="summary-chip">
+          <div class="summary-chip-num" style="color:#93C5FD">6</div>
+          <div class="summary-chip-label">Storage services<br>Block → Object → Archive</div>
+        </div>
+        <div class="summary-chip">
+          <div class="summary-chip-num" style="color:#86EFAC">7</div>
+          <div class="summary-chip-label">Database services<br>SQL → NoSQL → Data Warehouse</div>
+        </div>
+        <div class="summary-chip">
+          <div class="summary-chip-num" style="color:#FCD34D">9</div>
+          <div class="summary-chip-label">Networking services<br>VPC → VPN → CDN → Firewall</div>
+        </div>
+        <div class="summary-chip">
+          <div class="summary-chip-num" style="color:#F9A8D4">7</div>
+          <div class="summary-chip-label">Security services<br>WAF → DDoS → SIEM → KMS</div>
+        </div>
+        <div class="summary-chip">
+          <div class="summary-chip-num" style="color:#A5B4FC">20</div>
+          <div class="summary-chip-label">Identity + Monitoring + DevOps + AI<br>6 + 7 + 7 + 6 services</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav reveal">
+    <a href="section5.html" class="bnav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 05: Vì sao chuyển lên Cloud?</a>
+    <span class="bnav-center">Module 06 / 11</span>
+    <a href="section7.html" class="bnav-btn next">Module 07: Định vị theo tình huống <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+  </div>
+
+</main>
+
+<script>
+// Scroll reveal
+const io = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// Tab switcher
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabPanels = document.querySelectorAll('.tab-panel');
+
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.tab;
+    tabBtns.forEach(b => b.classList.remove('active'));
+    tabPanels.forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const panel = document.getElementById(target);
+    if (panel) panel.classList.add('active');
+    // Scroll tab into view on mobile
+    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>One-page Summary cho Sales | Module 11</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0078D4;
+      --primary-dark: #005A9E;
+      --secondary: #00BCF2;
+      --accent: #FFB900;
+      --success: #107C10;
+      --danger: #D83B01;
+      --dark: #050F1E;
+      --dark-2: #0D1F3C;
+      --gray-1: #F5F8FC;
+      --gray-2: #EEF2F7;
+      --gray-3: #D1DCE8;
+      --text: #1A202C;
+      --text-light: #4A5568;
+      --text-muted: #718096;
+      --shadow-sm: 0 2px 12px rgba(0,120,212,.07);
+      --shadow-md: 0 8px 32px rgba(0,120,212,.13);
+      --radius: 16px;
+      --tr: all .3s cubic-bezier(.4,0,.2,1);
+    }
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box }
+    html { scroll-behavior:smooth }
+    body { font-family:'Inter',sans-serif; background:var(--gray-1); color:var(--text); overflow-x:hidden; -webkit-font-smoothing:antialiased }
+
+    /* NAV */
+    .top-nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(5,15,30,.92); backdrop-filter:blur(20px); border-bottom:1px solid rgba(255,255,255,.07); padding:0 32px; height:60px; display:flex; align-items:center; justify-content:space-between; gap:16px }
+    .nav-left { display:flex; align-items:center; gap:12px }
+    .nav-back { display:flex; align-items:center; gap:8px; color:rgba(255,255,255,.6); text-decoration:none; font-size:14px; font-weight:500; padding:6px 12px; border-radius:8px; transition:var(--tr) }
+    .nav-back:hover { color:white; background:rgba(255,255,255,.08) }
+    .nav-sep { color:rgba(255,255,255,.2) }
+    .nav-title { color:rgba(255,255,255,.75); font-size:14px; font-weight:600 }
+    .nav-right { display:flex; gap:8px }
+    .nav-btn { display:flex; align-items:center; gap:6px; color:rgba(255,255,255,.55); text-decoration:none; font-size:13px; font-weight:500; padding:7px 14px; border-radius:8px; border:1px solid rgba(255,255,255,.1); transition:var(--tr) }
+    .nav-btn:hover { color:white; border-color:rgba(255,255,255,.25); background:rgba(255,255,255,.07) }
+    .nav-btn.prim { background:var(--primary); border-color:var(--primary); color:white }
+    .nav-btn.prim:hover { background:var(--primary-dark) }
+
+    /* HERO */
+    .hero { position:relative; background:linear-gradient(140deg,#050F1E 0%,#0D1F3C 50%,#0A3070 100%); padding:100px 24px 72px; overflow:hidden; text-align:center }
+    .hero::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(0,120,212,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,120,212,.05) 1px,transparent 1px); background-size:50px 50px }
+    .hero::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 600px 400px at 60% 40%,rgba(0,120,212,.22) 0%,transparent 70%),radial-gradient(ellipse 400px 300px at 20% 65%,rgba(0,188,242,.13) 0%,transparent 60%); pointer-events:none }
+    .hero-inner { position:relative; z-index:2; max-width:760px; margin:0 auto }
+    .module-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(0,120,212,.2); border:1px solid rgba(0,188,242,.4); border-radius:50px; padding:7px 18px; font-size:12px; font-weight:700; letter-spacing:1px; color:#7DD3FC; margin-bottom:28px; text-transform:uppercase; animation:fadeUp .6s ease both }
+    .hero h1 { font-size:clamp(28px,4.5vw,52px); font-weight:900; letter-spacing:-1.5px; line-height:1.1; margin-bottom:20px; background:linear-gradient(90deg,#fff 0%,#A8D4F5 60%,#00BCF2 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:fadeUp .6s ease .1s both }
+    .hero .subtitle { font-size:17px; color:rgba(255,255,255,.6); line-height:1.65; margin-bottom:40px; animation:fadeUp .6s ease .2s both }
+    .hero-meta { display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; animation:fadeUp .6s ease .3s both }
+    .meta-chip { display:flex; align-items:center; gap:7px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius:50px; padding:8px 18px; font-size:13px; color:rgba(255,255,255,.7); font-weight:500 }
+
+    /* PAGE */
+    .page { max-width:1100px; margin:0 auto; padding:56px 24px 80px }
+    .section-block { margin-bottom:44px }
+    .section-label { font-size:11px; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px }
+    .section-title { font-size:20px; font-weight:800; color:var(--text); margin-bottom:16px; letter-spacing:-.4px }
+
+    /* DEFINITION BOX */
+    .def-box {
+      background:white; border-radius:var(--radius); padding:32px 36px;
+      box-shadow:var(--shadow-sm); border-left:6px solid var(--primary);
+      display:flex; align-items:flex-start; gap:20px;
+    }
+    .def-icon { font-size:40px; flex-shrink:0; margin-top:2px }
+    .def-text {}
+    .def-label { font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--primary-dark); margin-bottom:10px }
+    .def-content { font-size:17px; font-weight:600; color:var(--text); line-height:1.7 }
+    .def-content strong { color:var(--primary-dark) }
+
+    /* TWO-COL LAYOUT */
+    .two-col { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:44px }
+
+    /* Problem box */
+    .problem-box { background:white; border-radius:var(--radius); padding:28px; box-shadow:var(--shadow-sm) }
+    .box-header { display:flex; align-items:center; gap:10px; margin-bottom:18px }
+    .box-icon { font-size:22px }
+    .box-title { font-size:16px; font-weight:800; color:var(--text) }
+    .problem-list { display:flex; flex-direction:column; gap:10px }
+    .problem-item { display:flex; align-items:flex-start; gap:10px; padding:10px 14px; background:var(--gray-1); border-radius:8px; font-size:14px; color:var(--text-light); line-height:1.5 }
+    .problem-item::before { content:'✅'; flex-shrink:0; margin-top:0 }
+
+    /* Service groups box */
+    .svc-box { background:white; border-radius:var(--radius); padding:28px; box-shadow:var(--shadow-sm) }
+    .svc-chips { display:flex; flex-wrap:wrap; gap:8px }
+    .svc-chip { display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:8px; font-size:13px; font-weight:600; border:1px solid transparent }
+    .svc-chip.compute  { background:rgba(0,120,212,.08); border-color:rgba(0,120,212,.2); color:#005A9E }
+    .svc-chip.storage  { background:rgba(230,126,34,.08); border-color:rgba(230,126,34,.2); color:#C05621 }
+    .svc-chip.database { background:rgba(16,124,16,.08); border-color:rgba(16,124,16,.2); color:#065F06 }
+    .svc-chip.network  { background:rgba(0,188,242,.08); border-color:rgba(0,188,242,.2); color:#007B9E }
+    .svc-chip.identity { background:rgba(135,100,184,.08); border-color:rgba(135,100,184,.2); color:#5B3A8C }
+    .svc-chip.security { background:rgba(216,59,1,.08); border-color:rgba(216,59,1,.2); color:#9B1C1C }
+    .svc-chip.monitor  { background:rgba(0,137,123,.08); border-color:rgba(0,137,123,.2); color:#005F57 }
+    .svc-chip.backup   { background:rgba(255,185,0,.1); border-color:rgba(255,185,0,.3); color:#8a6000 }
+    .svc-chip.ai       { background:rgba(99,102,241,.08); border-color:rgba(99,102,241,.2); color:#3730A3 }
+
+    /* MAPPING TABLE */
+    .map-wrap { background:white; border-radius:var(--radius); padding:28px; box-shadow:var(--shadow-sm); margin-bottom:44px }
+    .map-table-scroll { overflow-x:auto }
+    .map-table { width:100%; border-collapse:collapse; font-size:13.5px; min-width:640px }
+    .map-table thead tr { background:var(--gray-1) }
+    .map-table thead th { padding:11px 16px; text-align:left; font-size:11px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; border-bottom:2px solid var(--gray-2) }
+    .map-table thead th:first-child { color:var(--text-muted); width:18% }
+    .map-table thead th:nth-child(2) { color:#E67E22; width:20% }
+    .map-table thead th:nth-child(3) { color:#0078D4; width:21% }
+    .map-table thead th:nth-child(4) { color:#C05621; width:21% }
+    .map-table thead th:nth-child(5) { color:#107C10; width:20% }
+    .td-ncx { color:#C05621; font-weight:600 }
+    .tag-unknown { display:inline-block; background:var(--gray-2); border:1px solid var(--gray-3); border-radius:20px; padding:2px 10px; font-size:11px; font-weight:600; color:var(--text-muted) }
+    .map-table tbody tr { border-bottom:1px solid var(--gray-2); transition:background .2s }
+    .map-table tbody tr:hover { background:rgba(0,120,212,.03) }
+    .map-table td { padding:11px 16px; vertical-align:middle; color:var(--text-light); line-height:1.5 }
+    .map-table td:first-child { font-weight:700; color:var(--text) }
+    .map-table tbody tr:last-child { border-bottom:none }
+
+    /* CLOSING QUESTION */
+    .closing-box {
+      background:linear-gradient(135deg,rgba(0,120,212,.08),rgba(0,188,242,.04));
+      border:2px solid rgba(0,120,212,.18); border-radius:var(--radius);
+      padding:36px; text-align:center; margin-bottom:44px;
+    }
+    .closing-label { font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--primary-dark); margin-bottom:16px }
+    .closing-q { font-size:18px; font-weight:700; color:var(--text); line-height:1.7; font-style:italic; margin-bottom:20px }
+    .closing-hint { font-size:13px; color:var(--text-muted); line-height:1.6 }
+
+    /* MODULES OVERVIEW */
+    .modules-wrap { background:white; border-radius:var(--radius); padding:28px; box-shadow:var(--shadow-sm); margin-bottom:44px }
+    .modules-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px }
+    .mod-item { border-radius:10px; padding:14px 16px; background:var(--gray-1); border:1px solid var(--gray-2); text-decoration:none; transition:var(--tr) }
+    .mod-item:hover { border-color:var(--primary); background:rgba(0,120,212,.04); transform:translateY(-2px) }
+    .mod-num { font-size:11px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:var(--text-muted); margin-bottom:4px }
+    .mod-name { font-size:13px; font-weight:700; color:var(--text); line-height:1.4 }
+
+    /* PRINT HINT */
+    .print-hint {
+      background:rgba(0,120,212,.06); border:1px solid rgba(0,120,212,.15);
+      border-radius:10px; padding:14px 18px; margin-bottom:44px;
+      display:flex; align-items:center; gap:12px;
+      font-size:13.5px; color:var(--text-light);
+    }
+    .print-hint strong { color:var(--primary-dark) }
+
+    /* COMPLETION CARD */
+    .completion-card {
+      background:linear-gradient(135deg,var(--dark) 0%,var(--dark-2) 100%);
+      border-radius:var(--radius); padding:48px 40px; color:white;
+      border:1px solid rgba(255,255,255,.07); text-align:center;
+    }
+    .completion-icon { font-size:56px; margin-bottom:20px }
+    .completion-card h2 { font-size:28px; font-weight:900; margin-bottom:12px; letter-spacing:-.5px }
+    .completion-card p { font-size:16px; color:rgba(255,255,255,.6); line-height:1.7; margin-bottom:32px; max-width:560px; margin-left:auto; margin-right:auto }
+    .completion-stats { display:flex; justify-content:center; gap:32px; flex-wrap:wrap; margin-bottom:36px }
+    .stat-item { text-align:center }
+    .stat-num { font-size:36px; font-weight:900; color:var(--secondary); line-height:1 }
+    .stat-label { font-size:12px; color:rgba(255,255,255,.5); margin-top:4px; font-weight:500 }
+    .completion-cta { display:inline-flex; align-items:center; gap:8px; background:var(--primary); border:none; color:white; font-size:15px; font-weight:700; padding:14px 28px; border-radius:10px; cursor:pointer; transition:var(--tr); text-decoration:none }
+    .completion-cta:hover { background:var(--primary-dark); transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,120,212,.4) }
+
+    /* BOTTOM NAV */
+    .bottom-nav { display:flex; justify-content:space-between; align-items:center; padding:24px 0 0; border-top:1px solid var(--gray-3); flex-wrap:wrap; gap:12px; margin-top:48px }
+    .bnav-btn { display:flex; align-items:center; gap:10px; padding:12px 22px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; transition:var(--tr); text-decoration:none; border:2px solid var(--gray-3); color:var(--text-light); background:white }
+    .bnav-btn:hover { border-color:var(--primary); color:var(--primary); transform:translateY(-2px); box-shadow:var(--shadow-sm) }
+    .bnav-btn.home { background:var(--primary); border-color:var(--primary); color:white }
+    .bnav-btn.home:hover { background:var(--primary-dark); box-shadow:0 6px 20px rgba(0,120,212,.4) }
+    .bnav-center { font-size:13px; color:var(--text-muted); font-weight:500 }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+    .reveal { opacity:0; transform:translateY(22px); transition:opacity .5s ease,transform .5s ease }
+    .reveal.visible { opacity:1; transform:translateY(0) }
+
+    @media(max-width:768px) {
+      .top-nav { padding:0 16px }
+      .nav-title { display:none }
+      .hero { padding:90px 16px 56px }
+      .page { padding:36px 16px 60px }
+      .two-col { grid-template-columns:1fr }
+      .modules-grid { grid-template-columns:1fr 1fr }
+      .def-box { flex-direction:column; gap:12px }
+      .completion-stats { gap:20px }
+      .bottom-nav { flex-direction:column }
+      .bnav-btn { width:100%; justify-content:center }
+    }
+    @media(max-width:480px) {
+      .modules-grid { grid-template-columns:1fr }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-back"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Trang chủ</a>
+      <span class="nav-sep">/</span>
+      <span class="nav-title">Module 11 · One-page Summary cho Sales</span>
+    </div>
+    <div class="nav-right">
+      <a href="section10.html" class="nav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 10</a>
+      <a href="index.html" class="nav-btn prim">🏠 Trang chủ</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="module-badge">MODULE 11 / 11 · TỔNG KẾT</div>
+      <h1>📋 One-page Summary cho Sales</h1>
+      <p class="subtitle">
+        Tất cả kiến thức Cloud cần thiết cho Sales — gói gọn trong một trang tham chiếu.
+        Dùng như cheat sheet trước buổi gặp khách hàng.
+      </p>
+      <div class="hero-meta">
+        <span class="meta-chip">📋 Reference card</span>
+        <span class="meta-chip">🗺️ 11 dịch vụ mapping</span>
+        <span class="meta-chip">🎓 Module cuối khoá</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <!-- DEFINITION -->
+    <div class="section-block reveal">
+      <div class="section-label">Định nghĩa cốt lõi</div>
+      <div class="section-title">Cloud Computing là gì?</div>
+      <div class="def-box">
+        <div class="def-icon">☁️</div>
+        <div class="def-text">
+          <div class="def-label">Định nghĩa ngắn gọn</div>
+          <div class="def-content">
+            Cloud Computing là mô hình <strong>sử dụng tài nguyên CNTT dưới dạng dịch vụ</strong>
+            thông qua Cloud provider — giúp doanh nghiệp không cần tự đầu tư và vận hành
+            toàn bộ hạ tầng vật lý. Dùng theo nhu cầu, mở rộng linh hoạt, thanh toán theo mức sử dụng.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROBLEMS + SERVICE GROUPS -->
+    <div class="two-col reveal">
+
+      <!-- Cloud giải quyết vấn đề gì -->
+      <div class="problem-box">
+        <div class="box-header">
+          <span class="box-icon">✅</span>
+          <span class="box-title">Cloud giải quyết vấn đề gì?</span>
+        </div>
+        <div class="problem-list">
+          <div class="problem-item">Triển khai nhanh hơn — từ tuần xuống còn giờ</div>
+          <div class="problem-item">Mở rộng linh hoạt — scale theo nhu cầu thực tế</div>
+          <div class="problem-item">Giảm đầu tư ban đầu — CAPEX chuyển sang OPEX</div>
+          <div class="problem-item">Có thêm lựa chọn Backup / DR linh hoạt</div>
+          <div class="problem-item">Tiếp cận nhanh AI, Data, DevOps, Security</div>
+          <div class="problem-item">Quản lý chi phí theo mức sử dụng thực tế</div>
+        </div>
+      </div>
+
+      <!-- 9 nhóm dịch vụ -->
+      <div class="svc-box">
+        <div class="box-header">
+          <span class="box-icon">🗂️</span>
+          <span class="box-title">9 nhóm dịch vụ Cloud cần biết</span>
+        </div>
+        <div class="svc-chips">
+          <div class="svc-chip compute">🖥️ Compute</div>
+          <div class="svc-chip storage">💾 Storage</div>
+          <div class="svc-chip database">🗃️ Database</div>
+          <div class="svc-chip network">🌐 Network</div>
+          <div class="svc-chip identity">👤 Identity</div>
+          <div class="svc-chip security">🔒 Security</div>
+          <div class="svc-chip monitor">📊 Monitoring</div>
+          <div class="svc-chip backup">🔄 Backup / DR</div>
+          <div class="svc-chip ai">🤖 AI / Data / IoT / DevOps</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MAPPING TABLE -->
+    <div class="map-wrap reveal">
+      <div class="box-header" style="margin-bottom:18px">
+        <span class="box-icon">🗺️</span>
+        <span class="box-title">Mapping nhanh — On-premises → Cloud</span>
+      </div>
+      <div class="map-table-scroll">
+        <table class="map-table">
+          <thead>
+            <tr>
+              <th>🏢 On-premises</th>
+              <th>🟠 NetCloudX</th>
+              <th>☁️ Azure</th>
+              <th>🟡 AWS</th>
+              <th>🟢 GCP</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Server / VM</td>
+              <td class="td-ncx">UHost / UPHost</td>
+              <td>Azure Virtual Machines</td>
+              <td>Amazon EC2</td>
+              <td>Compute Engine</td>
+            </tr>
+            <tr>
+              <td>Object Storage</td>
+              <td class="td-ncx">US3 (UFile)</td>
+              <td>Azure Blob Storage</td>
+              <td>Amazon S3</td>
+              <td>Cloud Storage</td>
+            </tr>
+            <tr>
+              <td>SQL Database</td>
+              <td class="td-ncx">UDB (MySQL / PostgreSQL / SQL Server)</td>
+              <td>Azure SQL Database</td>
+              <td>Amazon RDS</td>
+              <td>Cloud SQL</td>
+            </tr>
+            <tr>
+              <td>Virtual Network</td>
+              <td class="td-ncx">UVPC</td>
+              <td>Azure Virtual Network</td>
+              <td>Amazon VPC</td>
+              <td>VPC</td>
+            </tr>
+            <tr>
+              <td>VPN</td>
+              <td class="td-ncx">IPSec VPN / UWAN</td>
+              <td>Azure VPN Gateway</td>
+              <td>AWS Site-to-Site VPN</td>
+              <td>Cloud VPN</td>
+            </tr>
+            <tr>
+              <td>Private Link / Leased Line</td>
+              <td class="td-ncx">UDPN / UGN</td>
+              <td>ExpressRoute</td>
+              <td>Direct Connect</td>
+              <td>Cloud Interconnect</td>
+            </tr>
+            <tr>
+              <td>IAM / Phân quyền</td>
+              <td class="td-ncx">URM (IAM)</td>
+              <td>Microsoft Entra ID / Azure RBAC</td>
+              <td>AWS IAM</td>
+              <td>Cloud IAM</td>
+            </tr>
+            <tr>
+              <td>Monitoring</td>
+              <td class="td-ncx">UMon / CloudWatch</td>
+              <td>Azure Monitor</td>
+              <td>Amazon CloudWatch</td>
+              <td>Cloud Monitoring</td>
+            </tr>
+            <tr>
+              <td>Backup</td>
+              <td class="td-ncx">USnap / UDataArk</td>
+              <td>Azure Backup</td>
+              <td>AWS Backup</td>
+              <td>Backup and DR Service</td>
+            </tr>
+            <tr>
+              <td>Kubernetes / Container</td>
+              <td class="td-ncx">UK8S</td>
+              <td>AKS</td>
+              <td>EKS</td>
+              <td>GKE</td>
+            </tr>
+            <tr>
+              <td>Serverless / Functions</td>
+              <td><span class="tag-unknown">Đang cập nhật</span></td>
+              <td>Azure Functions</td>
+              <td>AWS Lambda</td>
+              <td>Cloud Functions</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CLOSING QUESTION -->
+    <div class="closing-box reveal">
+      <div class="closing-label">💬 Câu hỏi chốt nhu cầu</div>
+      <div class="closing-q">
+        "Khách hàng đang cần giải quyết bài toán gì:<br>
+        triển khai nhanh, mở rộng nhanh, giảm đầu tư ban đầu,<br>
+        tăng dự phòng, bảo mật tốt hơn, hay khai thác dữ liệu / AI?"
+      </div>
+      <div class="closing-hint">
+        Đây là câu hỏi quan trọng nhất — đặt ra đúng lúc sẽ mở ra toàn bộ cuộc trò chuyện về giải pháp
+      </div>
+    </div>
+
+    <!-- MODULE OVERVIEW -->
+    <div class="modules-wrap reveal">
+      <div class="box-header" style="margin-bottom:18px">
+        <span class="box-icon">🗺️</span>
+        <span class="box-title">Toàn bộ chương trình — 11 Module</span>
+      </div>
+      <div class="modules-grid">
+        <a href="section1.html" class="mod-item"><div class="mod-num">Module 01</div><div class="mod-name">Cloud Computing là gì?</div></a>
+        <a href="section2.html" class="mod-item"><div class="mod-num">Module 02</div><div class="mod-name">Ba mô hình dịch vụ</div></a>
+        <a href="section3.html" class="mod-item"><div class="mod-num">Module 03</div><div class="mod-name">Hạ tầng Cloud hoạt động như thế nào?</div></a>
+        <a href="section4.html" class="mod-item"><div class="mod-num">Module 04</div><div class="mod-name">Các nhóm dịch vụ Cloud</div></a>
+        <a href="section5.html" class="mod-item"><div class="mod-num">Module 05</div><div class="mod-name">Vì sao khách hàng chuyển lên Cloud?</div></a>
+        <a href="section6.html" class="mod-item"><div class="mod-num">Module 06</div><div class="mod-name">Mapping dịch vụ Cloud</div></a>
+        <a href="section7.html" class="mod-item"><div class="mod-num">Module 07</div><div class="mod-name">Định vị Cloud theo tình huống</div></a>
+        <a href="section8.html" class="mod-item"><div class="mod-num">Module 08</div><div class="mod-name">Câu hỏi khai thác nhu cầu</div></a>
+        <a href="section9.html" class="mod-item"><div class="mod-num">Module 09</div><div class="mod-name">Cấu trúc trình bày 15 phút</div></a>
+        <a href="section10.html" class="mod-item"><div class="mod-num">Module 10</div><div class="mod-name">Những hiểu nhầm cần tránh</div></a>
+        <a href="section11.html" class="mod-item" style="border-color:var(--primary);background:rgba(0,120,212,.04)"><div class="mod-num" style="color:var(--primary)">Module 11 ✓</div><div class="mod-name">One-page Summary</div></a>
+      </div>
+    </div>
+
+    <!-- PRINT HINT -->
+    <div class="print-hint reveal">
+      <span>🖨️</span>
+      <span><strong>Lưu làm reference card:</strong> Nhấn Ctrl+P (hoặc Cmd+P trên Mac) → chọn "Save as PDF" để lưu trang này làm tài liệu tham khảo nhanh trước buổi gặp khách hàng.</span>
+    </div>
+
+    <!-- COMPLETION CARD -->
+    <div class="completion-card reveal">
+      <div class="completion-icon">🎓</div>
+      <h2>Hoàn thành khoá học!</h2>
+      <p>Bạn đã đi qua toàn bộ 11 module về Cloud Computing dành cho Sales.
+        Kiến thức này là nền tảng để tư vấn và định vị Cloud đúng cách cho từng khách hàng.</p>
+
+      <div class="completion-stats">
+        <div class="stat-item">
+          <div class="stat-num">11</div>
+          <div class="stat-label">Modules</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">9</div>
+          <div class="stat-label">Nhóm dịch vụ</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">11</div>
+          <div class="stat-label">Service mappings</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">20</div>
+          <div class="stat-label">Discovery questions</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">5</div>
+          <div class="stat-label">Sales scenarios</div>
+        </div>
+      </div>
+
+      <a href="index.html" class="completion-cta">🏠 Quay về trang chủ</a>
+    </div>
+
+    <div class="bottom-nav">
+      <a href="section10.html" class="bnav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 10: Những hiểu nhầm cần tránh</a>
+      <span class="bnav-center">Module 11 / 11 · Kết thúc</span>
+      <a href="index.html" class="bnav-btn home">🏠 Trang chủ</a>
+    </div>
+
+  </main>
+
+  <script>
+    const io = new IntersectionObserver(entries => {
+      entries.forEach((e,i) => { if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'),i*80); io.unobserve(e.target) } });
+    },{ threshold:0.08 });
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  </script>
+</body>
+</html>

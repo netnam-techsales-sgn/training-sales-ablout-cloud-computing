@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Những hiểu nhầm phổ biến | Module 10</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0078D4;
+      --primary-dark: #005A9E;
+      --secondary: #00BCF2;
+      --accent: #FFB900;
+      --success: #107C10;
+      --danger: #D83B01;
+      --dark: #050F1E;
+      --dark-2: #0D1F3C;
+      --gray-1: #F5F8FC;
+      --gray-2: #EEF2F7;
+      --gray-3: #D1DCE8;
+      --text: #1A202C;
+      --text-light: #4A5568;
+      --text-muted: #718096;
+      --shadow-sm: 0 2px 12px rgba(0,120,212,.07);
+      --shadow-md: 0 8px 32px rgba(0,120,212,.13);
+      --radius: 16px;
+      --tr: all .3s cubic-bezier(.4,0,.2,1);
+    }
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box }
+    html { scroll-behavior:smooth }
+    body { font-family:'Inter',sans-serif; background:var(--gray-1); color:var(--text); overflow-x:hidden; -webkit-font-smoothing:antialiased }
+
+    /* NAV */
+    .top-nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      background:rgba(5,15,30,.92); backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(255,255,255,.07);
+      padding:0 32px; height:60px;
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+    }
+    .nav-left { display:flex; align-items:center; gap:12px }
+    .nav-back { display:flex; align-items:center; gap:8px; color:rgba(255,255,255,.6); text-decoration:none; font-size:14px; font-weight:500; padding:6px 12px; border-radius:8px; transition:var(--tr) }
+    .nav-back:hover { color:white; background:rgba(255,255,255,.08) }
+    .nav-sep { color:rgba(255,255,255,.2) }
+    .nav-title { color:rgba(255,255,255,.75); font-size:14px; font-weight:600 }
+    .nav-right { display:flex; gap:8px }
+    .nav-btn { display:flex; align-items:center; gap:6px; color:rgba(255,255,255,.55); text-decoration:none; font-size:13px; font-weight:500; padding:7px 14px; border-radius:8px; border:1px solid rgba(255,255,255,.1); transition:var(--tr) }
+    .nav-btn:hover { color:white; border-color:rgba(255,255,255,.25); background:rgba(255,255,255,.07) }
+    .nav-btn.prim { background:var(--primary); border-color:var(--primary); color:white }
+    .nav-btn.prim:hover { background:var(--primary-dark) }
+
+    /* HERO */
+    .hero {
+      position:relative;
+      background:linear-gradient(140deg,#050F1E 0%,#0D1F3C 50%,#0A3070 100%);
+      padding:100px 24px 72px; overflow:hidden; text-align:center;
+    }
+    .hero::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(0,120,212,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,120,212,.05) 1px,transparent 1px); background-size:50px 50px }
+    .hero::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 600px 400px at 60% 40%,rgba(0,120,212,.22) 0%,transparent 70%),radial-gradient(ellipse 400px 300px at 20% 65%,rgba(0,188,242,.13) 0%,transparent 60%); pointer-events:none }
+    .hero-inner { position:relative; z-index:2; max-width:760px; margin:0 auto }
+    .module-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(0,120,212,.2); border:1px solid rgba(0,188,242,.4); border-radius:50px; padding:7px 18px; font-size:12px; font-weight:700; letter-spacing:1px; color:#7DD3FC; margin-bottom:28px; text-transform:uppercase; animation:fadeUp .6s ease both }
+    .hero h1 { font-size:clamp(28px,4.5vw,52px); font-weight:900; letter-spacing:-1.5px; line-height:1.1; margin-bottom:20px; background:linear-gradient(90deg,#fff 0%,#A8D4F5 60%,#00BCF2 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:fadeUp .6s ease .1s both }
+    .hero .subtitle { font-size:17px; color:rgba(255,255,255,.6); line-height:1.65; margin-bottom:40px; animation:fadeUp .6s ease .2s both }
+    .hero-meta { display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; animation:fadeUp .6s ease .3s both }
+    .meta-chip { display:flex; align-items:center; gap:7px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius:50px; padding:8px 18px; font-size:13px; color:rgba(255,255,255,.7); font-weight:500 }
+
+    /* PAGE */
+    .page { max-width:1100px; margin:0 auto; padding:56px 24px 80px }
+    .block { margin-bottom:52px }
+    .block-label { font-size:11px; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px }
+    .block-title { font-size:22px; font-weight:800; color:var(--text); margin-bottom:8px; letter-spacing:-.5px }
+    .block-sub { font-size:14px; color:var(--text-muted); margin-bottom:24px; line-height:1.6 }
+
+    .intro-box { background:white; border-radius:var(--radius); padding:28px 32px; box-shadow:var(--shadow-sm); border-left:5px solid var(--danger); margin-bottom:44px }
+    .intro-box p { font-size:15px; color:var(--text-light); line-height:1.75 }
+    .intro-box strong { color:#9B1C1C }
+
+    /* MYTH CARDS */
+    .myth-grid { display:flex; flex-direction:column; gap:16px }
+
+    .myth-card {
+      background:white; border-radius:var(--radius); box-shadow:var(--shadow-sm);
+      overflow:hidden; border-left:5px solid var(--danger);
+      transition:box-shadow .3s;
+    }
+    .myth-card.active { box-shadow:var(--shadow-md) }
+
+    .myth-header {
+      display:flex; align-items:center; gap:18px;
+      padding:22px 28px; cursor:pointer; user-select:none; transition:background .2s;
+    }
+    .myth-header:hover { background:var(--gray-1) }
+    .myth-card.active .myth-header { background:var(--gray-1) }
+
+    .myth-icon-box {
+      width:54px; height:54px; border-radius:14px;
+      background:linear-gradient(135deg,#FEF2F2,#FEE2E2);
+      border:1px solid #FCA5A5;
+      display:flex; align-items:center; justify-content:center;
+      font-size:26px; flex-shrink:0;
+    }
+
+    .myth-meta { flex:1 }
+    .myth-tag { font-size:11px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:#DC2626; margin-bottom:4px }
+    .myth-title { font-size:17px; font-weight:800; color:var(--text); line-height:1.3 }
+    .myth-brief { font-size:13px; color:var(--text-muted); margin-top:3px }
+
+    .myth-toggle { font-size:18px; color:var(--text-muted); transition:transform .3s; flex-shrink:0 }
+    .myth-card.active .myth-toggle { transform:rotate(180deg) }
+
+    .myth-body { max-height:0; overflow:hidden; transition:max-height .5s cubic-bezier(.4,0,.2,1),opacity .35s ease; opacity:0 }
+    .myth-card.active .myth-body { max-height:1400px; opacity:1 }
+    .myth-body-inner { padding:0 28px 28px }
+
+    /* Myth wrong box */
+    .myth-wrong {
+      background:#FEF2F2; border:1px solid #FCA5A5; border-left:4px solid #DC2626;
+      border-radius:10px; padding:16px 20px; margin-bottom:16px;
+    }
+    .myth-wrong-label { font-size:11px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:#991B1B; margin-bottom:8px; display:flex; align-items:center; gap:6px }
+    .myth-wrong p { font-size:14px; color:#7F1D1D; line-height:1.7 }
+
+    /* Correct box */
+    .myth-correct {
+      background:#F0FDF4; border:1px solid #86EFAC; border-left:4px solid #16A34A;
+      border-radius:10px; padding:16px 20px; margin-bottom:16px;
+    }
+    .myth-correct-label { font-size:11px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:#166534; margin-bottom:8px; display:flex; align-items:center; gap:6px }
+    .myth-correct blockquote { font-size:14px; color:#14532D; line-height:1.75; font-style:italic; font-weight:500 }
+
+    /* ISP Box */
+
+    /* Sales Quote */
+    .sales-quote { background:linear-gradient(135deg,rgba(255,185,0,.10),rgba(255,185,0,.05)); border:1px solid rgba(255,185,0,.3); border-left:4px solid var(--accent); border-radius:10px; padding:16px 20px }
+    .sales-quote-label { font-size:11px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:#8a6000; margin-bottom:8px; display:flex; align-items:center; gap:6px }
+    .sales-quote blockquote { font-size:14px; color:var(--text); line-height:1.75; font-style:italic }
+    .sales-quote blockquote strong { font-style:normal; color:var(--primary-dark) }
+
+    /* SUMMARY */
+    .summary-card { background:linear-gradient(135deg,var(--dark) 0%,var(--dark-2) 100%); border-radius:var(--radius); padding:40px; color:white; border:1px solid rgba(255,255,255,.07) }
+    .summary-card h3 { font-size:20px; font-weight:800; margin-bottom:8px; letter-spacing:-.3px }
+    .summary-sub { font-size:14px; color:rgba(255,255,255,.55); margin-bottom:28px; line-height:1.6 }
+    .myth-chips { display:flex; flex-direction:column; gap:8px; margin-bottom:28px }
+    .myth-chip { display:flex; align-items:flex-start; gap:12px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:12px 16px }
+    .myth-chip-x { font-size:16px; flex-shrink:0; margin-top:1px }
+    .myth-chip-text { font-size:13px; color:rgba(255,255,255,.75); line-height:1.6 }
+    .myth-chip-text strong { color:rgba(255,255,255,.95); font-style:normal }
+    .summary-takeaway { background:rgba(0,120,212,.2); border:1px solid rgba(0,188,242,.25); border-radius:10px; padding:16px 20px; font-size:14px; color:rgba(255,255,255,.75); line-height:1.7; font-style:italic }
+
+    /* BOTTOM NAV */
+    .bottom-nav { display:flex; justify-content:space-between; align-items:center; padding:24px 0 0; border-top:1px solid var(--gray-3); flex-wrap:wrap; gap:12px; margin-top:48px }
+    .bnav-btn { display:flex; align-items:center; gap:10px; padding:12px 22px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; transition:var(--tr); text-decoration:none; border:2px solid var(--gray-3); color:var(--text-light); background:white }
+    .bnav-btn:hover { border-color:var(--primary); color:var(--primary); transform:translateY(-2px); box-shadow:var(--shadow-sm) }
+    .bnav-btn.next { background:var(--primary); border-color:var(--primary); color:white }
+    .bnav-btn.next:hover { background:var(--primary-dark); box-shadow:0 6px 20px rgba(0,120,212,.4) }
+    .bnav-center { font-size:13px; color:var(--text-muted); font-weight:500 }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+    .reveal { opacity:0; transform:translateY(22px); transition:opacity .5s ease,transform .5s ease }
+    .reveal.visible { opacity:1; transform:translateY(0) }
+
+    @media(max-width:768px) {
+      .top-nav { padding:0 16px }
+      .nav-title { display:none }
+      .hero { padding:90px 16px 56px }
+      .page { padding:36px 16px 60px }
+      .myth-header { padding:16px 18px }
+      .myth-body-inner { padding:0 18px 20px }
+      .bottom-nav { flex-direction:column }
+      .bnav-btn { width:100%; justify-content:center }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-back"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Trang chủ</a>
+      <span class="nav-sep">/</span>
+      <span class="nav-title">Module 10 · Những hiểu nhầm phổ biến</span>
+    </div>
+    <div class="nav-right">
+      <a href="section9.html" class="nav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 09</a>
+      <a href="section11.html" class="nav-btn prim">Module 11 <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="module-badge">MODULE 10 / 11</div>
+      <h1>⚠️ Những hiểu nhầm phổ biến Sales cần tránh</h1>
+      <p class="subtitle">
+        Nói sai về Cloud không chỉ mất uy tín — còn có thể khiến khách hàng kỳ vọng sai
+        và thất vọng sau khi triển khai. Đây là 4 hiểu nhầm thường gặp nhất.
+      </p>
+      <div class="hero-meta">
+        <span class="meta-chip">⏱ ~10 phút</span>
+        <span class="meta-chip">⚠️ 4 hiểu nhầm phổ biến</span>
+        <span class="meta-chip">✅ Cách nói đúng cho từng trường hợp</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <div class="intro-box reveal">
+      <p>
+        Những câu nói như <strong>"Cloud luôn rẻ hơn"</strong> hay <strong>"lên Cloud là an toàn ngay"</strong>
+        nghe có vẻ thuyết phục trong lúc pitch — nhưng thực tế không đơn giản như vậy.
+        Khi khách hàng triển khai và gặp vấn đề, họ sẽ nhớ lại những gì Sales đã nói.
+        <strong>Nói trung thực và chính xác</strong> mới là cách xây dựng uy tín lâu dài.
+      </p>
+    </div>
+
+    <div class="block reveal">
+      <div class="block-label">4 hiểu nhầm thường gặp</div>
+      <div class="block-title">Nhận diện — Giải thích — Nói đúng</div>
+      <div class="block-sub">Click vào từng hiểu nhầm để xem tại sao sai và cách diễn đạt chính xác hơn</div>
+
+      <div class="myth-grid">
+
+        <!-- MYTH 1 -->
+        <div class="myth-card">
+          <div class="myth-header">
+            <div class="myth-icon-box">💸</div>
+            <div class="myth-meta">
+              <div class="myth-tag">Hiểu nhầm #1 · Chi phí</div>
+              <div class="myth-title">"Cloud luôn rẻ hơn on-premises"</div>
+              <div class="myth-brief">Không phải lúc nào cũng đúng — phụ thuộc vào cách thiết kế và vận hành</div>
+            </div>
+            <span class="myth-toggle">▼</span>
+          </div>
+          <div class="myth-body">
+            <div class="myth-body-inner">
+
+              <div class="myth-wrong">
+                <div class="myth-wrong-label">❌ Tại sao không chính xác?</div>
+                <p>Cloud <em>có thể</em> rẻ hơn trong nhiều trường hợp — nhưng cũng có thể đắt hơn nếu:
+                thiết kế kiến trúc sai, không tắt tài nguyên không dùng, không right-size VM,
+                không có cost governance, hoặc chạy workload dạng steady-state với chi phí on-demand cao.
+                Cloud không tự động tiết kiệm — cần thiết kế đúng.</p>
+              </div>
+
+              <div class="myth-correct">
+                <div class="myth-correct-label">✅ Cách nói đúng</div>
+                <blockquote>"Cloud giúp chi phí linh hoạt và minh bạch hơn. Để tối ưu chi phí, cần thiết kế kiến trúc, governance và cost management ngay từ đầu."</blockquote>
+              </div>
+
+              <div class="sales-quote">
+                <div class="sales-quote-label">💬 Khi khách hàng hỏi "Cloud có rẻ hơn không?"</div>
+                <blockquote>"Cloud giúp chi phí <strong>linh hoạt và minh bạch hơn</strong> — anh/chị có thể thấy rõ từng đồng chi cho dịch vụ nào. Để biết có tiết kiệm không, mình cần đánh giá workload cụ thể và thiết kế đúng kiến trúc ngay từ đầu."</blockquote>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- MYTH 2 -->
+        <div class="myth-card">
+          <div class="myth-header">
+            <div class="myth-icon-box">🔒</div>
+            <div class="myth-meta">
+              <div class="myth-tag">Hiểu nhầm #2 · Bảo mật</div>
+              <div class="myth-title">"Đưa lên Cloud là tự động an toàn"</div>
+              <div class="myth-brief">Cloud provider bảo vệ nền tảng — không bảo vệ thay khách hàng</div>
+            </div>
+            <span class="myth-toggle">▼</span>
+          </div>
+          <div class="myth-body">
+            <div class="myth-body-inner">
+
+              <div class="myth-wrong">
+                <div class="myth-wrong-label">❌ Tại sao không chính xác?</div>
+                <p>Cloud provider chỉ bảo vệ <em>nền tảng Cloud</em> (datacenter vật lý, hypervisor, network cơ bản) theo
+                <strong>Shared Responsibility Model</strong>. Phần còn lại — IAM, network config, encryption,
+                logging, backup, patch management — vẫn là trách nhiệm của khách hàng.
+                Nhiều sự cố Cloud thực tế xuất phát từ cấu hình sai của người dùng, không phải lỗi của provider.</p>
+              </div>
+
+              <div class="myth-correct">
+                <div class="myth-correct-label">✅ Cách nói đúng</div>
+                <blockquote>"Cloud cung cấp nhiều công cụ bảo mật mạnh, nhưng mức độ an toàn phụ thuộc vào thiết kế IAM, network, encryption, logging, backup và quy trình vận hành."</blockquote>
+              </div>
+
+              <div class="sales-quote">
+                <div class="sales-quote-label">💬 Khi khách hàng lo ngại bảo mật Cloud</div>
+                <blockquote>"Cloud cung cấp <strong>rất nhiều công cụ bảo mật</strong> mà on-premises khó có sẵn — IAM chi tiết, encryption, audit log, SIEM tích hợp. Nhưng hiệu quả phụ thuộc vào thiết kế đúng ngay từ đầu — đây là điều mình sẽ hỗ trợ anh/chị trong quá trình triển khai."</blockquote>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- MYTH 3 -->
+        <div class="myth-card">
+          <div class="myth-header">
+            <div class="myth-icon-box">🖥️</div>
+            <div class="myth-meta">
+              <div class="myth-tag">Hiểu nhầm #3 · Phạm vi</div>
+              <div class="myth-title">"Cloud chỉ là máy chủ ảo"</div>
+              <div class="myth-brief">VM chỉ là một phần rất nhỏ trong hệ sinh thái Cloud</div>
+            </div>
+            <span class="myth-toggle">▼</span>
+          </div>
+          <div class="myth-body">
+            <div class="myth-body-inner">
+
+              <div class="myth-wrong">
+                <div class="myth-wrong-label">❌ Tại sao không chính xác?</div>
+                <p>Virtual Machine (IaaS) là lớp dịch vụ cơ bản nhất và quen thuộc nhất — nhưng chỉ là
+                một phần trong hệ sinh thái Cloud rộng lớn hơn nhiều. Nếu Sales chỉ bán VM,
+                khách hàng sẽ chỉ thấy Cloud như "hosting đắt hơn" thay vì nhìn thấy toàn bộ
+                giá trị chuyển đổi số mà Cloud mang lại.</p>
+              </div>
+
+              <div class="myth-correct">
+                <div class="myth-correct-label">✅ Cách nói đúng</div>
+                <blockquote>"Cloud bao gồm hạ tầng, nền tảng ứng dụng, database, storage, security, monitoring, AI, analytics, IoT và automation — một hệ sinh thái dịch vụ hoàn chỉnh."</blockquote>
+              </div>
+
+              <div class="sales-quote">
+                <div class="sales-quote-label">💬 Khi khách hàng nói "Cloud thì chỉ cần VM thôi"</div>
+                <blockquote>"VM là điểm khởi đầu tốt — nhưng Cloud còn mang lại <strong>managed database, AI/ML, monitoring tự động, security tools</strong> và nhiều hơn nữa. Nhiều khách hàng bắt đầu với VM rồi dần mở rộng sang các dịch vụ giá trị cao hơn."</blockquote>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- MYTH 4 -->
+        <div class="myth-card">
+          <div class="myth-header">
+            <div class="myth-icon-box">🚚</div>
+            <div class="myth-meta">
+              <div class="myth-tag">Hiểu nhầm #4 · Hành trình</div>
+              <div class="myth-title">"Migrate lên Cloud là xong"</div>
+              <div class="myth-brief">Migration chỉ là bước đầu — vận hành và tối ưu mới là hành trình dài</div>
+            </div>
+            <span class="myth-toggle">▼</span>
+          </div>
+          <div class="myth-body">
+            <div class="myth-body-inner">
+
+              <div class="myth-wrong">
+                <div class="myth-wrong-label">❌ Tại sao không chính xác?</div>
+                <p>Migration (chuyển workload lên Cloud) chỉ là bước đầu tiên. Sau khi migrate,
+                doanh nghiệp vẫn cần: vận hành và monitoring liên tục, tối ưu chi phí định kỳ,
+                cập nhật security baseline, backup và kiểm tra DR, cải tiến kiến trúc theo nhu cầu mới.
+                Nhiều dự án "migrate xong" nhưng không có kế hoạch vận hành sẽ phát sinh chi phí
+                cao và rủi ro bảo mật sau vài tháng.</p>
+              </div>
+
+              <div class="myth-correct">
+                <div class="myth-correct-label">✅ Cách nói đúng</div>
+                <blockquote>"Cloud là một hành trình vận hành và tối ưu liên tục, không chỉ là một dự án di chuyển hạ tầng."</blockquote>
+              </div>
+
+              <div class="sales-quote">
+                <div class="sales-quote-label">💬 Khi khách hàng hỏi "migrate xong thì sao?"</div>
+                <blockquote>"Sau khi migrate, mình cần lên kế hoạch cho <strong>vận hành, monitoring, cost optimization và security</strong> liên tục. Đây là lúc managed service và professional service phát huy giá trị — để khách hàng tập trung vào kinh doanh thay vì lo hạ tầng."</blockquote>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end myth-grid -->
+    </div>
+
+    <!-- SUMMARY CARD -->
+    <div class="summary-card reveal">
+      <h3>⚠️ 4 hiểu nhầm — 4 cách nói đúng</h3>
+      <p class="summary-sub">Nói đúng từ đầu giúp kỳ vọng của khách hàng phù hợp với thực tế — tránh thất vọng sau khi triển khai</p>
+
+      <div class="myth-chips">
+        <div class="myth-chip">
+          <span class="myth-chip-x">💸</span>
+          <div class="myth-chip-text">❌ "Cloud luôn rẻ hơn" → ✅ <strong>Chi phí linh hoạt, cần thiết kế đúng để tối ưu</strong></div>
+        </div>
+        <div class="myth-chip">
+          <span class="myth-chip-x">🔒</span>
+          <div class="myth-chip-text">❌ "Lên Cloud tự động an toàn" → ✅ <strong>Cần thiết kế IAM, encryption, logging ngay từ đầu</strong></div>
+        </div>
+        <div class="myth-chip">
+          <span class="myth-chip-x">🖥️</span>
+          <div class="myth-chip-text">❌ "Cloud chỉ là máy chủ ảo" → ✅ <strong>Hệ sinh thái đầy đủ: DB, AI, Security, DevOps...</strong></div>
+        </div>
+        <div class="myth-chip">
+          <span class="myth-chip-x">🚚</span>
+          <div class="myth-chip-text">❌ "Migrate xong là xong" → ✅ <strong>Hành trình vận hành và tối ưu liên tục</strong></div>
+        </div>
+      </div>
+
+      <div class="summary-takeaway">
+        💡 <strong style="font-style:normal;color:rgba(255,255,255,.9)">Nguyên tắc:</strong>
+        Uy tín của Sales được xây bằng <em>sự trung thực</em>, không phải bằng lời hứa quá mức.
+        Khách hàng thấy bạn nói đúng về điểm yếu của Cloud sẽ tin tưởng bạn hơn khi nói về điểm mạnh.
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <a href="section9.html" class="bnav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 09: Cấu trúc trình bày 15'</a>
+      <span class="bnav-center">Module 10 / 11</span>
+      <a href="section11.html" class="bnav-btn next">Module 11: One-page Summary <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+    </div>
+
+  </main>
+
+  <script>
+    const io = new IntersectionObserver(entries => {
+      entries.forEach((e,i) => { if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'),i*80); io.unobserve(e.target) } });
+    },{ threshold:0.08 });
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+    document.querySelectorAll('.myth-card').forEach(card=>{
+      card.querySelector('.myth-header').addEventListener('click',()=>{
+        const wasActive=card.classList.contains('active');
+        document.querySelectorAll('.myth-card').forEach(c=>c.classList.remove('active'));
+        if(!wasActive){ card.classList.add('active'); setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),100) }
+      });
+    });
+    setTimeout(()=>document.querySelector('.myth-card').classList.add('active'),700);
+  </script>
+</body>
+</html>

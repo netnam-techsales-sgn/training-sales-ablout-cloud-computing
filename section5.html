@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vì sao khách hàng chuyển lên Cloud? | Module 05</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#0078D4;--primary-dark:#005A9E;--primary-light:#50B0F0;
+  --secondary:#00BCF2;--accent:#FFB900;--success:#107C10;--danger:#D83B01;
+  --dark:#050F1E;--dark-2:#0D1F3C;--white:#fff;
+  --gray-1:#F5F8FC;--gray-2:#EEF2F7;--gray-3:#D1DCE8;
+  --text:#1A202C;--text-light:#4A5568;--text-muted:#718096;
+  --shadow-sm:0 2px 12px rgba(0,120,212,.07);
+  --shadow-md:0 8px 32px rgba(0,120,212,.13);
+  --shadow-lg:0 20px 60px rgba(0,0,0,.15);
+  --radius:16px;--radius-sm:10px;
+  --tr:all .3s cubic-bezier(.4,0,.2,1);
+  /* Driver colors */
+  --d1:#E67E22; --d2:#0078D4; --d3:#107C10; --d4:#8764B8; --d5:#00897B; --d6:#D83B01;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--gray-1);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── NAV ── */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(5,15,30,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.07);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-left{display:flex;align-items:center;gap:12px}
+.nav-back{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.6);text-decoration:none;font-size:14px;font-weight:500;padding:6px 12px;border-radius:8px;transition:var(--tr)}
+.nav-back:hover{color:white;background:rgba(255,255,255,.08)}
+.nav-sep{color:rgba(255,255,255,.2)}
+.nav-title{color:rgba(255,255,255,.75);font-size:14px;font-weight:600}
+.nav-right{display:flex;gap:8px}
+.nav-btn{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.55);text-decoration:none;font-size:13px;font-weight:500;padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);transition:var(--tr)}
+.nav-btn:hover{color:white;border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.07)}
+.nav-btn.prim{background:var(--primary);border-color:var(--primary);color:white}
+.nav-btn.prim:hover{background:var(--primary-dark)}
+
+/* ── HERO ── */
+.hero{position:relative;background:linear-gradient(140deg,#050F1E 0%,#0D1F3C 50%,#0A3070 100%);padding:100px 24px 72px;overflow:hidden;text-align:center}
+.hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,120,212,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,120,212,.05) 1px,transparent 1px);background-size:50px 50px}
+.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 600px 400px at 60% 40%,rgba(0,120,212,.22) 0%,transparent 70%),radial-gradient(ellipse 400px 300px at 20% 65%,rgba(0,188,242,.13) 0%,transparent 60%);pointer-events:none}
+.hero-inner{position:relative;z-index:2;max-width:760px;margin:0 auto}
+.module-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,120,212,.2);border:1px solid rgba(0,188,242,.4);border-radius:50px;padding:7px 18px;font-size:12px;font-weight:700;letter-spacing:1px;color:#7DD3FC;margin-bottom:28px;text-transform:uppercase;animation:fadeUp .6s ease both}
+.hero h1{font-size:clamp(28px,4.5vw,52px);font-weight:900;letter-spacing:-1.5px;line-height:1.1;margin-bottom:20px;background:linear-gradient(90deg,#fff 0%,#A8D4F5 60%,#00BCF2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:fadeUp .6s ease .1s both}
+.hero .subtitle{font-size:17px;color:rgba(255,255,255,.6);line-height:1.65;margin-bottom:40px;animation:fadeUp .6s ease .2s both}
+.hero-meta{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;animation:fadeUp .6s ease .3s both}
+.meta-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:50px;padding:8px 18px;font-size:13px;color:rgba(255,255,255,.7);font-weight:500}
+
+/* ── PAGE ── */
+.page{max-width:1100px;margin:0 auto;padding:56px 24px 80px}
+.block{margin-bottom:52px}
+.block-label{font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px}
+.block-title{font-size:22px;font-weight:800;color:var(--text);margin-bottom:8px;letter-spacing:-.5px}
+.block-sub{font-size:14px;color:var(--text-muted);margin-bottom:24px;line-height:1.6}
+
+/* ── INTRO BOX ── */
+.intro-box{background:white;border-radius:var(--radius);padding:28px 32px;box-shadow:var(--shadow-sm);border-left:5px solid var(--primary)}
+.intro-box p{font-size:15px;color:var(--text-light);line-height:1.75}
+.intro-box strong{color:var(--primary-dark)}
+
+/* ── DRIVER CARDS ── */
+.drivers-grid{display:flex;flex-direction:column;gap:16px}
+
+.driver-card{background:white;border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;border:2px solid transparent;transition:box-shadow .3s,border-color .3s}
+.driver-card.active{box-shadow:var(--shadow-md)}
+
+.driver-header{display:flex;align-items:center;gap:18px;padding:22px 28px;cursor:pointer;user-select:none;transition:background .2s}
+.driver-header:hover{background:var(--gray-1)}
+.driver-card.active .driver-header{background:var(--gray-1)}
+
+.driver-num-icon{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;color:white}
+.driver-card[data-d="1"] .driver-num-icon{background:var(--d1)}
+.driver-card[data-d="2"] .driver-num-icon{background:var(--d2)}
+.driver-card[data-d="3"] .driver-num-icon{background:var(--d3)}
+.driver-card[data-d="4"] .driver-num-icon{background:var(--d4)}
+.driver-card[data-d="5"] .driver-num-icon{background:var(--d5)}
+.driver-card[data-d="6"] .driver-num-icon{background:var(--d6)}
+
+.driver-card[data-d="1"].active{border-color:var(--d1)}
+.driver-card[data-d="2"].active{border-color:var(--d2)}
+.driver-card[data-d="3"].active{border-color:var(--d3)}
+.driver-card[data-d="4"].active{border-color:var(--d4)}
+.driver-card[data-d="5"].active{border-color:var(--d5)}
+.driver-card[data-d="6"].active{border-color:var(--d6)}
+
+.driver-meta{flex:1}
+.driver-tag{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px}
+.driver-card[data-d="1"] .driver-tag{color:var(--d1)}
+.driver-card[data-d="2"] .driver-tag{color:var(--d2)}
+.driver-card[data-d="3"] .driver-tag{color:var(--d3)}
+.driver-card[data-d="4"] .driver-tag{color:var(--d4)}
+.driver-card[data-d="5"] .driver-tag{color:var(--d5)}
+.driver-card[data-d="6"] .driver-tag{color:var(--d6)}
+
+.driver-title{font-size:17px;font-weight:800;color:var(--text);line-height:1.3}
+.driver-brief{font-size:13px;color:var(--text-muted);margin-top:3px}
+.driver-toggle{font-size:18px;color:var(--text-muted);transition:transform .3s;flex-shrink:0}
+.driver-card.active .driver-toggle{transform:rotate(180deg)}
+
+/* Expandable body */
+.driver-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1),opacity .3s ease;opacity:0}
+.driver-card.active .driver-body{max-height:1400px;opacity:1}
+.driver-body-inner{padding:0 28px 28px}
+
+/* Comparison grid */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+.compare-col{border-radius:12px;padding:20px 22px}
+.compare-col.onprem{background:#FEF2F2;border:1px solid #FCA5A5}
+.compare-col.cloud{background:#F0FDF4;border:1px solid #86EFAC}
+.compare-col-title{font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.compare-col.onprem .compare-col-title{color:#991B1B}
+.compare-col.cloud .compare-col-title{color:#166534}
+.compare-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.compare-list li{display:flex;align-items:flex-start;gap:8px;font-size:14px;color:var(--text-light);line-height:1.5}
+.compare-list li::before{flex-shrink:0;margin-top:2px;font-size:13px}
+.compare-col.onprem .compare-list li::before{content:'✕';color:#DC2626}
+.compare-col.cloud .compare-list li::before{content:'✓';color:#16A34A}
+
+/* Timeline steps */
+.timeline{display:flex;flex-direction:column;gap:0;margin-bottom:24px;position:relative}
+.timeline::before{content:'';position:absolute;left:22px;top:24px;bottom:24px;width:2px;background:var(--gray-3)}
+.tl-step{display:flex;align-items:flex-start;gap:16px;padding:12px 0;position:relative;z-index:1}
+.tl-dot{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;color:white}
+.tl-dot.onprem{background:#DC2626}
+.tl-dot.cloud{background:#16A34A}
+.tl-content{padding-top:10px}
+.tl-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);margin-bottom:2px}
+.tl-text{font-size:14px;color:var(--text-light);line-height:1.5}
+.tl-divider{border:none;border-top:2px dashed var(--gray-3);margin:12px 0 12px 52px}
+
+/* Scale boxes */
+.scale-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+.scale-box{border-radius:12px;padding:20px 22px}
+.scale-box.up{background:#EFF6FF;border:1px solid #93C5FD}
+.scale-box.down{background:#F0FDF4;border:1px solid #86EFAC}
+.scale-box-title{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.scale-box.up .scale-box-title{color:#1D4ED8}
+.scale-box.down .scale-box-title{color:#166534}
+.scale-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.scale-list li{font-size:14px;color:var(--text-light);display:flex;align-items:center;gap:8px;line-height:1.5}
+.scale-list li::before{font-size:14px;flex-shrink:0}
+.scale-box.up .scale-list li::before{content:'↑';color:#2563EB;font-weight:800}
+.scale-box.down .scale-list li::before{content:'↓';color:#16A34A;font-weight:800}
+
+/* Availability layers */
+.avail-layers{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.avail-layer{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:10px;background:rgba(135,100,184,.07);border:1px solid rgba(135,100,184,.15)}
+.avail-layer-icon{font-size:22px;width:40px;text-align:center;flex-shrink:0}
+.avail-layer-content{}
+.avail-layer-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px}
+.avail-layer-desc{font-size:13px;color:var(--text-muted);line-height:1.5}
+
+/* Tech items */
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:24px}
+.tech-item{background:var(--gray-1);border:1px solid var(--gray-2);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:var(--tr)}
+.tech-item:hover{border-color:var(--primary);background:rgba(0,120,212,.04);transform:translateY(-2px)}
+.tech-icon{font-size:22px;flex-shrink:0}
+.tech-name{font-size:13px;font-weight:700;color:var(--text)}
+.tech-desc{font-size:12px;color:var(--text-muted);margin-top:2px;line-height:1.4}
+
+/* DX goals */
+.dx-list{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.dx-item{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border-radius:10px;background:rgba(214,59,1,.05);border:1px solid rgba(216,59,1,.12)}
+.dx-item-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.dx-item-text{font-size:14px;color:var(--text-light);line-height:1.55}
+.dx-item-text strong{color:var(--text);font-weight:700}
+
+/* Sales quote */
+.sales-quote{background:linear-gradient(135deg,rgba(255,185,0,.1),rgba(255,185,0,.05));border:1px solid rgba(255,185,0,.3);border-left:4px solid var(--accent);border-radius:10px;padding:18px 22px;margin-top:8px}
+.sales-quote-label{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#8a6000;margin-bottom:8px}
+.sales-quote blockquote{font-size:14px;color:var(--text);line-height:1.7;font-style:italic}
+.sales-quote blockquote strong{font-style:normal;color:var(--primary-dark)}
+
+/* Note box */
+.note-box{background:rgba(0,120,212,.06);border:1px solid rgba(0,120,212,.15);border-radius:10px;padding:14px 18px;margin-top:8px;font-size:13.5px;color:var(--text-light);line-height:1.6}
+.note-box strong{color:var(--primary-dark)}
+
+/* Divider */
+.driver-body-inner hr{border:none;border-top:1px solid var(--gray-2);margin:20px 0}
+
+/* ── SUMMARY DARK CARD ── */
+.summary-card{background:linear-gradient(135deg,var(--dark) 0%,var(--dark-2) 100%);border-radius:var(--radius);padding:40px;color:white;border:1px solid rgba(255,255,255,.07)}
+.summary-card h3{font-size:20px;font-weight:800;margin-bottom:8px;letter-spacing:-.3px}
+.summary-card .summary-sub{font-size:14px;color:rgba(255,255,255,.55);margin-bottom:28px;line-height:1.6}
+.summary-reasons{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.reason-chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:16px 18px;display:flex;align-items:flex-start;gap:12px}
+.reason-chip-icon{font-size:22px;flex-shrink:0}
+.reason-chip-name{font-size:13px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:3px}
+.reason-chip-note{font-size:12px;color:rgba(255,255,255,.45);line-height:1.45}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0 0;border-top:1px solid var(--gray-3);flex-wrap:wrap;gap:12px;margin-top:48px}
+.bnav-btn{display:flex;align-items:center;gap:10px;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:var(--tr);text-decoration:none;border:2px solid var(--gray-3);color:var(--text-light);background:white}
+.bnav-btn:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.bnav-btn.next{background:var(--primary);border-color:var(--primary);color:white}
+.bnav-btn.next:hover{background:var(--primary-dark);border-color:var(--primary-dark);box-shadow:0 6px 20px rgba(0,120,212,.4)}
+.bnav-center{font-size:13px;color:var(--text-muted);font-weight:500}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .5s ease,transform .5s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .top-nav{padding:0 16px}
+  .nav-title{display:none}
+  .hero{padding:90px 16px 56px}
+  .page{padding:36px 16px 60px}
+  .compare-grid,.scale-grid{grid-template-columns:1fr}
+  .summary-reasons{grid-template-columns:1fr 1fr}
+  .bottom-nav{flex-direction:column}
+  .bnav-btn{width:100%;justify-content:center}
+  .driver-header{padding:18px 20px}
+  .driver-body-inner{padding:0 20px 24px}
+}
+@media(max-width:480px){
+  .summary-reasons{grid-template-columns:1fr}
+  .tech-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-back"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Trang chủ</a>
+    <span class="nav-sep">/</span>
+    <span class="nav-title">Module 05 · Vì sao chuyển lên Cloud?</span>
+  </div>
+  <div class="nav-right">
+    <a href="section4.html" class="nav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 04</a>
+    <a href="section6.html" class="nav-btn prim">Module 06 <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="module-badge">☁️ MODULE 05 / 11</div>
+    <h1>🚀 Vì sao khách hàng chuyển lên Cloud?</h1>
+    <p class="subtitle">6 lý do cốt lõi — từ bài toán chi phí đến chiến lược chuyển đổi số. Hiểu rõ từng lý do giúp Sales đặt đúng câu hỏi và định vị đúng giá trị với từng khách hàng.</p>
+    <div class="hero-meta">
+      <div class="meta-chip">🕐 ~20 phút</div>
+      <div class="meta-chip">📌 6 lý do tương tác</div>
+      <div class="meta-chip">💬 Thông điệp Sales kèm theo</div>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- INTRO -->
+  <div class="block reveal">
+    <div class="intro-box">
+      <p>Mỗi khách hàng chuyển lên Cloud vì <strong>một lý do khác nhau</strong> — có người muốn giảm chi phí ban đầu, có người cần triển khai nhanh, có người cần DR site mà không đầu tư thêm cơ sở hạ tầng vật lý. Sales cần nhận ra đúng <strong>động lực chính (driver)</strong> của từng khách hàng để tư vấn đúng hướng, thay vì trình bày hết tất cả tính năng Cloud.</p>
+    </div>
+  </div>
+
+  <!-- 6 DRIVER CARDS -->
+  <div class="block reveal">
+    <div class="block-label">6 lý do chuyển lên Cloud</div>
+    <div class="block-title">Nhấp vào từng lý do để xem chi tiết & thông điệp Sales</div>
+    <div class="block-sub">Mỗi driver đi kèm so sánh thực tế, cách giải thích với khách hàng và câu nói gợi ý</div>
+
+    <div class="drivers-grid">
+
+      <!-- DRIVER 1: CAPEX → OPEX -->
+      <div class="driver-card" data-d="1">
+        <div class="driver-header">
+          <div class="driver-num-icon">💰</div>
+          <div class="driver-meta">
+            <div class="driver-tag">Lý do 01 · Chi phí</div>
+            <div class="driver-title">Từ CAPEX sang OPEX — Linh hoạt hóa chi phí đầu tư</div>
+            <div class="driver-brief">On-premises đòi hỏi đầu tư lớn ngay từ đầu. Cloud chuyển sang mô hình pay-as-you-go.</div>
+          </div>
+          <div class="driver-toggle">▼</div>
+        </div>
+        <div class="driver-body">
+          <div class="driver-body-inner">
+
+            <div class="compare-grid">
+              <div class="compare-col onprem">
+                <div class="compare-col-title">🏢 On-premises — CAPEX</div>
+                <ul class="compare-list">
+                  <li>Server vật lý</li>
+                  <li>Storage (SAN/NAS)</li>
+                  <li>Network (switch, firewall, router)</li>
+                  <li>Security appliance</li>
+                  <li>License phần mềm</li>
+                  <li>Data center space (thuê chỗ đặt máy)</li>
+                  <li>Điện, làm mát, bảo trì định kỳ</li>
+                </ul>
+              </div>
+              <div class="compare-col cloud">
+                <div class="compare-col-title">☁️ Cloud — OPEX</div>
+                <ul class="compare-list">
+                  <li>Dùng trước, trả theo mức sử dụng thực tế</li>
+                  <li>Không cần đầu tư toàn bộ công suất từ đầu</li>
+                  <li>Có thể tăng/giảm tài nguyên theo nhu cầu</li>
+                  <li>Chi phí gắn trực tiếp với nhu cầu kinh doanh</li>
+                  <li>Không tốn chi phí khi tài nguyên không dùng</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="note-box">
+              ⚠️ <strong>Lưu ý quan trọng:</strong> Cloud không phải lúc nào cũng rẻ hơn on-premises theo nghĩa tuyệt đối. Nếu thiết kế sai, không tắt tài nguyên không dùng hoặc không quản trị chi phí — bill Cloud có thể còn cao hơn. Điểm mạnh thực sự là sự <strong>linh hoạt và minh bạch</strong> của chi phí.
+            </div>
+
+            <div class="sales-quote" style="margin-top:16px">
+              <div class="sales-quote-label">💬 Thông điệp Sales</div>
+              <blockquote>Cloud không phải lúc nào cũng rẻ hơn tuyệt đối, nhưng giúp chi phí <strong>linh hoạt hơn và gắn với nhu cầu kinh doanh thực tế hơn</strong>. Thay vì mua trước cho 5 năm, doanh nghiệp chỉ trả cho những gì đang dùng — và có thể điều chỉnh bất cứ lúc nào.</blockquote>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- DRIVER 2: TRIỂN KHAI NHANH -->
+      <div class="driver-card" data-d="2">
+        <div class="driver-header">
+          <div class="driver-num-icon">⚡</div>
+          <div class="driver-meta">
+            <div class="driver-tag">Lý do 02 · Tốc độ</div>
+            <div class="driver-title">Tăng tốc triển khai — Từ nhiều tháng còn vài phút</div>
+            <div class="driver-brief">On-premises mất nhiều tuần hoặc nhiều tháng để có hạ tầng mới. Cloud rút ngắn xuống còn vài phút.</div>
+          </div>
+          <div class="driver-toggle">▼</div>
+        </div>
+        <div class="driver-body">
+          <div class="driver-body-inner">
+
+            <div class="compare-grid">
+              <div class="compare-col onprem">
+                <div class="compare-col-title">🏢 Quy trình On-premises</div>
+                <ul class="compare-list">
+                  <li>Bước 1: Lập BOM (danh sách thiết bị cần mua)</li>
+                  <li>Bước 2: Phê duyệt ngân sách & đặt hàng</li>
+                  <li>Bước 3: Chờ hàng về (2–12 tuần)</li>
+                  <li>Bước 4: Lắp đặt phần cứng vào rack</li>
+                  <li>Bước 5: Cấu hình hệ thống, OS, phần mềm</li>
+                  <li>Bước 6: Nghiệm thu, kiểm thử, go-live</li>
+                </ul>
+              </div>
+              <div class="compare-col cloud">
+                <div class="compare-col-title">☁️ Quy trình Cloud</div>
+                <ul class="compare-list">
+                  <li>Chọn cấu hình VM / service trên portal</li>
+                  <li>Nhấn "Deploy" — tài nguyên sẵn sàng trong vài phút</li>
+                  <li>Bắt đầu cấu hình ứng dụng ngay lập tức</li>
+                  <li>Scale thêm tài nguyên bất kỳ lúc nào mà không cần mua thêm hardware</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="sales-quote">
+              <div class="sales-quote-label">💬 Thông điệp Sales</div>
+              <blockquote>Cloud giúp rút ngắn <strong>time-to-market</strong>. Nếu dự án digital của anh/chị có deadline go-live mà chờ hardware về có thể lỡ mất thị trường — Cloud cho phép bắt đầu triển khai ngay hôm nay.</blockquote>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- DRIVER 3: MỞ RỘNG LINH HOẠT -->
+      <div class="driver-card" data-d="3">
+        <div class="driver-header">
+          <div class="driver-num-icon">📈</div>
+          <div class="driver-meta">
+            <div class="driver-tag">Lý do 03 · Mở rộng</div>
+            <div class="driver-title">Mở rộng linh hoạt — Scale up và Scale down theo nhu cầu thực tế</div>
+            <div class="driver-brief">Tăng tài nguyên khi nhu cầu tăng, thu hẹp khi nhu cầu giảm — không bị "chết cứng" theo phần cứng đã mua.</div>
+          </div>
+          <div class="driver-toggle">▼</div>
+        </div>
+        <div class="driver-body">
+          <div class="driver-body-inner">
+
+            <div class="scale-grid">
+              <div class="scale-box up">
+                <div class="scale-box-title">📈 Khi nhu cầu tăng — Scale UP</div>
+                <ul class="scale-list">
+                  <li>Thêm VM (scale out)</li>
+                  <li>Tăng CPU / RAM (scale up)</li>
+                  <li>Tăng storage theo nhu cầu</li>
+                  <li>Scale web app / API tự động</li>
+                  <li>Scale database (read replica, compute)</li>
+                  <li>Mở rộng sang region khác</li>
+                </ul>
+              </div>
+              <div class="scale-box down">
+                <div class="scale-box-title">📉 Khi nhu cầu giảm — Scale DOWN</div>
+                <ul class="scale-list">
+                  <li>Thu hẹp số VM không cần thiết</li>
+                  <li>Giảm cấu hình xuống tier phù hợp</li>
+                  <li>Tắt môi trường dev/test ngoài giờ</li>
+                  <li>Tối ưu chi phí theo usage thực tế</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="note-box">
+              📌 <strong>Ví dụ thực tế:</strong> Một sàn thương mại điện tử cần gấp đôi server mỗi dịp sale lớn (11/11, Tết). On-premises phải mua thêm máy cho cả năm, chỉ để dùng 1–2 tuần. Cloud cho phép scale lên trong ngày sale rồi scale down ngay sau đó — chỉ trả cho những ngày đó.
+            </div>
+
+            <div class="sales-quote">
+              <div class="sales-quote-label">💬 Thông điệp Sales</div>
+              <blockquote>Khi nhu cầu tăng, Cloud mở rộng ngay. Khi nhu cầu giảm, Cloud thu hẹp và tiết kiệm chi phí. <strong>Doanh nghiệp không cần mua trước công suất cho đỉnh tải — mà chỉ trả theo tải thực tế.</strong></blockquote>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- DRIVER 4: ĐỘ SẴN SÀNG & DR -->
+      <div class="driver-card" data-d="4">
+        <div class="driver-header">
+          <div class="driver-num-icon">🛡️</div>
+          <div class="driver-meta">
+            <div class="driver-tag">Lý do 04 · Sẵn sàng & Phục hồi</div>
+            <div class="driver-title">Tăng độ sẵn sàng và khả năng phục hồi — DR không cần data center vật lý thứ hai</div>
+            <div class="driver-brief">Cloud cung cấp nhiều lớp dự phòng từ Availability Zone đến Multi-region — mà không cần đầu tư thêm cơ sở hạ tầng.</div>
+          </div>
+          <div class="driver-toggle">▼</div>
+        </div>
+        <div class="driver-body">
+          <div class="driver-body-inner">
+
+            <div class="avail-layers">
+              <div class="avail-layer">
+                <div class="avail-layer-icon">🌍</div>
+                <div class="avail-layer-content">
+                  <div class="avail-layer-name">Region — Vùng địa lý</div>
+                  <div class="avail-layer-desc">Mỗi Region là một cụm data center tại một khu vực địa lý. Có thể chọn Region gần khách hàng để giảm latency, hoặc Region khác để làm DR site.</div>
+                </div>
+              </div>
+              <div class="avail-layer">
+                <div class="avail-layer-icon">🏗️</div>
+                <div class="avail-layer-content">
+                  <div class="avail-layer-name">Availability Zone — Phân vùng trong Region</div>
+                  <div class="avail-layer-desc">Mỗi Region có nhiều AZ — là các data center riêng biệt nhưng kết nối tốc độ cao. Deploy workload trên nhiều AZ để chịu lỗi nếu một AZ gặp sự cố.</div>
+                </div>
+              </div>
+              <div class="avail-layer">
+                <div class="avail-layer-icon">🔁</div>
+                <div class="avail-layer-content">
+                  <div class="avail-layer-name">Multi-region — Dự phòng xuyên vùng địa lý</div>
+                  <div class="avail-layer-desc">Deploy workload trên nhiều Region để đảm bảo hoạt động kể cả khi cả một Region gặp sự cố lớn — mức bảo vệ cao nhất.</div>
+                </div>
+              </div>
+              <div class="avail-layer">
+                <div class="avail-layer-icon">💾</div>
+                <div class="avail-layer-content">
+                  <div class="avail-layer-name">Backup — Sao lưu định kỳ</div>
+                  <div class="avail-layer-desc">Backup tự động theo lịch, lưu trữ nhiều phiên bản. Khôi phục dữ liệu khi bị xóa nhầm, ransomware hoặc lỗi ứng dụng.</div>
+                </div>
+              </div>
+              <div class="avail-layer">
+                <div class="avail-layer-icon">🔄</div>
+                <div class="avail-layer-content">
+                  <div class="avail-layer-name">Replication — Sao chép real-time</div>
+                  <div class="avail-layer-desc">Đồng bộ dữ liệu liên tục sang vị trí khác — giảm thiểu mất dữ liệu khi xảy ra sự cố đột ngột.</div>
+                </div>
+              </div>
+              <div class="avail-layer">
+                <div class="avail-layer-icon">🚨</div>
+                <div class="avail-layer-content">
+                  <div class="avail-layer-name">DR — Disaster Recovery</div>
+                  <div class="avail-layer-desc">Kế hoạch phục hồi toàn hệ thống khi có thảm họa. Cloud làm DR site linh hoạt, chỉ trả tiền khi thực sự cần khởi động — không cần duy trì data center dự phòng 24/7.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="note-box">
+              ⚠️ <strong>Lưu ý trung thực:</strong> Cloud cung cấp đầy đủ công cụ và hạ tầng để đạt độ sẵn sàng cao — nhưng <strong>hiệu quả phụ thuộc vào kiến trúc được thiết kế đúng</strong>. Nếu chỉ deploy workload trên 1 AZ duy nhất, mức độ dự phòng không khác on-premises là bao nhiêu.
+            </div>
+
+            <div class="sales-quote">
+              <div class="sales-quote-label">💬 Thông điệp Sales</div>
+              <blockquote>Cloud giúp khách hàng thiết kế hệ thống có khả năng chịu lỗi tốt hơn, <strong>nếu kiến trúc được thiết kế đúng</strong>. Doanh nghiệp có thể có DR site ở Region khác mà không cần đầu tư thêm data center vật lý thứ hai — tiết kiệm cả chi phí lẫn công vận hành.</blockquote>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- DRIVER 5: CÔNG NGHỆ MỚI -->
+      <div class="driver-card" data-d="5">
+        <div class="driver-header">
+          <div class="driver-num-icon">🤖</div>
+          <div class="driver-meta">
+            <div class="driver-tag">Lý do 05 · Công nghệ mới</div>
+            <div class="driver-title">Tiếp cận nhanh công nghệ mới — AI, Data, IoT, DevOps sẵn sàng dùng ngay</div>
+            <div class="driver-brief">Thay vì tự xây toàn bộ nền tảng, khách hàng có thể sử dụng ngay các dịch vụ hiện đại mà Cloud provider đã xây sẵn.</div>
+          </div>
+          <div class="driver-toggle">▼</div>
+        </div>
+        <div class="driver-body">
+          <div class="driver-body-inner">
+
+            <div class="tech-grid">
+              <div class="tech-item">
+                <div class="tech-icon">🧠</div>
+                <div>
+                  <div class="tech-name">AI / ML</div>
+                  <div class="tech-desc">Nhận diện ảnh, xử lý ngôn ngữ, chatbot, model training, fraud detection</div>
+                </div>
+              </div>
+              <div class="tech-item">
+                <div class="tech-icon">📊</div>
+                <div>
+                  <div class="tech-name">Data Analytics</div>
+                  <div class="tech-desc">Data warehouse, dashboard BI, báo cáo real-time từ nhiều nguồn dữ liệu</div>
+                </div>
+              </div>
+              <div class="tech-item">
+                <div class="tech-icon">📡</div>
+                <div>
+                  <div class="tech-name">IoT</div>
+                  <div class="tech-desc">Thu thập và xử lý dữ liệu từ thiết bị, sensor, máy móc nhà máy</div>
+                </div>
+              </div>
+              <div class="tech-item">
+                <div class="tech-icon">⚡</div>
+                <div>
+                  <div class="tech-name">Serverless</div>
+                  <div class="tech-desc">Chạy code theo sự kiện, không quản lý server, trả tiền theo lần gọi</div>
+                </div>
+              </div>
+              <div class="tech-item">
+                <div class="tech-icon">🐳</div>
+                <div>
+                  <div class="tech-name">Kubernetes</div>
+                  <div class="tech-desc">Nền tảng quản lý container tự động hóa deploy, scale, healing</div>
+                </div>
+              </div>
+              <div class="tech-item">
+                <div class="tech-icon">🔍</div>
+                <div>
+                  <div class="tech-name">Security Analytics</div>
+                  <div class="tech-desc">Phát hiện mối đe dọa, SIEM, phân tích log bảo mật theo thời gian thực</div>
+                </div>
+              </div>
+              <div class="tech-item">
+                <div class="tech-icon">🔧</div>
+                <div>
+                  <div class="tech-name">DevOps Automation</div>
+                  <div class="tech-desc">CI/CD pipeline, infrastructure as code, auto build-test-deploy</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="note-box">
+              📌 <strong>Góc nhìn thực tế:</strong> Để tự xây nền tảng AI/ML on-premises, doanh nghiệp cần GPU server, storage lớn, đội kỹ sư chuyên sâu, và 6–18 tháng thiết lập. Trên Cloud, có thể bắt đầu thử nghiệm trong ngày với chi phí ban đầu gần như bằng 0.
+            </div>
+
+            <div class="sales-quote">
+              <div class="sales-quote-label">💬 Thông điệp Sales</div>
+              <blockquote>Cloud giúp doanh nghiệp <strong>không cần tự xây toàn bộ nền tảng từ đầu</strong> — AI, Data, IoT, DevOps đều đã có sẵn dưới dạng dịch vụ. Chỉ cần tích hợp và cấu hình theo nhu cầu, tiết kiệm hàng năm trời phát triển hạ tầng.</blockquote>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- DRIVER 6: CHUYỂN ĐỔI SỐ -->
+      <div class="driver-card" data-d="6">
+        <div class="driver-header">
+          <div class="driver-num-icon">🏢</div>
+          <div class="driver-meta">
+            <div class="driver-tag">Lý do 06 · Chiến lược</div>
+            <div class="driver-title">Phù hợp chiến lược chuyển đổi số — Cloud là nền tảng để digital transformation</div>
+            <div class="driver-brief">Cloud hỗ trợ các mục tiêu chuyển đổi số của doanh nghiệp — từ ra mắt dịch vụ số đến tối ưu vận hành CNTT.</div>
+          </div>
+          <div class="driver-toggle">▼</div>
+        </div>
+        <div class="driver-body">
+          <div class="driver-body-inner">
+
+            <div class="dx-list">
+              <div class="dx-item">
+                <div class="dx-item-icon">🚀</div>
+                <div class="dx-item-text"><strong>Ra mắt dịch vụ số nhanh hơn</strong> — Không bị bottleneck bởi thời gian mua và triển khai hạ tầng. Đội phát triển có thể deploy môi trường mới trong vài phút và đưa sản phẩm ra thị trường nhanh hơn.</div>
+              </div>
+              <div class="dx-item">
+                <div class="dx-item-icon">🔗</div>
+                <div class="dx-item-text"><strong>Kết nối dữ liệu từ nhiều nguồn</strong> — Cloud cung cấp nền tảng tích hợp dữ liệu từ ERP, CRM, website, mobile app, IoT, bên thứ ba — giúp có cái nhìn tổng thể về khách hàng và vận hành.</div>
+              </div>
+              <div class="dx-item">
+                <div class="dx-item-icon">🌐</div>
+                <div class="dx-item-text"><strong>Phục vụ người dùng ở nhiều địa điểm</strong> — Deploy ứng dụng ở nhiều Region để phục vụ người dùng tại các quốc gia khác nhau với latency thấp, không cần đặt server vật lý tại từng nơi.</div>
+              </div>
+              <div class="dx-item">
+                <div class="dx-item-icon">⚙️</div>
+                <div class="dx-item-text"><strong>Tăng khả năng tự động hóa</strong> — Tự động scale, tự động backup, tự động deploy, tự động cảnh báo — giảm công việc vận hành thủ công và rủi ro do lỗi con người.</div>
+              </div>
+              <div class="dx-item">
+                <div class="dx-item-icon">📉</div>
+                <div class="dx-item-text"><strong>Tối ưu vận hành CNTT</strong> — Chuyển từ quản lý phần cứng sang quản lý dịch vụ. Đội IT tập trung vào giá trị kinh doanh thay vì dành thời gian cho bảo trì server, cập nhật OS, và xử lý sự cố phần cứng.</div>
+              </div>
+            </div>
+
+            <div class="sales-quote">
+              <div class="sales-quote-label">💬 Thông điệp Sales</div>
+              <blockquote>Chuyển đổi số không thể tách rời Cloud. Cloud không chỉ là hạ tầng — mà là <strong>nền tảng cho toàn bộ hành trình digital: từ ứng dụng, dữ liệu, AI đến trải nghiệm khách hàng đa kênh</strong>. Doanh nghiệp nào đi sau sẽ mất lợi thế cạnh tranh.</blockquote>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end drivers-grid -->
+  </div>
+
+  <!-- SUMMARY CARD -->
+  <div class="block reveal">
+    <div class="summary-card">
+      <h3>📋 Tóm tắt 6 lý do chuyển lên Cloud</h3>
+      <p class="summary-sub">Mỗi lý do là một góc độ tư vấn khác nhau — Sales hãy xác định đúng driver chính của từng khách hàng</p>
+      <div class="summary-reasons">
+        <div class="reason-chip">
+          <div class="reason-chip-icon">💰</div>
+          <div>
+            <div class="reason-chip-name">CAPEX → OPEX</div>
+            <div class="reason-chip-note">Linh hoạt chi phí, pay-as-you-go</div>
+          </div>
+        </div>
+        <div class="reason-chip">
+          <div class="reason-chip-icon">⚡</div>
+          <div>
+            <div class="reason-chip-name">Tăng tốc triển khai</div>
+            <div class="reason-chip-note">Từ nhiều tháng còn vài phút</div>
+          </div>
+        </div>
+        <div class="reason-chip">
+          <div class="reason-chip-icon">📈</div>
+          <div>
+            <div class="reason-chip-name">Mở rộng linh hoạt</div>
+            <div class="reason-chip-note">Scale up/down theo nhu cầu thực</div>
+          </div>
+        </div>
+        <div class="reason-chip">
+          <div class="reason-chip-icon">🛡️</div>
+          <div>
+            <div class="reason-chip-name">Độ sẵn sàng & DR</div>
+            <div class="reason-chip-note">AZ, Region, Backup, Replication</div>
+          </div>
+        </div>
+        <div class="reason-chip">
+          <div class="reason-chip-icon">🤖</div>
+          <div>
+            <div class="reason-chip-name">Công nghệ mới</div>
+            <div class="reason-chip-note">AI, Data, IoT, DevOps sẵn có ngay</div>
+          </div>
+        </div>
+        <div class="reason-chip">
+          <div class="reason-chip-icon">🏢</div>
+          <div>
+            <div class="reason-chip-name">Chuyển đổi số</div>
+            <div class="reason-chip-note">Nền tảng cho toàn bộ digital journey</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav reveal">
+    <a href="section4.html" class="bnav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 04: Services trên Cloud</a>
+    <span class="bnav-center">Module 05 / 11</span>
+    <a href="section6.html" class="bnav-btn next">Module 06: Mapping dịch vụ <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+  </div>
+
+</main>
+
+<script>
+// Scroll reveal
+const io = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// Driver cards — toggle expand/collapse
+document.querySelectorAll('.driver-card').forEach(card => {
+  const header = card.querySelector('.driver-header');
+  header.addEventListener('click', () => {
+    const wasActive = card.classList.contains('active');
+    // Collapse all
+    document.querySelectorAll('.driver-card').forEach(c => c.classList.remove('active'));
+    if (!wasActive) {
+      card.classList.add('active');
+      setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+    }
+  });
+});
+
+// Auto-open first card
+setTimeout(() => {
+  document.querySelector('.driver-card[data-d="1"]').classList.add('active');
+}, 700);
+</script>
+</body>
+</html>

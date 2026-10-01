@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Các thuật ngữ cần phân biệt: Cloud, DR, Backup | Module 12</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      --primary: #0078D4;
+      --primary-dark: #005A9E;
+      --primary-light: #50B0F0;
+      --secondary: #00BCF2;
+      --accent: #FFB900;
+      --success: #107C10;
+      --danger: #D83B01;
+      --dark: #050F1E;
+      --dark-2: #0D1F3C;
+      --white: #fff;
+      --gray-1: #F5F8FC;
+      --gray-2: #EEF2F7;
+      --gray-3: #D1DCE8;
+      --text: #1A202C;
+      --text-light: #4A5568;
+      --text-muted: #718096;
+      --shadow-sm: 0 2px 12px rgba(0,120,212,.07);
+      --shadow-md: 0 8px 32px rgba(0,120,212,.13);
+      --shadow-lg: 0 20px 60px rgba(0,0,0,.15);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --tr: all .3s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ===== RESET ===== */
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box }
+    html { scroll-behavior:smooth }
+    body { font-family:'Inter',sans-serif; background:var(--gray-1); color:var(--text); overflow-x:hidden; -webkit-font-smoothing:antialiased }
+
+    /* ===== TOP NAV ===== */
+    .top-nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(5,15,30,.92); backdrop-filter:blur(20px); border-bottom:1px solid rgba(255,255,255,.07); padding:0 32px; height:60px; display:flex; align-items:center; justify-content:space-between; gap:16px }
+    .nav-left { display:flex; align-items:center; gap:12px }
+    .nav-back { display:flex; align-items:center; gap:8px; color:rgba(255,255,255,.6); text-decoration:none; font-size:14px; font-weight:500; padding:6px 12px; border-radius:8px; transition:var(--tr) }
+    .nav-back:hover { color:white; background:rgba(255,255,255,.08) }
+    .nav-sep { color:rgba(255,255,255,.2) }
+    .nav-title { color:rgba(255,255,255,.75); font-size:14px; font-weight:600 }
+    .nav-right { display:flex; gap:8px }
+    .nav-btn { display:flex; align-items:center; gap:6px; color:rgba(255,255,255,.55); text-decoration:none; font-size:13px; font-weight:500; padding:7px 14px; border-radius:8px; border:1px solid rgba(255,255,255,.1); transition:var(--tr) }
+    .nav-btn:hover { color:white; border-color:rgba(255,255,255,.25); background:rgba(255,255,255,.07) }
+    .nav-btn.prim { background:var(--primary); border-color:var(--primary); color:white }
+    .nav-btn.prim:hover { background:var(--primary-dark) }
+
+    /* ===== HERO ===== */
+    .hero { position:relative; background:linear-gradient(140deg,#050F1E 0%,#0D1F3C 50%,#0A3070 100%); padding:100px 24px 72px; overflow:hidden; text-align:center }
+    .hero::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(0,120,212,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,120,212,.05) 1px,transparent 1px); background-size:50px 50px }
+    .hero::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 600px 400px at 60% 40%,rgba(0,120,212,.22) 0%,transparent 70%),radial-gradient(ellipse 400px 300px at 20% 65%,rgba(0,188,242,.13) 0%,transparent 60%); pointer-events:none }
+    .hero-inner { position:relative; z-index:2; max-width:760px; margin:0 auto }
+    .module-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(0,120,212,.2); border:1px solid rgba(0,188,242,.4); border-radius:50px; padding:7px 18px; font-size:12px; font-weight:700; letter-spacing:1px; color:#7DD3FC; margin-bottom:28px; text-transform:uppercase; animation:fadeUp .6s ease both }
+    .hero h1 { font-size:clamp(26px,4vw,48px); font-weight:900; letter-spacing:-1.5px; line-height:1.1; margin-bottom:20px; background:linear-gradient(90deg,#fff 0%,#A8D4F5 60%,#00BCF2 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:fadeUp .6s ease .1s both }
+    .hero .subtitle { font-size:17px; color:rgba(255,255,255,.6); line-height:1.65; margin-bottom:40px; animation:fadeUp .6s ease .2s both }
+    .hero-meta { display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; animation:fadeUp .6s ease .3s both }
+    .meta-chip { display:flex; align-items:center; gap:7px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius:50px; padding:8px 18px; font-size:13px; color:rgba(255,255,255,.7); font-weight:500 }
+
+    /* ===== PAGE CONTAINER ===== */
+    .page { max-width:1100px; margin:0 auto; padding:56px 24px 80px }
+    .block { margin-bottom:52px }
+    .block-label { font-size:11px; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px }
+    .block-title { font-size:22px; font-weight:800; color:var(--text); margin-bottom:8px; letter-spacing:-.5px }
+    .block-sub { font-size:14px; color:var(--text-muted); margin-bottom:24px; line-height:1.6 }
+
+    /* ===== INTRO BOX ===== */
+    .intro-box { background:white; border-radius:var(--radius); padding:28px 32px; box-shadow:var(--shadow-sm); border-left:5px solid var(--primary); margin-bottom:32px }
+    .intro-box p { font-size:15px; color:var(--text-light); line-height:1.75 }
+    .intro-box strong { color:var(--primary-dark) }
+
+    /* ===== EXPANDABLE GUIDE BOX ===== */
+    .guide-box { background:white; border-radius:var(--radius); box-shadow:var(--shadow-sm); overflow:hidden; margin-bottom:32px; border:1px solid var(--gray-3) }
+    .guide-header { display:flex; align-items:center; justify-content:space-between; padding:16px 24px; cursor:pointer; transition:background .2s }
+    .guide-header:hover { background:var(--gray-1) }
+    .guide-header-left { display:flex; align-items:center; gap:10px; font-size:14px; font-weight:700; color:var(--text) }
+    .guide-toggle { font-size:16px; color:var(--text-muted); transition:transform .3s }
+    .guide-box.open .guide-toggle { transform:rotate(180deg) }
+    .guide-body { max-height:0; overflow:hidden; transition:max-height .45s cubic-bezier(.4,0,.2,1),opacity .3s; opacity:0 }
+    .guide-box.open .guide-body { max-height:600px; opacity:1 }
+    .guide-body-inner { padding:4px 24px 20px }
+    .guide-list { list-style:none; display:flex; flex-direction:column; gap:10px }
+    .guide-list li { display:flex; align-items:flex-start; gap:10px; font-size:13.5px; color:var(--text-light); line-height:1.6 }
+    .guide-list li::before { content:'📌'; flex-shrink:0; margin-top:1px }
+    .guide-list li strong { color:var(--text); font-weight:700 }
+
+    /* ===== DRIVER CARDS (ACCORDION) ===== */
+    .drivers-grid { display:flex; flex-direction:column; gap:16px }
+    .driver-card { background:white; border-radius:var(--radius); box-shadow:var(--shadow-sm); overflow:hidden; border:2px solid transparent; transition:box-shadow .3s,border-color .3s }
+    .driver-card.active { box-shadow:var(--shadow-md) }
+    .driver-header { display:flex; align-items:center; gap:18px; padding:22px 28px; cursor:pointer; user-select:none; transition:background .2s }
+    .driver-header:hover { background:var(--gray-1) }
+    .driver-card.active .driver-header { background:var(--gray-1) }
+    .driver-num-icon { width:54px; height:54px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0; color:white }
+    .driver-meta { flex:1 }
+    .driver-tag { font-size:11px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; margin-bottom:4px }
+    .driver-title { font-size:17px; font-weight:800; color:var(--text); line-height:1.3 }
+    .driver-brief { font-size:13px; color:var(--text-muted); margin-top:3px }
+    .driver-toggle { font-size:18px; color:var(--text-muted); transition:transform .3s; flex-shrink:0 }
+    .driver-card.active .driver-toggle { transform:rotate(180deg) }
+    .driver-body { max-height:0; overflow:hidden; transition:max-height .5s cubic-bezier(.4,0,.2,1),opacity .3s ease; opacity:0 }
+    .driver-card.active .driver-body { max-height:1600px; opacity:1 }
+    .driver-body-inner { padding:0 28px 28px }
+
+    /* ===== MODULE IMAGE ===== */
+    .module-img-wrap { margin-bottom:24px; border-radius:12px; overflow:hidden; border:1px solid var(--gray-3) }
+    .module-img-wrap img { width:100%; height:auto; display:block; max-height:360px; object-fit:contain; background:var(--gray-1); padding:8px }
+
+    /* ===== CONCEPT BOX ===== */
+    .concept-block { margin-bottom:20px }
+    .concept-label { font-size:11px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px }
+    .concept-text { font-size:14.5px; color:var(--text-light); line-height:1.75 }
+
+    /* ===== NOTE BOX ===== */
+    .note-box { background:rgba(0,120,212,.06); border:1px solid rgba(0,120,212,.15); border-radius:10px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; color:var(--text-light); line-height:1.6 }
+    .note-box strong { color:var(--primary-dark) }
+    .note-box.warning { background:rgba(255,185,0,.07); border-color:rgba(255,185,0,.25) }
+    .note-box.warning strong { color:#8a6000 }
+    .note-label { font-size:11px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; margin-bottom:8px; color:var(--primary-dark) }
+    .note-box.warning .note-label { color:#8a6000 }
+
+    /* ===== WHEN-LIST (Khi nào khách hàng quan tâm) ===== */
+    .when-block { margin-bottom:20px }
+    .when-label { font-size:11px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px }
+    .when-list { list-style:none; display:flex; flex-direction:column; gap:8px }
+    .when-list li { display:flex; align-items:flex-start; gap:10px; font-size:13.5px; color:var(--text-light); line-height:1.5; padding:9px 14px; background:var(--gray-1); border-radius:8px }
+    .when-list li::before { content:'✅'; flex-shrink:0 }
+
+    /* ===== SIMPLE LIST (Cách hiểu đơn giản) ===== */
+    .simple-list { list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:20px }
+    .simple-list li { display:flex; align-items:flex-start; gap:12px; font-size:14px; color:var(--text-light); line-height:1.6 }
+    .simple-num { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:white; background:var(--primary); flex-shrink:0; margin-top:1px }
+
+    /* ===== SALES QUOTE ===== */
+    .sales-quote { background:linear-gradient(135deg,rgba(255,185,0,.1),rgba(255,185,0,.05)); border:1px solid rgba(255,185,0,.3); border-left:4px solid var(--accent); border-radius:10px; padding:18px 22px; margin-top:8px }
+    .sales-quote-label { font-size:11px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:#8a6000; margin-bottom:8px }
+    .sales-quote blockquote { font-size:14px; color:var(--text); line-height:1.7; font-style:italic }
+    .sales-quote blockquote strong { font-style:normal; color:var(--primary-dark) }
+
+    /* ===== COMPARE TABLE (12.6) ===== */
+    .compare-table-wrap { background:white; border-radius:var(--radius); padding:24px 28px; box-shadow:var(--shadow-sm); margin-bottom:20px }
+    .compare-table-scroll { overflow-x:auto }
+    .compare-table { width:100%; border-collapse:collapse; font-size:13.5px; min-width:600px }
+    .compare-table thead tr { background:var(--gray-1) }
+    .compare-table thead th { padding:11px 16px; text-align:left; font-size:11px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; border-bottom:2px solid var(--gray-2) }
+    .compare-table thead th:first-child { color:var(--text-muted); width:22% }
+    .compare-table thead th:nth-child(2) { color:#D83B01; width:39% }
+    .compare-table thead th:nth-child(3) { color:#0078D4; width:39% }
+    .compare-table tbody tr { border-bottom:1px solid var(--gray-2); transition:background .2s }
+    .compare-table tbody tr:hover { background:rgba(0,120,212,.03) }
+    .compare-table td { padding:12px 16px; vertical-align:top; color:var(--text-light); line-height:1.6 }
+    .compare-table td:first-child { font-weight:700; color:var(--text) }
+    .compare-table tbody tr:last-child { border-bottom:none }
+    .tag-backup { display:inline-block; background:rgba(216,59,1,.08); border:1px solid rgba(216,59,1,.2); border-radius:6px; padding:2px 8px; font-size:11px; font-weight:700; color:#D83B01 }
+    .tag-dr { display:inline-block; background:rgba(0,120,212,.08); border:1px solid rgba(0,120,212,.2); border-radius:6px; padding:2px 8px; font-size:11px; font-weight:700; color:#0078D4 }
+
+    /* ===== KEY MESSAGE BOX ===== */
+    .key-msg { background:linear-gradient(135deg,var(--dark) 0%,var(--dark-2) 100%); border-radius:12px; padding:24px 28px; color:white; margin-bottom:20px }
+    .key-msg-label { font-size:11px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:10px }
+    .key-msg p { font-size:15px; color:rgba(255,255,255,.85); line-height:1.7 }
+    .key-msg strong { color:#7DD3FC }
+
+    /* ===== RTO / RPO SECTION ===== */
+    .rto-rpo-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px }
+    .def-card { background:white; border-radius:var(--radius); padding:28px; box-shadow:var(--shadow-sm); border-top:5px solid }
+    .def-card.rto { border-color:var(--primary) }
+    .def-card.rpo { border-color:#8764B8 }
+    .def-card-tag { font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px }
+    .def-card.rto .def-card-tag { color:var(--primary-dark) }
+    .def-card.rpo .def-card-tag { color:#5B3A8C }
+    .def-card-name { font-size:22px; font-weight:900; letter-spacing:-0.5px; margin-bottom:16px; color:var(--text) }
+    .def-card-def { font-size:14px; color:var(--text-light); line-height:1.7; margin-bottom:16px }
+    .def-card-example { background:var(--gray-1); border-radius:8px; padding:12px 16px; font-size:13px; color:var(--text-light); line-height:1.6 }
+    .def-card-example strong { color:var(--text); font-weight:700 }
+
+    /* ===== DISCOVERY QUESTIONS ===== */
+    .q-category { background:white; border-radius:var(--radius); box-shadow:var(--shadow-sm); overflow:hidden; margin-bottom:12px }
+    .q-cat-header { display:flex; align-items:center; justify-content:space-between; padding:18px 24px; cursor:pointer; transition:background .2s }
+    .q-cat-header:hover { background:var(--gray-1) }
+    .q-cat-title { display:flex; align-items:center; gap:12px; font-size:16px; font-weight:800; color:var(--text) }
+    .q-cat-icon { width:36px; height:36px; border-radius:9px; color:white; display:flex; align-items:center; justify-content:center; font-size:16px }
+    .q-cat-count { font-size:12px; color:var(--text-muted); font-weight:500 }
+    .q-cat-toggle { font-size:16px; color:var(--text-muted); transition:transform .3s }
+    .q-category.active .q-cat-toggle { transform:rotate(180deg) }
+    .q-list { max-height:0; overflow:hidden; transition:max-height .4s ease,opacity .3s ease; opacity:0 }
+    .q-category.active .q-list { max-height:800px; opacity:1 }
+    .q-list-inner { padding:0 24px 20px; display:flex; flex-direction:column; gap:10px }
+    .q-item { display:flex; align-items:flex-start; gap:12px; padding:12px 16px; background:var(--gray-1); border-radius:8px; font-size:14px; color:var(--text-light); line-height:1.6 }
+    .q-item::before { content:'❓'; flex-shrink:0; margin-top:1px }
+
+    /* ===== SUMMARY CARD ===== */
+    .summary-card { background:linear-gradient(135deg,var(--dark) 0%,var(--dark-2) 100%); border-radius:var(--radius); padding:40px; color:white; border:1px solid rgba(255,255,255,.07) }
+    .summary-card h3 { font-size:20px; font-weight:800; margin-bottom:8px; letter-spacing:-.3px }
+    .summary-sub { font-size:14px; color:rgba(255,255,255,.55); margin-bottom:28px; line-height:1.6 }
+    .summary-trio { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px }
+    .trio-item { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:20px }
+    .trio-icon { font-size:28px; margin-bottom:10px }
+    .trio-name { font-size:13px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:6px }
+    .trio-def { font-size:14px; color:rgba(255,255,255,.8); line-height:1.6 }
+    .trio-def strong { color:#7DD3FC }
+    .summary-note { background:rgba(255,185,0,.1); border:1px solid rgba(255,185,0,.25); border-radius:10px; padding:16px 20px; font-size:14px; color:rgba(255,255,255,.8); line-height:1.7 }
+    .summary-note strong { color:var(--accent) }
+
+    /* ===== BOTTOM NAV ===== */
+    .bottom-nav { display:flex; justify-content:space-between; align-items:center; padding:24px 0 0; border-top:1px solid var(--gray-3); flex-wrap:wrap; gap:12px; margin-top:48px }
+    .bnav-btn { display:flex; align-items:center; gap:10px; padding:12px 22px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; transition:var(--tr); text-decoration:none; border:2px solid var(--gray-3); color:var(--text-light); background:white }
+    .bnav-btn:hover { border-color:var(--primary); color:var(--primary); transform:translateY(-2px); box-shadow:var(--shadow-sm) }
+    .bnav-btn.home { background:var(--primary); border-color:var(--primary); color:white }
+    .bnav-btn.home:hover { background:var(--primary-dark); box-shadow:0 6px 20px rgba(0,120,212,.4) }
+    .bnav-center { font-size:13px; color:var(--text-muted); font-weight:500 }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(18px) } to { opacity:1; transform:translateY(0) } }
+    .reveal { opacity:0; transform:translateY(22px); transition:opacity .5s ease,transform .5s ease }
+    .reveal.visible { opacity:1; transform:translateY(0) }
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:768px) {
+      .top-nav { padding:0 16px }
+      .nav-title { display:none }
+      .hero { padding:90px 16px 56px }
+      .page { padding:36px 16px 60px }
+      .bottom-nav { flex-direction:column }
+      .bnav-btn { width:100%; justify-content:center }
+      .rto-rpo-grid { grid-template-columns:1fr }
+      .summary-trio { grid-template-columns:1fr }
+      .driver-header { padding:16px 18px; gap:14px }
+      .driver-body-inner { padding:0 18px 20px }
+    }
+    @media(max-width:480px) {
+      .driver-num-icon { width:44px; height:44px; font-size:20px }
+    }
+
+    /* ===== LIGHTBOX ===== */
+    .module-img-wrap img { cursor:zoom-in; transition:opacity .2s }
+    .module-img-wrap img:hover { opacity:.88 }
+
+    .lightbox-overlay {
+      position:fixed; inset:0; z-index:999;
+      background:rgba(5,15,30,.92);
+      backdrop-filter:blur(8px);
+      display:flex; align-items:center; justify-content:center;
+      padding:24px;
+      opacity:0; visibility:hidden;
+      transition:opacity .3s ease, visibility .3s ease;
+    }
+    .lightbox-overlay.open { opacity:1; visibility:visible }
+
+    .lightbox-img-wrap {
+      position:relative; max-width:90vw; max-height:88vh;
+      transform:scale(.88);
+      transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .lightbox-overlay.open .lightbox-img-wrap { transform:scale(1) }
+
+    .lightbox-img-wrap img {
+      display:block; max-width:90vw; max-height:82vh;
+      border-radius:12px; box-shadow:0 24px 80px rgba(0,0,0,.6);
+      object-fit:contain; background:#0D1F3C;
+    }
+    .lightbox-caption {
+      text-align:center; margin-top:12px;
+      font-size:13px; color:rgba(255,255,255,.55); font-style:italic;
+    }
+    .lightbox-close {
+      position:absolute; top:-14px; right:-14px;
+      width:36px; height:36px; border-radius:50%;
+      background:rgba(255,255,255,.15); border:none; cursor:pointer;
+      color:white; font-size:18px; line-height:1;
+      display:flex; align-items:center; justify-content:center;
+      transition:background .2s;
+    }
+    .lightbox-close:hover { background:rgba(255,255,255,.28) }
+  </style>
+</head>
+<body>
+
+  <!-- ===== TOP NAV ===== -->
+  <nav class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-back">← Trang chủ</a>
+      <span class="nav-sep">/</span>
+      <span class="nav-title">Module 12 · Các thuật ngữ cần phân biệt: Cloud, DR, Backup</span>
+    </div>
+    <div class="nav-right">
+      <a href="section11.html" class="nav-btn">← Module 11</a>
+      <a href="index.html" class="nav-btn prim">🏠 Trang chủ</a>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="module-badge">MODULE 12 / 12 · Thuật ngữ Cloud</div>
+      <h1>🗂️ Các thuật ngữ cần phân biệt trong Cloud Computing</h1>
+      <p class="subtitle">Cloud Region, DR Site, Backup Strategy — ba khái niệm khách hàng hay dùng lẫn, Sales cần phân biệt chính xác để tư vấn đúng kỳ vọng.</p>
+      <div class="hero-meta">
+        <span class="meta-chip">⏱️ ~20 phút</span>
+        <span class="meta-chip">📖 6 thuật ngữ chính</span>
+        <span class="meta-chip">💬 9 Discovery Questions</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="page">
+
+    <!-- INTRO BOX -->
+    <div class="intro-box reveal">
+      <p><strong>Mục tiêu module này:</strong> Giúp Sales phân biệt đúng các khái niệm dễ bị nói lẫn trong tư vấn Cloud Computing. Module tập trung vào <strong>Cloud region, DR site, DR đa quốc gia, backup strategy, online/offsite backup</strong>, và sự khác nhau giữa DR site với data backup.</p>
+    </div>
+
+    <!-- KEY INSIGHT -->
+    <div class="block reveal">
+      <div class="block-label">Ý chính</div>
+      <div class="block-title">Tại sao phải phân biệt rõ?</div>
+      <div style="background:white;border-radius:var(--radius);padding:28px 32px;box-shadow:var(--shadow-sm);border-left:5px solid #D83B01;">
+        <p style="font-size:15px;color:var(--text-light);line-height:1.75;">Khách hàng thường dùng chung các từ <strong style="color:#D83B01">"Cloud", "DR", "backup", "site dự phòng", "lưu dữ liệu nhiều nơi"</strong> như thể chúng giống nhau. Nhưng trong tư vấn hạ tầng, mỗi thuật ngữ giải quyết một bài toán khác nhau: <strong>nơi chạy workload, nơi dự phòng khi có sự cố, cách lưu bản sao dữ liệu, và khả năng khôi phục dịch vụ.</strong></p>
+      </div>
+    </div>
+
+    <!-- GUIDE BOX — Cách bổ sung thuật ngữ mới -->
+    <div class="guide-box reveal" id="guideBox">
+      <div class="guide-header" onclick="toggleGuide()">
+        <div class="guide-header-left">📋 Cách bổ sung thuật ngữ mới vào Module 12 sau này</div>
+        <span class="guide-toggle">▼</span>
+      </div>
+      <div class="guide-body">
+        <div class="guide-body-inner">
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Khi cần thêm thuật ngữ mới, giữ cùng cấu trúc sau để Sales dễ học và dễ dùng lại trong tư vấn:</p>
+          <ul class="guide-list">
+            <li><strong>Tên thuật ngữ:</strong> dùng tên phổ biến mà khách hàng hoặc Presales hay nhắc tới.</li>
+            <li><strong>Ảnh sử dụng:</strong> ghi tên file ảnh minh họa nếu có.</li>
+            <li><strong>Khái niệm:</strong> giải thích ngắn, đúng bản chất, tránh quá kỹ thuật.</li>
+            <li><strong>Sales cần hiểu:</strong> nêu điểm dễ nhầm hoặc rủi ro khi tư vấn sai.</li>
+            <li><strong>Khi nào khách hàng quan tâm:</strong> liệt kê tình huống kinh doanh hoặc vận hành thường gặp.</li>
+            <li><strong>Câu nói đúng:</strong> một câu talk-track Sales có thể dùng khi gặp khách hàng.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 6 THUẬT NGỮ — DRIVER CARDS ===== -->
+    <div class="block reveal">
+      <div class="block-label">6 thuật ngữ cần phân biệt</div>
+      <div class="block-title">Cloud Region · DR Site · Backup Strategy</div>
+      <div class="block-sub">Click vào từng thẻ để xem định nghĩa đầy đủ, điểm cần lưu ý khi tư vấn và câu mẫu cho Sales.</div>
+
+      <div class="drivers-grid">
+
+        <!-- CARD 12.1: Cloud Region With Multiple Country -->
+        <div class="driver-card" id="card1">
+          <div class="driver-header" onclick="toggleCard('card1')">
+            <div class="driver-num-icon" style="background:#0078D4;">🌏</div>
+            <div class="driver-meta">
+              <div class="driver-tag" style="color:#0078D4;">12.1 · Cloud Region</div>
+              <div class="driver-title">Cloud Region With Multiple Country</div>
+              <div class="driver-brief">Nơi đặt hạ tầng Cloud — không đồng nghĩa workload tự động chạy ở nhiều quốc gia</div>
+            </div>
+            <div class="driver-toggle">▼</div>
+          </div>
+          <div class="driver-body">
+            <div class="driver-body-inner">
+              <div class="module-img-wrap">
+                <img src="assets/images/cloud-provider-regional.png" alt="Cloud Provider Regional — nhiều region tại nhiều quốc gia" loading="lazy">
+              </div>
+
+              <div class="concept-block">
+                <div class="concept-label">📖 Khái niệm</div>
+                <div class="concept-text">Cloud region là khu vực địa lý nơi cloud provider đặt hạ tầng Cloud. Một provider lớn có thể có nhiều region ở nhiều quốc gia khác nhau. Mỗi region thường bao gồm một hoặc nhiều data center/availability zone để phục vụ workload tại khu vực đó.</div>
+              </div>
+
+              <div class="note-box warning">
+                <div class="note-label">⚠️ Sales cần hiểu</div>
+                Cloud regional với multiple country <strong>không có nghĩa là workload của khách hàng tự động chạy ở tất cả quốc gia.</strong> Khách hàng cần chọn region triển khai, thiết kế replication, network, backup hoặc DR nếu muốn hệ thống hoạt động xuyên quốc gia.
+              </div>
+
+              <div class="when-block">
+                <div class="when-label">🎯 Khi nào khách hàng quan tâm</div>
+                <ul class="when-list">
+                  <li>Muốn giảm độ trễ cho người dùng ở nhiều quốc gia.</li>
+                  <li>Có yêu cầu dữ liệu lưu trong một quốc gia/khu vực cụ thể.</li>
+                  <li>Muốn triển khai hệ thống gần khách hàng cuối.</li>
+                  <li>Cần thiết kế multi-region để tăng khả năng sẵn sàng.</li>
+                </ul>
+              </div>
+
+              <div class="sales-quote">
+                <div class="sales-quote-label">💬 Khi gặp khách hàng, bạn có thể nói...</div>
+                <blockquote>"Cloud provider có thể có nhiều region tại nhiều quốc gia, nhưng việc hệ thống của khách hàng có chạy hoặc dự phòng ở nhiều quốc gia hay không <strong>phụ thuộc vào thiết kế kiến trúc, replication, network và chính sách dữ liệu</strong> — không phải tự nhiên mà có."</blockquote>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 12.2: DR Site In A Country -->
+        <div class="driver-card" id="card2">
+          <div class="driver-header" onclick="toggleCard('card2')">
+            <div class="driver-num-icon" style="background:#107C10;">🏢</div>
+            <div class="driver-meta">
+              <div class="driver-tag" style="color:#107C10;">12.2 · DR Site</div>
+              <div class="driver-title">DR Site In A Country</div>
+              <div class="driver-brief">Môi trường dự phòng trong cùng quốc gia — không chỉ là nơi lưu backup</div>
+            </div>
+            <div class="driver-toggle">▼</div>
+          </div>
+          <div class="driver-body">
+            <div class="driver-body-inner">
+              <div class="module-img-wrap">
+                <img src="assets/images/understanding-dr-site-in-a-country.png" alt="DR Site trong cùng quốc gia" loading="lazy">
+              </div>
+
+              <div class="concept-block">
+                <div class="concept-label">📖 Khái niệm</div>
+                <div class="concept-text">DR site trong một quốc gia là môi trường dự phòng được đặt ở một địa điểm khác trong cùng quốc gia với site chính. Mục tiêu là khôi phục dịch vụ khi site chính gặp sự cố như mất điện, lỗi hạ tầng, sự cố data center hoặc lỗi vận hành nghiêm trọng.</div>
+              </div>
+
+              <div class="note-box warning">
+                <div class="note-label">⚠️ Sales cần hiểu</div>
+                DR site <strong>không chỉ là nơi lưu backup.</strong> DR site thường cần đủ hạ tầng, network, dữ liệu đồng bộ, quy trình chuyển đổi và kế hoạch kiểm thử để workload có thể chạy lại khi site chính gặp sự cố.
+              </div>
+
+              <div class="when-block">
+                <div class="when-label">🎯 Khi nào khách hàng quan tâm</div>
+                <ul class="when-list">
+                  <li>Có hệ thống quan trọng cần đảm bảo uptime.</li>
+                  <li>Không muốn dữ liệu ra khỏi quốc gia.</li>
+                  <li>Cần tuân thủ quy định nội địa.</li>
+                  <li>Muốn có phương án khôi phục dịch vụ trong trường hợp site chính lỗi.</li>
+                </ul>
+              </div>
+
+              <div class="sales-quote">
+                <div class="sales-quote-label">💬 Khi gặp khách hàng, bạn có thể nói...</div>
+                <blockquote>"DR site trong cùng quốc gia giúp khách hàng có điểm khôi phục dịch vụ khi site chính gặp sự cố, <strong>nhưng vẫn giữ dữ liệu và vận hành trong phạm vi quốc gia</strong> — phù hợp với các yêu cầu tuân thủ nội địa."</blockquote>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 12.3: DR Site With Multiple Country -->
+        <div class="driver-card" id="card3">
+          <div class="driver-header" onclick="toggleCard('card3')">
+            <div class="driver-num-icon" style="background:#8764B8;">🌐</div>
+            <div class="driver-meta">
+              <div class="driver-tag" style="color:#8764B8;">12.3 · DR Đa Quốc Gia</div>
+              <div class="driver-title">DR Site With Multiple Country</div>
+              <div class="driver-brief">Dự phòng thảm họa ở quốc gia khác — cần đánh giá kỹ về compliance và chi phí</div>
+            </div>
+            <div class="driver-toggle">▼</div>
+          </div>
+          <div class="driver-body">
+            <div class="driver-body-inner">
+              <div class="module-img-wrap">
+                <img src="assets/images/understanding-dr-site.png" alt="DR Site với nhiều quốc gia" loading="lazy">
+              </div>
+
+              <div class="concept-block">
+                <div class="concept-label">📖 Khái niệm</div>
+                <div class="concept-text">DR site with multiple country là mô hình dự phòng thảm họa ở quốc gia khác. Site chính có thể nằm ở Việt Nam, còn DR site nằm ở Singapore, Nhật Bản, Hong Kong hoặc quốc gia khác tùy chiến lược và quy định dữ liệu.</div>
+              </div>
+
+              <div class="note-box warning">
+                <div class="note-label">⚠️ Sales cần hiểu</div>
+                DR đa quốc gia giúp tăng khả năng chống chịu khi sự cố ảnh hưởng diện rộng, nhưng cũng kéo theo yêu cầu cao hơn về <strong>network, latency, data sovereignty, compliance, chi phí truyền dữ liệu và quy trình vận hành.</strong>
+              </div>
+
+              <div class="when-block">
+                <div class="when-label">🎯 Khi nào khách hàng quan tâm</div>
+                <ul class="when-list">
+                  <li>Doanh nghiệp hoạt động đa quốc gia.</li>
+                  <li>Cần khả năng phục hồi khi một quốc gia/khu vực gặp sự cố lớn.</li>
+                  <li>Có người dùng hoặc chi nhánh ở nhiều nước.</li>
+                  <li>Cần chiến lược business continuity ở cấp khu vực.</li>
+                </ul>
+              </div>
+
+              <div class="sales-quote">
+                <div class="sales-quote-label">💬 Khi gặp khách hàng, bạn có thể nói...</div>
+                <blockquote>"DR site ở nhiều quốc gia giúp tăng khả năng phục hồi ở cấp khu vực, nhưng <strong>cần đánh giá kỹ yêu cầu pháp lý, vị trí dữ liệu, độ trễ, chi phí kết nối và quy trình failover</strong> trước khi thiết kế."</blockquote>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 12.4: Data Backup Strategy 3-2-1 -->
+        <div class="driver-card" id="card4">
+          <div class="driver-header" onclick="toggleCard('card4')">
+            <div class="driver-num-icon" style="background:#E67E22;">🗄️</div>
+            <div class="driver-meta">
+              <div class="driver-tag" style="color:#C05621;">12.4 · Backup Strategy</div>
+              <div class="driver-title">Data Backup Strategy 3-2-1</div>
+              <div class="driver-brief">3 bản dữ liệu · 2 môi trường khác nhau · 1 bản offsite — nguyên tắc bảo vệ dữ liệu</div>
+            </div>
+            <div class="driver-toggle">▼</div>
+          </div>
+          <div class="driver-body">
+            <div class="driver-body-inner">
+              <div class="module-img-wrap">
+                <img src="assets/images/data-backup-strategy.png" alt="Data Backup Strategy 3-2-1" loading="lazy">
+              </div>
+
+              <div class="concept-block">
+                <div class="concept-label">📖 Khái niệm</div>
+                <div class="concept-text">Chiến lược backup 3-2-1 nghĩa là có ít nhất <strong>3 bản dữ liệu</strong>, lưu trên <strong>2 loại phương tiện hoặc môi trường khác nhau</strong>, và có <strong>1 bản nằm offsite</strong> hoặc tách biệt khỏi hệ thống chính.</div>
+              </div>
+
+              <div class="note-box warning">
+                <div class="note-label">⚠️ Sales cần hiểu</div>
+                3-2-1 là <strong>nguyên tắc bảo vệ dữ liệu, không phải bản thân nó là DR site.</strong> Backup giúp khôi phục dữ liệu, còn DR giúp khôi phục dịch vụ hoặc workload trong một thời gian mục tiêu.
+              </div>
+
+              <div class="concept-block">
+                <div class="concept-label">💡 Cách hiểu đơn giản</div>
+                <ul class="simple-list">
+                  <li>
+                    <div class="simple-num">3</div>
+                    <div><strong>3 bản dữ liệu:</strong> dữ liệu chính + ít nhất 2 bản sao.</div>
+                  </li>
+                  <li>
+                    <div class="simple-num">2</div>
+                    <div><strong>2 loại môi trường lưu trữ:</strong> ví dụ storage nội bộ và object storage/cloud backup.</div>
+                  </li>
+                  <li>
+                    <div class="simple-num">1</div>
+                    <div><strong>1 bản offsite:</strong> nằm ngoài site chính để tránh mất dữ liệu khi site chính gặp sự cố.</div>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="sales-quote">
+                <div class="sales-quote-label">💬 Khi gặp khách hàng, bạn có thể nói...</div>
+                <blockquote>"Backup 3-2-1 giúp giảm rủi ro mất dữ liệu bằng cách giữ <strong>nhiều bản sao ở nhiều môi trường khác nhau</strong>, trong đó có ít nhất một bản tách khỏi site chính — đây là nguyên tắc tối thiểu bất kỳ hệ thống quan trọng nào cũng nên có."</blockquote>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 12.5: Data Backup Online And Offsite -->
+        <div class="driver-card" id="card5">
+          <div class="driver-header" onclick="toggleCard('card5')">
+            <div class="driver-num-icon" style="background:#00BCF2;">☁️</div>
+            <div class="driver-meta">
+              <div class="driver-tag" style="color:#007B9E;">12.5 · Online & Offsite Backup</div>
+              <div class="driver-title">Data Backup Online And Offsite</div>
+              <div class="driver-brief">Online không đồng nghĩa an toàn tuyệt đối — cần hỏi thêm về restore, retention, mã hóa</div>
+            </div>
+            <div class="driver-toggle">▼</div>
+          </div>
+          <div class="driver-body">
+            <div class="driver-body-inner">
+              <div class="module-img-wrap">
+                <img src="assets/images/data-backup-online-offsite.png" alt="Online và Offsite Backup" loading="lazy">
+              </div>
+
+              <div class="concept-block">
+                <div class="concept-label">📖 Khái niệm</div>
+                <div class="concept-text"><strong>Online backup</strong> là bản sao dữ liệu có thể truy cập qua mạng và thường được cập nhật định kỳ hoặc gần thời gian thực. <strong>Offsite backup</strong> là bản sao dữ liệu được lưu ở một địa điểm khác với site chính, có thể là cloud storage, data center khác hoặc dịch vụ backup chuyên dụng.</div>
+              </div>
+
+              <div class="note-box warning">
+                <div class="note-label">⚠️ Sales cần hiểu</div>
+                <strong>Online không đồng nghĩa với an toàn tuyệt đối, và offsite không đồng nghĩa với khôi phục nhanh.</strong> Cần hỏi thêm về tần suất backup, thời gian giữ bản sao, mã hóa, khả năng restore, băng thông và quy trình kiểm thử khôi phục.
+              </div>
+
+              <div class="when-block">
+                <div class="when-label">🎯 Khi nào khách hàng quan tâm</div>
+                <ul class="when-list">
+                  <li>Muốn bảo vệ dữ liệu khỏi lỗi người dùng, ransomware, lỗi hệ thống.</li>
+                  <li>Cần bản sao ngoài site chính.</li>
+                  <li>Cần khôi phục file, database, VM hoặc hệ thống sau sự cố.</li>
+                  <li>Muốn có chính sách retention theo ngày, tuần, tháng.</li>
+                </ul>
+              </div>
+
+              <div class="sales-quote">
+                <div class="sales-quote-label">💬 Khi gặp khách hàng, bạn có thể nói...</div>
+                <blockquote>"Online/offsite backup giúp khách hàng có bản sao dữ liệu ở ngoài site chính, nhưng <strong>cần thiết kế đúng retention, encryption, restore test và băng thông</strong> để đảm bảo khôi phục được khi cần — backup mà không test restore thì không đáng tin cậy."</blockquote>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 12.6: Compare DR Site And Data Backup -->
+        <div class="driver-card" id="card6">
+          <div class="driver-header" onclick="toggleCard('card6')">
+            <div class="driver-num-icon" style="background:#D83B01;">⚖️</div>
+            <div class="driver-meta">
+              <div class="driver-tag" style="color:#D83B01;">12.6 · So sánh</div>
+              <div class="driver-title">Compare DR Site And Data Backup</div>
+              <div class="driver-brief">Backup = khôi phục dữ liệu · DR Site = khôi phục dịch vụ — hai bài toán khác nhau</div>
+            </div>
+            <div class="driver-toggle">▼</div>
+          </div>
+          <div class="driver-body">
+            <div class="driver-body-inner">
+              <div class="module-img-wrap">
+                <img src="assets/images/compare-dr-site-data-backup.png" alt="So sánh DR Site và Data Backup" loading="lazy">
+              </div>
+
+              <div class="concept-block">
+                <div class="concept-label">📖 Khái niệm</div>
+                <div class="concept-text">DR site và data backup đều liên quan đến khôi phục sau sự cố, nhưng mục tiêu khác nhau. <strong>Backup</strong> tập trung vào khôi phục dữ liệu. <strong>DR site</strong> tập trung vào khôi phục khả năng chạy dịch vụ hoặc workload.</div>
+              </div>
+
+              <!-- Bảng phân biệt 6 rows -->
+              <div style="margin-bottom:20px;">
+                <div class="concept-label">📊 Bảng phân biệt</div>
+                <div class="compare-table-scroll">
+                  <table class="compare-table">
+                    <thead>
+                      <tr>
+                        <th>Tiêu chí</th>
+                        <th><span class="tag-backup">Data Backup</span></th>
+                        <th><span class="tag-dr">DR Site</span></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Mục tiêu chính</td>
+                        <td>Khôi phục dữ liệu</td>
+                        <td>Khôi phục dịch vụ/workload</td>
+                      </tr>
+                      <tr>
+                        <td>Câu hỏi cần trả lời</td>
+                        <td>Có lấy lại được dữ liệu không?</td>
+                        <td>Hệ thống có chạy lại được ở đâu và trong bao lâu?</td>
+                      </tr>
+                      <tr>
+                        <td>Thành phần chính</td>
+                        <td>Bản sao dữ liệu, retention, encryption, restore</td>
+                        <td>Hạ tầng dự phòng, dữ liệu đồng bộ, network, failover plan</td>
+                      </tr>
+                      <tr>
+                        <td>Chỉ số quan trọng</td>
+                        <td>Backup frequency, retention, restore time</td>
+                        <td>RTO, RPO, failover time, DR test</td>
+                      </tr>
+                      <tr>
+                        <td>Chi phí</td>
+                        <td>Thường thấp hơn DR site</td>
+                        <td>Thường cao hơn vì cần môi trường chạy dự phòng</td>
+                      </tr>
+                      <tr>
+                        <td>Rủi ro nếu hiểu nhầm</td>
+                        <td>Có backup nhưng khôi phục chậm hoặc thiếu dữ liệu</td>
+                        <td>Có site dự phòng nhưng dữ liệu không đồng bộ hoặc failover không chạy</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="key-msg">
+                <div class="key-msg-label">💡 Thông điệp cần nhớ</div>
+                <p><strong>Backup</strong> trả lời câu hỏi <strong>"dữ liệu có còn không?"</strong>. <strong>DR site</strong> trả lời câu hỏi <strong>"dịch vụ có chạy lại được không?"</strong>. Một hệ thống quan trọng thường cần cả backup và DR, nhưng <strong>hai khái niệm này không thay thế hoàn toàn cho nhau.</strong></p>
+              </div>
+
+              <div class="sales-quote">
+                <div class="sales-quote-label">💬 Khi gặp khách hàng, bạn có thể nói...</div>
+                <blockquote>"Nếu hệ thống gặp sự cố, câu hỏi đầu tiên cần hỏi là: <strong>khách hàng muốn khôi phục dữ liệu, hay muốn dịch vụ chạy lại nhanh?</strong> Hai mục tiêu đó cần hai giải pháp khác nhau — backup và DR site thường cần song song nhau, không thay thế nhau."</blockquote>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /drivers-grid -->
+    </div><!-- /block -->
+
+    <!-- ===== RTO & RPO ===== -->
+    <div class="block reveal">
+      <div class="block-label">Ghi chú nhanh</div>
+      <div class="block-title">RTO và RPO — hai chỉ số Sales cần nắm</div>
+      <div class="block-sub">Khi khách hàng nói về DR hay backup, hai chỉ số này sẽ xuất hiện thường xuyên. Sales cần hiểu đủ để đặt câu hỏi đúng.</div>
+
+      <div class="rto-rpo-grid">
+        <!-- RTO -->
+        <div class="def-card rto">
+          <div class="def-card-tag">RTO — Recovery Time Objective</div>
+          <div class="def-card-name">⏱️ Downtime tối đa</div>
+          <div class="def-card-def">RTO là thời gian tối đa khách hàng chấp nhận hệ thống bị gián đoạn trước khi dịch vụ phải chạy lại.</div>
+          <div class="def-card-example"><strong>Ví dụ:</strong> Nếu khách hàng yêu cầu <strong>RTO = 2 tiếng</strong>, nghĩa là sau sự cố, hệ thống cần được khôi phục và chạy lại trong vòng tối đa 2 tiếng.</div>
+        </div>
+        <!-- RPO -->
+        <div class="def-card rpo">
+          <div class="def-card-tag">RPO — Recovery Point Objective</div>
+          <div class="def-card-name">💾 Dữ liệu mất tối đa</div>
+          <div class="def-card-def">RPO là lượng dữ liệu tối đa khách hàng chấp nhận mất tính theo thời gian.</div>
+          <div class="def-card-example"><strong>Ví dụ:</strong> Nếu khách hàng yêu cầu <strong>RPO = 30 phút</strong>, nghĩa là khi có sự cố, khách hàng chấp nhận mất tối đa dữ liệu phát sinh trong 30 phút gần nhất.</div>
+        </div>
+      </div>
+
+      <div class="sales-quote">
+        <div class="sales-quote-label">💬 Cách nói dễ hiểu cho Sales</div>
+        <blockquote><strong>RTO</strong> là khách hàng chịu downtime tối đa bao lâu. <strong>RPO</strong> là khách hàng chịu mất dữ liệu tối đa bao lâu. <strong>RTO càng ngắn và RPO càng nhỏ thì giải pháp DR/backup càng cần thiết kế kỹ hơn và chi phí thường cao hơn.</strong></blockquote>
+      </div>
+    </div>
+
+    <!-- ===== DISCOVERY QUESTIONS ===== -->
+    <div class="block reveal">
+      <div class="block-label">Discovery Questions</div>
+      <div class="block-title">Câu hỏi khai thác nhu cầu cho Sales</div>
+      <div class="block-sub">Dùng những câu hỏi này để hiểu bài toán thực của khách hàng trước khi đề xuất giải pháp DR hoặc Backup.</div>
+
+      <!-- Group 1: Xác định workload và ưu tiên -->
+      <div class="q-category" id="qcat1">
+        <div class="q-cat-header" onclick="toggleQCat('qcat1')">
+          <div class="q-cat-title">
+            <div class="q-cat-icon" style="background:#0078D4;">🎯</div>
+            Xác định workload và mức độ ưu tiên
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span class="q-cat-count">3 câu hỏi</span>
+            <span class="q-cat-toggle">▼</span>
+          </div>
+        </div>
+        <div class="q-list">
+          <div class="q-list-inner">
+            <div class="q-item">Workload nào của khách hàng cần được bảo vệ?</div>
+            <div class="q-item">Khách hàng quan tâm mất dữ liệu, downtime, hay cả hai?</div>
+            <div class="q-item">Dữ liệu có được phép lưu hoặc replicate sang quốc gia khác không?</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group 2: RTO & RPO -->
+      <div class="q-category" id="qcat2">
+        <div class="q-cat-header" onclick="toggleQCat('qcat2')">
+          <div class="q-cat-title">
+            <div class="q-cat-icon" style="background:#8764B8;">⏱️</div>
+            RTO, RPO và khả năng chịu đựng sự cố
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span class="q-cat-count">2 câu hỏi</span>
+            <span class="q-cat-toggle">▼</span>
+          </div>
+        </div>
+        <div class="q-list">
+          <div class="q-list-inner">
+            <div class="q-item">Nếu hệ thống gặp sự cố, khách hàng cần dịch vụ chạy lại trong bao lâu? <em style="color:var(--primary-dark);font-weight:600">— Đây là RTO.</em></div>
+            <div class="q-item">Nếu có mất dữ liệu, khách hàng chấp nhận mất tối đa bao nhiêu phút/giờ dữ liệu? <em style="color:#5B3A8C;font-weight:600">— Đây là RPO.</em></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group 3: Backup hiện tại và hạ tầng -->
+      <div class="q-category" id="qcat3">
+        <div class="q-cat-header" onclick="toggleQCat('qcat3')">
+          <div class="q-cat-title">
+            <div class="q-cat-icon" style="background:#107C10;">🔍</div>
+            Hiện trạng backup và hạ tầng kết nối
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span class="q-cat-count">4 câu hỏi</span>
+            <span class="q-cat-toggle">▼</span>
+          </div>
+        </div>
+        <div class="q-list">
+          <div class="q-list-inner">
+            <div class="q-item">Khách hàng đã từng test restore hoặc DR failover chưa?</div>
+            <div class="q-item">Backup hiện tại đang lưu ở đâu, giữ bao lâu, có mã hóa không?</div>
+            <div class="q-item">Site chính gặp sự cố thì người dùng sẽ truy cập hệ thống từ đâu?</div>
+            <div class="q-item">Đường truyền giữa site chính, DR site và Cloud có đủ ổn định không?</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /block discovery -->
+
+    <!-- ===== SUMMARY CARD ===== -->
+    <div class="summary-card reveal">
+      <h3>🎯 Kết luận Module 12</h3>
+      <p class="summary-sub">Ba lớp kiến thức cần nắm vững trước khi tư vấn giải pháp DR hoặc Backup cho khách hàng</p>
+
+      <div class="summary-trio">
+        <div class="trio-item">
+          <div class="trio-icon">🌏</div>
+          <div class="trio-name">Cloud Region</div>
+          <div class="trio-def">Là <strong>nơi triển khai hạ tầng Cloud</strong>. Workload chạy ở quốc gia nào phụ thuộc vào kiến trúc thiết kế — không phải tự động có ở mọi nơi.</div>
+        </div>
+        <div class="trio-item">
+          <div class="trio-icon">🏢</div>
+          <div class="trio-name">DR Site</div>
+          <div class="trio-def">Là <strong>nơi giúp dịch vụ chạy lại</strong> khi site chính gặp sự cố. Cần hạ tầng, đồng bộ dữ liệu, failover plan — không phải chỉ lưu backup.</div>
+        </div>
+        <div class="trio-item">
+          <div class="trio-icon">🗄️</div>
+          <div class="trio-name">Backup</div>
+          <div class="trio-def">Là <strong>chiến lược giữ bản sao dữ liệu</strong> để khôi phục khi cần. Backup không thay thế DR site — hai giải pháp phục vụ hai mục tiêu khác nhau.</div>
+        </div>
+      </div>
+
+      <div class="summary-note">
+        <strong>💬 Nói đúng ba lớp này</strong> giúp Sales tránh tư vấn sai kỳ vọng và mở discovery chính xác hơn. Khi khách hàng hỏi về "dự phòng" hay "lưu dữ liệu nhiều nơi" — đây là cơ hội để hỏi lại: <em>"Anh/chị muốn bảo vệ dữ liệu hay muốn đảm bảo dịch vụ không gián đoạn?"</em>
+      </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+      <a href="section11.html" class="bnav-btn">← Module 11: One-page Summary cho Sales</a>
+      <span class="bnav-center">Module 12 / 12 · Kết thúc khoá học</span>
+      <a href="index.html" class="bnav-btn home">🏠 Trang chủ</a>
+    </div>
+
+  </main>
+
+  <!-- LIGHTBOX OVERLAY -->
+  <div class="lightbox-overlay" id="lightboxOverlay">
+    <div class="lightbox-img-wrap">
+      <button class="lightbox-close" onclick="closeLightbox()" aria-label="Đóng">✕</button>
+      <img src="" alt="" id="lbImg">
+      <div class="lightbox-caption" id="lbCaption"></div>
+    </div>
+  </div>
+
+  <script>
+    // ===== SCROLL REVEAL =====
+    const io = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // ===== DRIVER CARDS ACCORDION =====
+    document.querySelectorAll('.driver-card').forEach(card => {
+      card.querySelector('.driver-header').addEventListener('click', () => {
+        const isActive = card.classList.contains('active');
+        document.querySelectorAll('.driver-card').forEach(c => c.classList.remove('active'));
+        if (!isActive) card.classList.add('active');
+      });
+    });
+
+    // ===== GUIDE BOX TOGGLE =====
+    const guideBox = document.getElementById('guideBox');
+    if (guideBox) {
+      guideBox.querySelector('.guide-header').addEventListener('click', () => {
+        guideBox.classList.toggle('active');
+      });
+    }
+
+    // ===== DISCOVERY QUESTIONS ACCORDION =====
+    document.querySelectorAll('.q-category').forEach(cat => {
+      cat.querySelector('.q-cat-header').addEventListener('click', () => {
+        cat.classList.toggle('active');
+      });
+    });
+
+    // ===== LIGHTBOX =====
+    const lbOverlay = document.getElementById('lightboxOverlay');
+    const lbImg     = document.getElementById('lbImg');
+    const lbCaption = document.getElementById('lbCaption');
+
+    function openLightbox(src, alt) {
+      lbImg.src = src;
+      lbCaption.textContent = alt || '';
+      lbOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      lbOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+      setTimeout(() => { lbImg.src = ''; }, 350);
+    }
+
+    document.querySelectorAll('.module-img-wrap img').forEach(img => {
+      img.addEventListener('click', () => openLightbox(img.src, img.alt));
+    });
+    lbOverlay.addEventListener('click', e => {
+      if (e.target === lbOverlay) closeLightbox();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
+</body>
+</html>

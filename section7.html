@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Định vị Cloud theo tình huống | Module 07</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      --primary: #0078D4;
+      --primary-dark: #005A9E;
+      --primary-light: #50B0F0;
+      --secondary: #00BCF2;
+      --accent: #FFB900;
+      --success: #107C10;
+      --danger: #D83B01;
+      --iaas-color: #E67E22;
+      --paas-color: #0078D4;
+      --saas-color: #107C10;
+      --dark: #050F1E;
+      --dark-2: #0D1F3C;
+      --white: #fff;
+      --gray-1: #F5F8FC;
+      --gray-2: #EEF2F7;
+      --gray-3: #D1DCE8;
+      --text: #1A202C;
+      --text-light: #4A5568;
+      --text-muted: #718096;
+      --shadow-sm: 0 2px 12px rgba(0,120,212,.07);
+      --shadow-md: 0 8px 32px rgba(0,120,212,.13);
+      --shadow-lg: 0 20px 60px rgba(0,0,0,.15);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --tr: all .3s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ===== RESET ===== */
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box }
+    html { scroll-behavior:smooth }
+    body {
+      font-family:'Inter',sans-serif;
+      background:var(--gray-1);
+      color:var(--text);
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    /* ===== TOP NAV ===== */
+    .top-nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      background:rgba(5,15,30,.92);
+      backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(255,255,255,.07);
+      padding:0 32px; height:60px;
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+    }
+    .nav-left { display:flex; align-items:center; gap:12px }
+    .nav-back {
+      display:flex; align-items:center; gap:8px;
+      color:rgba(255,255,255,.6); text-decoration:none;
+      font-size:14px; font-weight:500; padding:6px 12px; border-radius:8px;
+      transition:var(--tr);
+    }
+    .nav-back:hover { color:white; background:rgba(255,255,255,.08) }
+    .nav-sep { color:rgba(255,255,255,.2) }
+    .nav-title { color:rgba(255,255,255,.75); font-size:14px; font-weight:600 }
+    .nav-right { display:flex; gap:8px }
+    .nav-btn {
+      display:flex; align-items:center; gap:6px;
+      color:rgba(255,255,255,.55); text-decoration:none;
+      font-size:13px; font-weight:500; padding:7px 14px; border-radius:8px;
+      border:1px solid rgba(255,255,255,.1); transition:var(--tr);
+    }
+    .nav-btn:hover { color:white; border-color:rgba(255,255,255,.25); background:rgba(255,255,255,.07) }
+    .nav-btn.prim { background:var(--primary); border-color:var(--primary); color:white }
+    .nav-btn.prim:hover { background:var(--primary-dark) }
+
+    /* ===== HERO ===== */
+    .hero {
+      position:relative;
+      background:linear-gradient(140deg,#050F1E 0%,#0D1F3C 50%,#0A3070 100%);
+      padding:100px 24px 72px; overflow:hidden; text-align:center;
+    }
+    .hero::before {
+      content:''; position:absolute; inset:0;
+      background-image:linear-gradient(rgba(0,120,212,.05) 1px,transparent 1px),
+                       linear-gradient(90deg,rgba(0,120,212,.05) 1px,transparent 1px);
+      background-size:50px 50px;
+    }
+    .hero::after {
+      content:''; position:absolute; inset:0;
+      background:radial-gradient(ellipse 600px 400px at 60% 40%,rgba(0,120,212,.22) 0%,transparent 70%),
+                 radial-gradient(ellipse 400px 300px at 20% 65%,rgba(0,188,242,.13) 0%,transparent 60%);
+      pointer-events:none;
+    }
+    .hero-inner { position:relative; z-index:2; max-width:760px; margin:0 auto }
+    .module-badge {
+      display:inline-flex; align-items:center; gap:8px;
+      background:rgba(0,120,212,.2); border:1px solid rgba(0,188,242,.4);
+      border-radius:50px; padding:7px 18px; font-size:12px; font-weight:700;
+      letter-spacing:1px; color:#7DD3FC; margin-bottom:28px; text-transform:uppercase;
+      animation:fadeUp .6s ease both;
+    }
+    .hero h1 {
+      font-size:clamp(28px,4.5vw,52px); font-weight:900; letter-spacing:-1.5px;
+      line-height:1.1; margin-bottom:20px;
+      background:linear-gradient(90deg,#fff 0%,#A8D4F5 60%,#00BCF2 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      animation:fadeUp .6s ease .1s both;
+    }
+    .hero .subtitle {
+      font-size:17px; color:rgba(255,255,255,.6); line-height:1.65;
+      margin-bottom:40px; animation:fadeUp .6s ease .2s both;
+    }
+    .hero-meta {
+      display:flex; align-items:center; justify-content:center;
+      gap:12px; flex-wrap:wrap; animation:fadeUp .6s ease .3s both;
+    }
+    .meta-chip {
+      display:flex; align-items:center; gap:7px;
+      background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);
+      border-radius:50px; padding:8px 18px; font-size:13px;
+      color:rgba(255,255,255,.7); font-weight:500;
+    }
+
+    /* ===== PAGE CONTAINER ===== */
+    .page { max-width:1100px; margin:0 auto; padding:56px 24px 80px }
+    .block { margin-bottom:52px }
+    .block-label {
+      font-size:11px; font-weight:800; letter-spacing:1.2px;
+      text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;
+    }
+    .block-title { font-size:22px; font-weight:800; color:var(--text); margin-bottom:8px; letter-spacing:-.5px }
+    .block-sub { font-size:14px; color:var(--text-muted); margin-bottom:24px; line-height:1.6 }
+
+    /* ===== INTRO BOX ===== */
+    .intro-box {
+      background:white; border-radius:var(--radius); padding:28px 32px;
+      box-shadow:var(--shadow-sm); border-left:5px solid var(--primary);
+    }
+    .intro-box p { font-size:15px; color:var(--text-light); line-height:1.75 }
+    .intro-box strong { color:var(--primary-dark) }
+
+    /* ===== SCENARIO CARDS ===== */
+    .scenario-grid { display:flex; flex-direction:column; gap:16px }
+
+    .scenario-card {
+      background:white; border-radius:var(--radius); box-shadow:var(--shadow-sm);
+      overflow:hidden; border-left:5px solid transparent;
+      transition:box-shadow .3s, border-color .3s;
+    }
+    .scenario-card.active { box-shadow:var(--shadow-md) }
+
+    /* Màu border-left per scenario */
+    .scenario-card[data-s="1"] { border-left-color:#E67E22 }
+    .scenario-card[data-s="2"] { border-left-color:#0078D4 }
+    .scenario-card[data-s="3"] { border-left-color:#8764B8 }
+    .scenario-card[data-s="4"] { border-left-color:#107C10 }
+    .scenario-card[data-s="5"] { border-left-color:#D83B01 }
+
+    .scenario-header {
+      display:flex; align-items:center; gap:16px;
+      padding:22px 28px; cursor:pointer; user-select:none;
+      transition:background .2s;
+    }
+    .scenario-header:hover { background:var(--gray-1) }
+    .scenario-card.active .scenario-header { background:var(--gray-1) }
+
+    .scenario-num {
+      width:46px; height:46px; border-radius:12px;
+      color:white; display:flex; align-items:center; justify-content:center;
+      font-size:17px; font-weight:900; flex-shrink:0;
+    }
+    .scenario-card[data-s="1"] .scenario-num { background:#E67E22 }
+    .scenario-card[data-s="2"] .scenario-num { background:#0078D4 }
+    .scenario-card[data-s="3"] .scenario-num { background:#8764B8 }
+    .scenario-card[data-s="4"] .scenario-num { background:#107C10 }
+    .scenario-card[data-s="5"] .scenario-num { background:#D83B01 }
+
+    .scenario-meta { flex:1 }
+    .scenario-title { font-size:16px; font-weight:800; color:var(--text); line-height:1.3 }
+    .scenario-brief { font-size:13px; color:var(--text-muted); margin-top:4px; line-height:1.5 }
+
+    .scenario-toggle {
+      font-size:18px; color:var(--text-muted);
+      transition:transform .3s; flex-shrink:0;
+    }
+    .scenario-card.active .scenario-toggle { transform:rotate(180deg) }
+
+    .scenario-body {
+      max-height:0; overflow:hidden;
+      transition:max-height .5s cubic-bezier(.4,0,.2,1), opacity .35s ease;
+      opacity:0;
+    }
+    .scenario-card.active .scenario-body { max-height:1400px; opacity:1 }
+    .scenario-body-inner { padding:0 28px 28px }
+
+    /* Pain tag */
+    .pain-tag {
+      display:inline-flex; align-items:center; gap:6px;
+      background:#FEF2F2; border:1px solid #FCA5A5;
+      border-radius:50px; padding:5px 14px;
+      font-size:12px; font-weight:700; color:#991B1B;
+      margin-bottom:16px;
+    }
+
+    /* Pain detail box */
+    .pain-detail {
+      background:#FEF2F2; border:1px solid #FCA5A5;
+      border-radius:10px; padding:14px 18px; margin-bottom:16px;
+      font-size:14px; color:#7F1D1D; line-height:1.7;
+    }
+    .pain-detail .pain-label {
+      font-size:11px; font-weight:800; letter-spacing:.8px;
+      text-transform:uppercase; color:#991B1B; margin-bottom:8px;
+      display:flex; align-items:center; gap:6px;
+    }
+
+    /* Cloud angle box */
+    .cloud-angle {
+      background:rgba(0,120,212,.06); border:1px solid rgba(0,120,212,.15);
+      border-radius:10px; padding:16px 18px; margin-bottom:16px;
+    }
+    .cloud-angle-label {
+      font-size:11px; font-weight:800; letter-spacing:.8px;
+      text-transform:uppercase; color:var(--primary-dark); margin-bottom:10px;
+      display:flex; align-items:center; gap:6px;
+    }
+    .cloud-angle p { font-size:14px; color:var(--text-light); line-height:1.7 }
+    .cloud-angle strong { color:var(--primary-dark); font-weight:700 }
+
+    /* Service tags */
+    .service-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px }
+    .service-tag {
+      display:inline-flex; align-items:center;
+      background:rgba(0,120,212,.1); border:1px solid rgba(0,120,212,.2);
+      border-radius:20px; padding:4px 12px;
+      font-size:12px; font-weight:600; color:var(--primary-dark);
+    }
+
+    /* ISP Box */
+
+    /* Sales Quote */
+    .sales-quote {
+      background:linear-gradient(135deg,rgba(255,185,0,.10),rgba(255,185,0,.05));
+      border:1px solid rgba(255,185,0,.3); border-left:4px solid var(--accent);
+      border-radius:10px; padding:18px 22px; margin-top:4px;
+    }
+    .sales-quote-label {
+      font-size:11px; font-weight:800; letter-spacing:.8px;
+      text-transform:uppercase; color:#8a6000; margin-bottom:8px;
+      display:flex; align-items:center; gap:6px;
+    }
+    .sales-quote blockquote {
+      font-size:14px; color:var(--text); line-height:1.75; font-style:italic;
+    }
+    .sales-quote blockquote strong { font-style:normal; color:var(--primary-dark) }
+
+    /* ===== SUMMARY CARD ===== */
+    .summary-card {
+      background:linear-gradient(135deg,var(--dark) 0%,var(--dark-2) 100%);
+      border-radius:var(--radius); padding:40px; color:white;
+      border:1px solid rgba(255,255,255,.07);
+    }
+    .summary-card h3 { font-size:20px; font-weight:800; margin-bottom:8px; letter-spacing:-.3px }
+    .summary-sub { font-size:14px; color:rgba(255,255,255,.55); margin-bottom:28px; line-height:1.6 }
+    .scenario-chips { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:28px }
+    .scenario-chip {
+      display:flex; align-items:center; gap:8px;
+      background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);
+      border-radius:50px; padding:8px 16px; font-size:13px; color:rgba(255,255,255,.8);
+      font-weight:500;
+    }
+    .scenario-chip .chip-dot {
+      width:8px; height:8px; border-radius:50%; flex-shrink:0;
+    }
+    .summary-takeaway {
+      background:rgba(0,120,212,.2); border:1px solid rgba(0,188,242,.25);
+      border-radius:10px; padding:16px 20px;
+      font-size:14px; color:rgba(255,255,255,.75); line-height:1.7; font-style:italic;
+    }
+
+    /* ===== BOTTOM NAV ===== */
+    .bottom-nav {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:24px 0 0; border-top:1px solid var(--gray-3);
+      flex-wrap:wrap; gap:12px; margin-top:48px;
+    }
+    .bnav-btn {
+      display:flex; align-items:center; gap:10px; padding:12px 22px;
+      border-radius:10px; font-size:14px; font-weight:600; cursor:pointer;
+      transition:var(--tr); text-decoration:none;
+      border:2px solid var(--gray-3); color:var(--text-light); background:white;
+    }
+    .bnav-btn:hover { border-color:var(--primary); color:var(--primary); transform:translateY(-2px); box-shadow:var(--shadow-sm) }
+    .bnav-btn.next { background:var(--primary); border-color:var(--primary); color:white }
+    .bnav-btn.next:hover { background:var(--primary-dark); box-shadow:0 6px 20px rgba(0,120,212,.4) }
+    .bnav-center { font-size:13px; color:var(--text-muted); font-weight:500 }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(18px) }
+      to   { opacity:1; transform:translateY(0) }
+    }
+    .reveal { opacity:0; transform:translateY(22px); transition:opacity .5s ease,transform .5s ease }
+    .reveal.visible { opacity:1; transform:translateY(0) }
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:768px) {
+      .top-nav { padding:0 16px }
+      .nav-title { display:none }
+      .hero { padding:90px 16px 56px }
+      .page { padding:36px 16px 60px }
+      .scenario-header { padding:16px 20px }
+      .scenario-body-inner { padding:0 20px 20px }
+      .bottom-nav { flex-direction:column }
+      .bnav-btn { width:100%; justify-content:center }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAV -->
+  <nav class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-back"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Trang chủ</a>
+      <span class="nav-sep">/</span>
+      <span class="nav-title">Module 07 · Định vị Cloud theo tình huống</span>
+    </div>
+    <div class="nav-right">
+      <a href="section6.html" class="nav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 06</a>
+      <a href="section8.html" class="nav-btn prim">Module 08 <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="module-badge">MODULE 07 / 11</div>
+      <h1>🎯 Định vị Cloud theo tình huống khách hàng</h1>
+      <p class="subtitle">
+        Không có khách hàng nào "mua Cloud" chung chung — họ mua giải pháp cho một bài toán cụ thể.
+        Module này giúp Sales nhận diện đúng tình huống và chọn đúng angle để tư vấn.
+      </p>
+      <div class="hero-meta">
+        <span class="meta-chip">⏱ ~15 phút</span>
+        <span class="meta-chip">📋 5 tình huống thực tế</span>
+        <span class="meta-chip">💬 5 câu nói mẫu sẵn dùng</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="page">
+
+    <!-- INTRO BOX -->
+    <div class="intro-box reveal" style="margin-bottom:44px">
+      <p>
+        Trong thực tế, mỗi khách hàng đến với Cloud vì một lý do khác nhau: người thiếu tài nguyên,
+        người muốn triển khai nhanh, người cần DR, người muốn tiết kiệm chi phí, người lo bảo mật.
+        <strong>Nói đúng bài toán của khách hàng</strong> — chứ không phải liệt kê tính năng Cloud —
+        mới là cách tư vấn hiệu quả. Chọn đúng tình huống, chọn đúng "angle", nói đúng ngôn ngữ khách hàng.
+      </p>
+    </div>
+
+    <!-- SCENARIO CARDS -->
+    <div class="block reveal">
+      <div class="block-label">5 tình huống thực tế</div>
+      <div class="block-title">Nhận diện bài toán → Chọn góc tiếp cận</div>
+      <div class="block-sub">Click vào từng tình huống để xem Pain Point, Cloud Angle và câu nói gợi ý</div>
+
+      <div class="scenario-grid">
+
+        <!-- SCENARIO 1: Thiếu tài nguyên hạ tầng -->
+        <div class="scenario-card" data-s="1">
+          <div class="scenario-header">
+            <div class="scenario-num">1</div>
+            <div class="scenario-meta">
+              <div class="scenario-title">🖥️ Khách hàng đang thiếu tài nguyên hạ tầng</div>
+              <div class="scenario-brief">Server đầy CPU/RAM, storage sắp hết, mua thiết bị mới lâu và tốn kém</div>
+            </div>
+            <div class="scenario-toggle">▼</div>
+          </div>
+          <div class="scenario-body">
+            <div class="scenario-body-inner">
+
+              <div class="pain-detail">
+                <div class="pain-label">🔴 Pain Point</div>
+                Server nội bộ đang đầy CPU/RAM, storage sắp hết dung lượng. Mua thiết bị phần cứng mới
+                mất 4–8 tuần (đặt hàng, vận chuyển, lắp đặt, cấu hình). Trong thời gian chờ, hệ thống bị
+                nghẽn, team dev phải "chia nhau" tài nguyên, deployment bị trì hoãn.
+              </div>
+
+              <div class="cloud-angle">
+                <div class="cloud-angle-label">☁️ Cloud Angle</div>
+                <p>Dùng <strong>VM, Block Storage, Object Storage</strong> trên Cloud để mở rộng ngay lập tức mà không cần chờ phần cứng. Các workload phù hợp để chuyển lên trước: <strong>môi trường test/dev, backup, DR</strong>, hoặc các ứng dụng có nhu cầu scale theo mùa vụ.</p>
+                <div class="service-tags">
+                  <span class="service-tag">☁️ Virtual Machines</span>
+                  <span class="service-tag">💾 Block Storage</span>
+                  <span class="service-tag">🗄️ Object Storage</span>
+                  <span class="service-tag">🔄 Backup & DR</span>
+                  <span class="service-tag">⚙️ Auto Scaling</span>
+                </div>
+              </div>
+
+              <div class="sales-quote">
+                <div class="sales-quote-label">💬 Khi gặp khách hàng, bạn có thể nói...</div>
+                <blockquote>
+                  "Thay vì đầu tư thêm phần cứng ngay từ đầu, mình có thể đánh giá workload nào phù hợp
+                  để mở rộng lên Cloud trước — đặc biệt là môi trường <strong>test/dev, backup, DR</strong>
+                  hoặc các ứng dụng cần scale theo mùa vụ. Điều này giúp có tài nguyên ngay trong vài ngày
+                  thay vì vài tuần."
+                </blockquote>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENARIO 2: Ứng dụng mới cần triển khai nhanh -->
+        <div class="scenario-card" data-s="2">
+          <div class="scenario-header">
+            <div class="scenario-num">2</div>
+            <div class="scenario-meta">
+              <div class="scenario-title">🚀 Khách hàng có ứng dụng mới cần triển khai nhanh</div>
+              <div class="scenario-brief">Dự án digital cần go-live gấp, nhưng hạ tầng nội bộ chưa sẵn sàng</div>
+            </div>
+            <div class="scenario-toggle">▼</div>
+          </div>
+          <div class="scenario-body">
+            <div class="scenario-body-inner">
+
+              <div class="pain-detail">
+                <div class="pain-label">🔴 Pain Point</div>
+                Dự án chuyển đổi số có deadline go-live cụ thể, nhưng hạ tầng on-premises chưa sẵn sàng:
+                server chưa mua, database chưa cài đặt, môi trường dev/staging chưa có. Team IT bị kéo vào
+                lo hạ tầng thay vì phát triển tính năng — dự án trễ deadline ngay từ bước đầu.
+              </div>
+
+              <div class="cloud-angle">
+                <div class="cloud-angle-label">☁️ Cloud Angle</div>
+                <p>Dùng <strong>PaaS, Managed Database, Container (Kubernetes)</strong> hoặc <strong>Serverless</strong> để đội phát triển có môi trường đầy đủ trong vài giờ. Phần nền tảng như server, runtime, scaling, backup, monitoring — tất cả đều được <strong>quản lý bởi Cloud provider</strong>.</p>
+                <div class="service-tags">
+                  <span class="service-tag">🏗️ PaaS / App Service</span>
+                  <span class="service-tag">🗃️ Managed Database</span>
+                  <span class="service-tag">📦 Kubernetes (AKS/EKS/GKE)</span>
+                  <span class="service-tag">⚡ Serverless Functions</span>
+                  <span class="service-tag">📊 Managed Monitoring</span>
+                </div>
+              </div>
+
+              <div class="sales-quote">
+                <div class="sales-quote-label">💬 Khi gặp khách hàng, bạn có thể nói...</div>
+                <blockquote>
+                  "Với Cloud, đội phát triển có thể tập trung vào ứng dụng — còn phần nền tảng như
+                  <strong>server, runtime, scaling, backup và monitoring</strong> có thể sử dụng dịch vụ
+                  managed để rút ngắn thời gian triển khai đáng kể, giúp dự án hit deadline dễ hơn."
+                </blockquote>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENARIO 3: Cần DR không muốn đầu tư site vật lý -->
+        <div class="scenario-card" data-s="3">
+          <div class="scenario-header">
+            <div class="scenario-num">3</div>
+            <div class="scenario-meta">
+              <div class="scenario-title">🛡️ Khách hàng cần DR nhưng không muốn đầu tư site vật lý</div>
+              <div class="scenario-brief">DR site tốn chi phí, khó vận hành, ít khi sử dụng nhưng phải luôn sẵn sàng</div>
+            </div>
+            <div class="scenario-toggle">▼</div>
+          </div>
+          <div class="scenario-body">
+            <div class="scenario-body-inner">
+
+              <div class="pain-detail">
+                <div class="pain-label">🔴 Pain Point</div>
+                Xây dựng DR site vật lý thứ 2 tốn chi phí rất lớn: thuê địa điểm, mua thiết bị, kéo đường
+                truyền, thuê nhân sự vận hành. Nhưng DR site này có thể "nằm không" nhiều năm nếu không có
+                sự cố. Chi phí vận hành liên tục nhưng giá trị thể hiện rất thấp trong ngân sách thường niên.
+              </div>
+
+              <div class="cloud-angle">
+                <div class="cloud-angle-label">☁️ Cloud Angle</div>
+                <p>Cloud đóng vai trò <strong>DR site linh hoạt</strong>: chỉ phát sinh chi phí đáng kể khi có sự cố hoặc cần test. Dùng <strong>backup định kỳ lên Cloud, replication workload</strong>, hoặc <strong>Pilot Light / Warm Standby</strong> — mức độ bảo vệ tùy theo RTO/RPO yêu cầu của khách hàng.</p>
+                <div class="service-tags">
+                  <span class="service-tag">🔄 Cloud Backup</span>
+                  <span class="service-tag">📡 Data Replication</span>
+                  <span class="service-tag">🏁 Pilot Light DR</span>
+                  <span class="service-tag">🌡️ Warm Standby</span>
+                  <span class="service-tag">📋 RTO / RPO Planning</span>
+                </div>
+              </div>
+
+              <div class="sales-quote">
+                <div class="sales-quote-label">💬 Khi gặp khách hàng, bạn có thể nói...</div>
+                <blockquote>
+                  "Cloud có thể đóng vai trò như một <strong>DR site linh hoạt</strong>, giúp doanh nghiệp
+                  không phải đầu tư toàn bộ data center dự phòng ngay từ đầu nhưng vẫn có phương án khôi phục
+                  khi xảy ra sự cố — với chi phí thực tế chỉ phát sinh theo mức độ bảo vệ cần thiết."
+                </blockquote>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENARIO 4: Tối ưu chi phí CNTT -->
+        <div class="scenario-card" data-s="4">
+          <div class="scenario-header">
+            <div class="scenario-num">4</div>
+            <div class="scenario-meta">
+              <div class="scenario-title">💰 Khách hàng muốn tối ưu chi phí CNTT</div>
+              <div class="scenario-brief">Chi phí hạ tầng lớn, tài nguyên mua dư, khó kiểm soát usage theo thực tế</div>
+            </div>
+            <div class="scenario-toggle">▼</div>
+          </div>
+          <div class="scenario-body">
+            <div class="scenario-body-inner">
+
+              <div class="pain-detail">
+                <div class="pain-label">🔴 Pain Point</div>
+                Ngân sách CNTT lớn nhưng khó phân bổ: mua tài nguyên theo peak demand nên thường
+                dư vào thời điểm thấp điểm. Không có visibility rõ ràng về chi phí theo dự án, phòng ban hay
+                ứng dụng. Finance và IT không nói cùng ngôn ngữ khi review ngân sách.
+              </div>
+
+              <div class="cloud-angle">
+                <div class="cloud-angle-label">☁️ Cloud Angle</div>
+                <p>Cloud mang lại <strong>Cost Visibility</strong>: mọi chi phí được tag và hiển thị theo dịch vụ, phòng ban, dự án. Kết hợp với <strong>Reserved Capacity, Autoscaling và Right-Sizing</strong> để tối ưu thực sự — không mua dư, không để tài nguyên idle.</p>
+                <div class="service-tags">
+                  <span class="service-tag">📊 Cost Management</span>
+                  <span class="service-tag">🏷️ Resource Tagging</span>
+                  <span class="service-tag">📅 Reserved Capacity</span>
+                  <span class="service-tag">⚖️ Right-Sizing</span>
+                  <span class="service-tag">📈 Autoscaling</span>
+                </div>
+              </div>
+
+              <div class="sales-quote">
+                <div class="sales-quote-label">💬 Khi gặp khách hàng, bạn có thể nói...</div>
+                <blockquote>
+                  "Điểm mạnh của Cloud không chỉ là giảm chi phí — mà là giúp khách hàng
+                  <strong>nhìn rõ chi phí theo từng dịch vụ, phòng ban, dự án</strong>, từ đó tối ưu
+                  theo usage thực tế. Đây là visibility mà hạ tầng on-premises thường không có sẵn."
+                </blockquote>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENARIO 5: Quan tâm bảo mật và tuân thủ -->
+        <div class="scenario-card" data-s="5">
+          <div class="scenario-header">
+            <div class="scenario-num">5</div>
+            <div class="scenario-meta">
+              <div class="scenario-title">🔐 Khách hàng quan tâm bảo mật và tuân thủ</div>
+              <div class="scenario-brief">Lo ngại về dữ liệu, phân quyền, audit log, compliance và governance</div>
+            </div>
+            <div class="scenario-toggle">▼</div>
+          </div>
+          <div class="scenario-body">
+            <div class="scenario-body-inner">
+
+              <div class="pain-detail">
+                <div class="pain-label">🔴 Pain Point</div>
+                Doanh nghiệp có yêu cầu compliance (ISO 27001, PCI-DSS, Nghị định 13, v.v.) nhưng hạ tầng
+                on-premises thiếu công cụ: log tập trung khó triển khai, phân quyền chi tiết phức tạp,
+                audit trail không đầy đủ. Lo ngại về quyền kiểm soát dữ liệu khi chuyển lên Cloud.
+              </div>
+
+              <div class="cloud-angle">
+                <div class="cloud-angle-label">☁️ Cloud Angle</div>
+                <p>Cloud provider cung cấp bộ công cụ bảo mật nền tảng: <strong>IAM, Encryption at rest/in-transit, Key Management, Audit Logging, Policy Enforcement, SIEM tích hợp</strong> và <strong>Security Posture Management</strong>. Tuy nhiên, hiệu quả phụ thuộc vào cách <strong>thiết kế và cấu hình</strong> — không phải mặc định đã an toàn.</p>
+                <div class="service-tags">
+                  <span class="service-tag">👤 IAM / RBAC</span>
+                  <span class="service-tag">🔑 Key Management (KMS)</span>
+                  <span class="service-tag">🔒 Encryption at rest/transit</span>
+                  <span class="service-tag">📋 Audit Logs</span>
+                  <span class="service-tag">🛡️ SIEM / Security Center</span>
+                  <span class="service-tag">📜 Policy & Governance</span>
+                </div>
+              </div>
+
+              <div class="sales-quote">
+                <div class="sales-quote-label">💬 Khi gặp khách hàng, bạn có thể nói...</div>
+                <blockquote>
+                  "Cloud provider cung cấp rất nhiều công cụ bảo mật nền tảng — nhưng hiệu quả phụ thuộc
+                  vào <strong>cách thiết kế và cấu hình</strong>. Vì vậy dự án Cloud nên đi kèm thiết kế
+                  security baseline, IAM, logging, backup và governance ngay từ đầu — đây là điều mình
+                  có thể hỗ trợ khách hàng."
+                </blockquote>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end scenario-grid -->
+    </div><!-- end block -->
+
+    <!-- SUMMARY CARD -->
+    <div class="summary-card reveal">
+      <h3>🎯 5 tình huống — 5 angle khác nhau</h3>
+      <p class="summary-sub">Sales không cần thuộc tất cả tính năng Cloud — chỉ cần nhận diện đúng bài toán và chọn góc tiếp cận phù hợp</p>
+
+      <div class="scenario-chips">
+        <div class="scenario-chip">
+          <span class="chip-dot" style="background:#E67E22"></span>
+          Thiếu tài nguyên → Mở rộng nhanh
+        </div>
+        <div class="scenario-chip">
+          <span class="chip-dot" style="background:#0078D4"></span>
+          Triển khai nhanh → PaaS / Managed
+        </div>
+        <div class="scenario-chip">
+          <span class="chip-dot" style="background:#8764B8"></span>
+          Cần DR → Cloud DR linh hoạt
+        </div>
+        <div class="scenario-chip">
+          <span class="chip-dot" style="background:#107C10"></span>
+          Tối ưu chi phí → Visibility & Right-sizing
+        </div>
+        <div class="scenario-chip">
+          <span class="chip-dot" style="background:#D83B01"></span>
+          Bảo mật & Compliance → Security baseline
+        </div>
+      </div>
+
+      <div class="summary-takeaway">
+        💡 <strong style="font-style:normal; color:rgba(255,255,255,.9)">Nguyên tắc:</strong>
+        Bắt đầu bằng câu hỏi <em>"Khách hàng đang gặp bài toán gì?"</em> — không phải
+        <em>"Cloud có tính năng gì?"</em>. Hiểu đúng pain point → chọn đúng angle → nói đúng ngôn ngữ
+        của người ra quyết định.
+      </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+      <a href="section6.html" class="bnav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 06: Mapping dịch vụ</a>
+      <span class="bnav-center">Module 07 / 11</span>
+      <a href="section8.html" class="bnav-btn next">Module 08: Câu hỏi khai thác nhu cầu <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+    </div>
+
+  </main>
+
+  <script>
+    // Scroll reveal
+    const io = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // Scenario card accordion
+    document.querySelectorAll('.scenario-card').forEach(card => {
+      card.querySelector('.scenario-header').addEventListener('click', () => {
+        const wasActive = card.classList.contains('active');
+        document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('active'));
+        if (!wasActive) {
+          card.classList.add('active');
+          setTimeout(() => card.scrollIntoView({ behavior:'smooth', block:'nearest' }), 100);
+        }
+      });
+    });
+
+    // Auto-open first scenario
+    setTimeout(() => {
+      document.querySelector('.scenario-card').classList.add('active');
+    }, 700);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cách hiểu các services trên Cloud | Module 04</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#0078D4;--primary-dark:#005A9E;--primary-light:#50B0F0;
+  --secondary:#00BCF2;--accent:#FFB900;--success:#107C10;--danger:#D83B01;
+  --dark:#050F1E;--dark-2:#0D1F3C;--white:#fff;
+  --gray-1:#F5F8FC;--gray-2:#EEF2F7;--gray-3:#D1DCE8;
+  --text:#1A202C;--text-light:#4A5568;--text-muted:#718096;
+  --shadow-sm:0 2px 12px rgba(0,120,212,.07);--shadow-md:0 8px 32px rgba(0,120,212,.13);
+  --glow:0 0 0 4px rgba(0,120,212,.12);--radius:16px;--radius-sm:10px;
+  --tr:all .3s cubic-bezier(.4,0,.2,1);
+  /* Category colors */
+  --c1:#E67E22; --c2:#0078D4; --c3:#8764B8; --c4:#00BCF2;
+  --c5:#D83B01; --c6:#107C10; --c7:#E91E63; --c8:#FF6B35; --c9:#00897B;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--gray-1);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(5,15,30,.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.07);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-back{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.6);text-decoration:none;font-size:14px;font-weight:500;padding:6px 12px;border-radius:8px;transition:var(--tr)}
+.nav-back:hover{color:white;background:rgba(255,255,255,.08)}
+.nav-sep{color:rgba(255,255,255,.2);font-size:18px}
+.nav-module-title{color:rgba(255,255,255,.75);font-size:14px;font-weight:600}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-btn{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.55);text-decoration:none;font-size:13px;font-weight:500;padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);transition:var(--tr)}
+.nav-btn:hover{color:white;border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.07)}
+.nav-btn.prim{background:var(--primary);border-color:var(--primary);color:white}
+.nav-btn.prim:hover{background:var(--primary-dark)}
+
+/* HERO */
+.section-hero{position:relative;background:linear-gradient(140deg,#050F1E 0%,#0D1F3C 50%,#0A3070 100%);padding:100px 24px 72px;overflow:hidden;text-align:center}
+.section-hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,120,212,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,120,212,.05) 1px,transparent 1px);background-size:50px 50px}
+.section-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 600px 400px at 60% 40%,rgba(0,120,212,.2) 0%,transparent 70%),radial-gradient(ellipse 400px 300px at 20% 60%,rgba(0,188,242,.12) 0%,transparent 60%);pointer-events:none}
+.hero-inner{position:relative;z-index:2;max-width:720px;margin:0 auto}
+.module-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,120,212,.2);border:1px solid rgba(0,188,242,.4);border-radius:50px;padding:7px 18px;font-size:12px;font-weight:700;letter-spacing:1px;color:#7DD3FC;margin-bottom:28px;text-transform:uppercase;animation:fadeUp .6s ease both}
+.section-hero h1{font-size:clamp(28px,4.5vw,52px);font-weight:900;letter-spacing:-1.5px;line-height:1.1;margin-bottom:20px;background:linear-gradient(90deg,#fff 0%,#A8D4F5 60%,#00BCF2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:fadeUp .6s ease .1s both}
+.section-hero .subtitle{font-size:17px;color:rgba(255,255,255,.6);line-height:1.65;margin-bottom:40px;animation:fadeUp .6s ease .2s both}
+.hero-meta{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;animation:fadeUp .6s ease .3s both}
+.meta-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:50px;padding:8px 18px;font-size:13px;color:rgba(255,255,255,.7);font-weight:500}
+
+/* PAGE */
+.page{max-width:1100px;margin:0 auto;padding:56px 24px 80px}
+.block{margin-bottom:52px}
+.block-title{font-size:22px;font-weight:800;color:var(--text);margin-bottom:8px;letter-spacing:-.5px;display:flex;align-items:center;gap:10px}
+.block-sub{font-size:14px;color:var(--text-muted);margin-bottom:24px;line-height:1.6}
+
+/* INTRO BOX */
+.intro-box{background:white;border-radius:var(--radius);padding:28px 32px;box-shadow:var(--shadow-sm);border-left:5px solid var(--primary)}
+.intro-box p{font-size:15px;color:var(--text-light);line-height:1.75}
+.intro-box strong{color:var(--primary-dark)}
+
+/* CLICK HINT */
+.click-hint{display:inline-flex;align-items:center;gap:6px;background:rgba(0,120,212,.07);border:1px solid rgba(0,120,212,.15);border-radius:50px;padding:5px 14px;font-size:12px;color:var(--primary);font-weight:500;margin-bottom:20px;animation:subtlePulse 2.5s ease-in-out infinite}
+@keyframes subtlePulse{0%,100%{opacity:.7}50%{opacity:1}}
+
+/* ========================
+   9 SERVICE CATEGORY TILES
+======================== */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+
+.cat-tile{background:white;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);cursor:pointer;transition:box-shadow .3s,border-color .3s,transform .2s;border:2px solid transparent;position:relative}
+.cat-tile::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;transition:var(--tr)}
+.cat-tile:not(.active):hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.cat-tile.active{box-shadow:var(--shadow-md);grid-column:1/-1;cursor:default}
+
+/* Per-category colors */
+.cat-tile[data-cat="compute"]::before{background:var(--c1)}
+.cat-tile[data-cat="storage"]::before{background:var(--c2)}
+.cat-tile[data-cat="database"]::before{background:var(--c3)}
+.cat-tile[data-cat="networking"]::before{background:var(--c4)}
+.cat-tile[data-cat="iam"]::before{background:var(--c5)}
+.cat-tile[data-cat="security"]::before{background:var(--c6)}
+.cat-tile[data-cat="monitoring"]::before{background:var(--c7)}
+.cat-tile[data-cat="backup"]::before{background:var(--c8)}
+.cat-tile[data-cat="ai"]::before{background:var(--c9)}
+
+.cat-tile[data-cat="compute"].active{border-color:var(--c1);box-shadow:var(--shadow-md),0 0 0 3px rgba(230,126,34,.12)}
+.cat-tile[data-cat="storage"].active{border-color:var(--c2);box-shadow:var(--shadow-md),0 0 0 3px rgba(0,120,212,.12)}
+.cat-tile[data-cat="database"].active{border-color:var(--c3);box-shadow:var(--shadow-md),0 0 0 3px rgba(135,100,184,.12)}
+.cat-tile[data-cat="networking"].active{border-color:var(--c4);box-shadow:var(--shadow-md),0 0 0 3px rgba(0,188,242,.12)}
+.cat-tile[data-cat="iam"].active{border-color:var(--c5);box-shadow:var(--shadow-md),0 0 0 3px rgba(216,59,1,.12)}
+.cat-tile[data-cat="security"].active{border-color:var(--c6);box-shadow:var(--shadow-md),0 0 0 3px rgba(16,124,16,.12)}
+.cat-tile[data-cat="monitoring"].active{border-color:var(--c7);box-shadow:var(--shadow-md),0 0 0 3px rgba(233,30,99,.12)}
+.cat-tile[data-cat="backup"].active{border-color:var(--c8);box-shadow:var(--shadow-md),0 0 0 3px rgba(255,107,53,.12)}
+.cat-tile[data-cat="ai"].active{border-color:var(--c9);box-shadow:var(--shadow-md),0 0 0 3px rgba(0,137,123,.12)}
+
+.cat-header{padding:22px 20px 14px}
+.cat-icon{font-size:36px;margin-bottom:10px}
+.cat-num{display:inline-block;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px}
+.cat-name{font-size:16px;font-weight:800;color:var(--text);margin-bottom:6px;line-height:1.3}
+.cat-brief{font-size:13px;color:var(--text-muted);line-height:1.5}
+.cat-expand-hint{padding:0 20px 16px;font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px;font-weight:500;transition:var(--tr)}
+.cat-tile.active .cat-expand-hint{color:var(--primary)}
+
+/* Expandable detail */
+.cat-detail{max-height:0;overflow:hidden;transition:max-height .55s cubic-bezier(.4,0,.2,1),opacity .35s ease;opacity:0;border-top:0px solid transparent}
+.cat-tile.active .cat-detail{max-height:1200px;opacity:1;border-top:1px solid var(--gray-2)}
+
+.cat-table-wrap{overflow-x:auto}
+.cat-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.cat-table thead th{padding:11px 18px;text-align:left;font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--text-muted);background:var(--gray-1);border-bottom:1px solid var(--gray-2)}
+.cat-table thead th:first-child{width:22%}
+.cat-table thead th:nth-child(2){width:38%}
+.cat-table thead th:nth-child(3){width:40%}
+.cat-table tbody tr{border-bottom:1px solid var(--gray-2);transition:background .2s}
+.cat-table tbody tr:last-child{border-bottom:none}
+.cat-table tbody tr:hover{background:rgba(0,120,212,.03)}
+.cat-table td{padding:12px 18px;vertical-align:top;line-height:1.6;color:var(--text-light)}
+.cat-table td:first-child{font-weight:700;color:var(--text)}
+.cat-table td code{background:var(--gray-2);padding:2px 7px;border-radius:4px;font-size:11px;font-family:monospace;color:var(--text)}
+
+.cat-sales-note{padding:14px 20px;background:rgba(255,185,0,.06);border-top:1px solid rgba(255,185,0,.15);font-size:13px;color:var(--text);line-height:1.6}
+.cat-sales-note strong{color:#8a6000}
+
+/* When active (full-row span), show header inline */
+.cat-tile.active .cat-header{display:flex;align-items:center;gap:16px;padding:18px 24px}
+.cat-tile.active .cat-icon{font-size:28px;margin-bottom:0;flex-shrink:0}
+.cat-tile.active .cat-name{font-size:17px;margin-bottom:2px}
+.cat-tile.active .cat-brief{font-size:13px}
+
+/* ARCHITECTURE LAYER */
+.arch-section{background:white;border-radius:var(--radius);padding:32px;box-shadow:var(--shadow-sm);margin-bottom:40px}
+.arch-title{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px}
+.arch-sub{font-size:13px;color:var(--text-muted);margin-bottom:24px}
+.arch-layers{display:flex;flex-direction:column;gap:8px}
+.arch-layer{display:flex;align-items:center;gap:12px;padding:14px 20px;border-radius:10px;transition:var(--tr);cursor:default}
+.arch-layer:hover{transform:translateX(6px)}
+.al-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:white}
+.al-content{flex:1}
+.al-name{font-size:14px;font-weight:700}
+.al-desc{font-size:12px;opacity:.75;margin-top:2px}
+.al-services{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.al-tag{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600;background:rgba(255,255,255,.25);color:inherit}
+.layer-c1{background:rgba(230,126,34,.1);color:var(--c1)}.layer-c1 .al-icon{background:var(--c1)}
+.layer-c2{background:rgba(0,120,212,.1);color:var(--c2)}.layer-c2 .al-icon{background:var(--c2)}
+.layer-c3{background:rgba(135,100,184,.1);color:var(--c3)}.layer-c3 .al-icon{background:var(--c3)}
+.layer-c4{background:rgba(0,188,242,.1);color:var(--c4)}.layer-c4 .al-icon{background:var(--c4)}
+.layer-c5{background:rgba(216,59,1,.1);color:var(--c5)}.layer-c5 .al-icon{background:var(--c5)}
+.layer-c6{background:rgba(16,124,16,.1);color:var(--c6)}.layer-c6 .al-icon{background:var(--c6)}
+.layer-c7{background:rgba(233,30,99,.1);color:var(--c7)}.layer-c7 .al-icon{background:var(--c7)}
+.layer-c8{background:rgba(255,107,53,.1);color:var(--c8)}.layer-c8 .al-icon{background:var(--c8)}
+.layer-c9{background:rgba(0,137,123,.1);color:var(--c9)}.layer-c9 .al-icon{background:var(--c9)}
+
+/* BOTTOM NAV */
+.bottom-nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0 0;border-top:1px solid var(--gray-3);flex-wrap:wrap;gap:12px;margin-top:48px}
+.bnav-btn{display:flex;align-items:center;gap:10px;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:var(--tr);text-decoration:none;border:2px solid var(--gray-3);color:var(--text-light);background:white}
+.bnav-btn:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.bnav-btn.next{background:var(--primary);border-color:var(--primary);color:white}
+.bnav-btn.next:hover{background:var(--primary-dark);border-color:var(--primary-dark);box-shadow:0 6px 20px rgba(0,120,212,.4)}
+.bnav-center{font-size:13px;color:var(--text-muted);font-weight:500}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .5s ease,transform .5s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:900px){
+  .cat-grid{grid-template-columns:1fr 1fr}
+  .cat-tile.active{grid-column:1/-1}
+}
+@media(max-width:768px){
+  .top-nav{padding:0 16px}.nav-module-title{display:none}
+  .section-hero{padding:90px 16px 56px}.page{padding:36px 16px 60px}
+  .cat-grid{grid-template-columns:1fr 1fr}
+  .cat-tile.active{grid-column:1/-1}
+  .bottom-nav{flex-direction:column}.bnav-btn{width:100%;justify-content:center}
+  .cat-tile.active .cat-header{flex-direction:column;align-items:flex-start;gap:8px}
+}
+@media(max-width:480px){
+  .cat-grid{grid-template-columns:1fr}
+  .cat-tile.active{grid-column:1/-1}
+}
+
+/* ===== SECTION IMAGE ===== */
+.section-img-block {
+  text-align: center;
+  margin: 4px 0 8px;
+}
+.section-img-block img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 14px;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.13);
+  display: block;
+  margin: 0 auto;
+}
+.img-caption {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 10px;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+    /* ===== LIGHTBOX ===== */
+    .section-img-block img { cursor:zoom-in; transition:opacity .2s }
+    .section-img-block img:hover { opacity:.88 }
+    .lightbox-overlay {
+      position:fixed; inset:0; z-index:999;
+      background:rgba(5,15,30,.92); backdrop-filter:blur(8px);
+      display:flex; align-items:center; justify-content:center; padding:24px;
+      opacity:0; visibility:hidden;
+      transition:opacity .3s ease, visibility .3s ease;
+    }
+    .lightbox-overlay.open { opacity:1; visibility:visible }
+    .lightbox-img-wrap {
+      position:relative; max-width:90vw; max-height:88vh;
+      transform:scale(.88);
+      transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .lightbox-overlay.open .lightbox-img-wrap { transform:scale(1) }
+    .lightbox-img-wrap img {
+      display:block; max-width:90vw; max-height:82vh;
+      border-radius:12px; box-shadow:0 24px 80px rgba(0,0,0,.6);
+      object-fit:contain; background:#0D1F3C; padding:8px;
+      cursor:default;
+    }
+    .lightbox-caption {
+      text-align:center; margin-top:12px;
+      font-size:13px; color:rgba(255,255,255,.55); font-style:italic;
+    }
+    .lightbox-close {
+      position:absolute; top:-14px; right:-14px;
+      width:36px; height:36px; border-radius:50%;
+      background:rgba(255,255,255,.15); border:none; cursor:pointer;
+      color:white; font-size:18px; display:flex; align-items:center; justify-content:center;
+      transition:background .2s;
+    }
+    .lightbox-close:hover { background:rgba(255,255,255,.28) }
+  </style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div style="display:flex;align-items:center;gap:12px">
+    <a href="index.html" class="nav-back"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Trang chủ</a>
+    <span class="nav-sep">/</span>
+    <span class="nav-module-title">Module 04 · Services trên Cloud</span>
+  </div>
+  <div class="nav-right">
+    <a href="section3.html" class="nav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 03</a>
+    <a href="section5.html" class="nav-btn prim">Module 05 <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+  </div>
+</nav>
+
+<header class="section-hero">
+  <div class="hero-inner">
+    <div class="module-badge">MODULE 04 / 11</div>
+    <h1>🔍 Cách hiểu các services chạy trên Cloud</h1>
+    <p class="subtitle">Nhìn vào một hệ thống CNTT, Sales cần biết bóc tách theo 9 nhóm dịch vụ để tư vấn đúng và đặt câu hỏi đúng chỗ.</p>
+    <div class="hero-meta">
+      <div class="meta-chip">🕐 ~20 phút đọc</div>
+      <div class="meta-chip">🗂️ 9 nhóm dịch vụ tương tác</div>
+      <div class="meta-chip">🏗️ Sơ đồ kiến trúc theo lớp</div>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- INTRO -->
+  <div class="block reveal">
+    <div class="intro-box">
+      <p>Một hệ thống Cloud thường gồm nhiều lớp dịch vụ. Khi Sales nhìn vào hệ thống CNTT của khách hàng, hãy bóc tách theo <strong>9 nhóm dịch vụ chính</strong> để hiểu khách hàng đang dùng gì, thiếu gì và cần gì tiếp theo. Mỗi nhóm là một cơ hội tư vấn và bán thêm.</p>
+    </div>
+  </div>
+
+  <!-- ARCHITECTURE OVERVIEW -->
+  <div class="block reveal">
+    <div class="block-title">🏗️ Tổng quan kiến trúc theo lớp dịch vụ</div>
+    <p class="block-sub">9 nhóm dịch vụ sắp xếp theo vai trò trong kiến trúc tổng thể — từ nền tảng hạ tầng đến ứng dụng thông minh</p>
+    <div class="arch-section">
+      <div class="arch-layers">
+        <div class="arch-layer layer-c9">
+          <div class="al-icon">🤖</div>
+          <div class="al-content">
+            <div class="al-name">AI, Data, IoT &amp; DevOps</div>
+            <div class="al-desc">Lớp ứng dụng thông minh và tự động hóa — điểm khác biệt của Cloud so với hạ tầng truyền thống</div>
+            <div class="al-services"><span class="al-tag">AI/ML</span><span class="al-tag">Data Analytics</span><span class="al-tag">IoT</span><span class="al-tag">CI/CD</span></div>
+          </div>
+        </div>
+        <div class="arch-layer layer-c7">
+          <div class="al-icon">📊</div>
+          <div class="al-content">
+            <div class="al-name">Monitoring &amp; Management</div>
+            <div class="al-desc">Giám sát toàn bộ hệ thống — performance, cost, policy, automation</div>
+            <div class="al-services"><span class="al-tag">Metrics</span><span class="al-tag">Logs</span><span class="al-tag">Alerts</span><span class="al-tag">Cost Mgmt</span></div>
+          </div>
+        </div>
+        <div class="arch-layer layer-c8">
+          <div class="al-icon">🔄</div>
+          <div class="al-content">
+            <div class="al-name">Backup &amp; Disaster Recovery</div>
+            <div class="al-desc">Bảo vệ dữ liệu và đảm bảo khả năng phục hồi khi sự cố xảy ra</div>
+            <div class="al-services"><span class="al-tag">Snapshot</span><span class="al-tag">Replication</span><span class="al-tag">RPO/RTO</span></div>
+          </div>
+        </div>
+        <div class="arch-layer layer-c6">
+          <div class="al-icon">🛡️</div>
+          <div class="al-content">
+            <div class="al-name">Security</div>
+            <div class="al-desc">Bảo mật workload — shared responsibility giữa nhà cung cấp và khách hàng</div>
+            <div class="al-services"><span class="al-tag">WAF</span><span class="al-tag">SIEM</span><span class="al-tag">DDoS Protection</span><span class="al-tag">Encryption</span></div>
+          </div>
+        </div>
+        <div class="arch-layer layer-c5">
+          <div class="al-icon">🔐</div>
+          <div class="al-content">
+            <div class="al-name">Identity &amp; Access Management (IAM)</div>
+            <div class="al-desc">Định danh và phân quyền — ai được truy cập gì, với quyền gì</div>
+            <div class="al-services"><span class="al-tag">MFA</span><span class="al-tag">SSO</span><span class="al-tag">RBAC</span><span class="al-tag">Conditional Access</span></div>
+          </div>
+        </div>
+        <div class="arch-layer layer-c4">
+          <div class="al-icon">🌐</div>
+          <div class="al-content">
+            <div class="al-name">Networking</div>
+            <div class="al-desc">Kết nối workload với nhau, với on-premises và với Internet</div>
+            <div class="al-services"><span class="al-tag">VNet/VPC</span><span class="al-tag">VPN</span><span class="al-tag">Load Balancer</span><span class="al-tag">CDN</span></div>
+          </div>
+        </div>
+        <div class="arch-layer layer-c3">
+          <div class="al-icon">🗄️</div>
+          <div class="al-content">
+            <div class="al-name">Database</div>
+            <div class="al-desc">Lưu trữ dữ liệu có cấu trúc và phi cấu trúc — managed hoặc tự vận hành</div>
+            <div class="al-services"><span class="al-tag">SQL</span><span class="al-tag">NoSQL</span><span class="al-tag">Data Warehouse</span><span class="al-tag">Managed DB</span></div>
+          </div>
+        </div>
+        <div class="arch-layer layer-c2">
+          <div class="al-icon">💾</div>
+          <div class="al-content">
+            <div class="al-name">Storage</div>
+            <div class="al-desc">Lưu trữ dữ liệu file, object, disk — theo nhiều loại khác nhau</div>
+            <div class="al-services"><span class="al-tag">Block</span><span class="al-tag">Object</span><span class="al-tag">File Share</span><span class="al-tag">Archive</span></div>
+          </div>
+        </div>
+        <div class="arch-layer layer-c1">
+          <div class="al-icon">💻</div>
+          <div class="al-content">
+            <div class="al-name">Compute</div>
+            <div class="al-desc">Nền tảng — nơi ứng dụng, website, API, backend service được chạy</div>
+            <div class="al-services"><span class="al-tag">VM</span><span class="al-tag">Container</span><span class="al-tag">Serverless</span><span class="al-tag">Kubernetes</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMAGE: Connectivity Roles in Cloud -->
+  <div class="block reveal">
+    <div class="section-img-block">
+      <img src="assets/images/connectivity-roles-cloud.png"
+           alt="Vai trò quan trọng của kết nối trong Cloud Computing"
+           loading="lazy">
+      <p class="img-caption">📷 Vai trò của kết nối mạng trong Cloud Computing — từ Internet broadband, dedicated line, đến SD-WAN và kết nối hybrid. Connectivity là huyết mạch kết nối on-premises với Cloud.</p>
+    </div>
+  </div>
+
+  <!-- 9 CATEGORY TILES -->
+  <div class="block reveal">
+    <div class="block-title">🗂️ Chi tiết 9 nhóm dịch vụ</div>
+    <div class="click-hint">👆 Nhấp vào từng ô để xem chi tiết sub-services và ghi chú cho Sales</div>
+
+    <div class="cat-grid">
+
+      <!-- 01 COMPUTE -->
+      <div class="cat-tile" data-cat="compute">
+        <div class="cat-header">
+          <div class="cat-icon">💻</div>
+          <div class="cat-num">01 · Compute</div>
+          <div class="cat-name">Compute — Nơi chạy workload</div>
+          <div class="cat-brief">Năng lực xử lý: VM, Container, Serverless, App Platform</div>
+        </div>
+        <div class="cat-expand-hint">▼ Xem chi tiết</div>
+        <div class="cat-detail">
+          <div class="cat-table-wrap">
+            <table class="cat-table">
+              <thead><tr><th>Loại</th><th>Cách hiểu</th><th>Use case điển hình</th></tr></thead>
+              <tbody>
+                <tr><td>Virtual Machine</td><td>Máy chủ ảo giống server truyền thống</td><td>App cũ, ERP, middleware, Windows/Linux server</td></tr>
+                <tr><td>Container</td><td>Đóng gói ứng dụng để chạy linh hoạt</td><td>Microservices, CI/CD, cloud-native app</td></tr>
+                <tr><td>Kubernetes (AKS/EKS/GKE)</td><td>Điều phối container quy mô lớn</td><td>App nhiều service, cần scaling, rolling update</td></tr>
+                <tr><td>Serverless Function</td><td>Chạy code theo sự kiện, không quản lý server</td><td>Xử lý ảnh, API nhỏ, automation, event trigger</td></tr>
+                <tr><td>App Platform</td><td>Chạy web app/API không quản lý VM</td><td>Web portal, API backend, app nội bộ</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cat-sales-note">💬 <strong>Sales note:</strong> Khi khách hàng nói "tôi cần server" — hãy hỏi: "Để chạy ứng dụng gì?" Từ đó xác định VM, Container hay App Service là phù hợp nhất.</div>
+        </div>
+      </div>
+
+      <!-- 02 STORAGE -->
+      <div class="cat-tile" data-cat="storage">
+        <div class="cat-header">
+          <div class="cat-icon">💾</div>
+          <div class="cat-num">02 · Storage</div>
+          <div class="cat-name">Storage — Nơi lưu dữ liệu</div>
+          <div class="cat-brief">Block, Object, File, Archive — mỗi loại có mục đích riêng</div>
+        </div>
+        <div class="cat-expand-hint">▼ Xem chi tiết</div>
+        <div class="cat-detail">
+          <div class="cat-table-wrap">
+            <table class="cat-table">
+              <thead><tr><th>Loại</th><th>Cách hiểu</th><th>Use case điển hình</th></tr></thead>
+              <tbody>
+                <tr><td>Block Storage</td><td>Disk gắn vào VM như ổ cứng</td><td>OS disk, database disk, application disk</td></tr>
+                <tr><td>Object Storage</td><td>Kho lưu trữ lớn, truy cập qua API</td><td>Backup, archive, log, ảnh, video, data lake</td></tr>
+                <tr><td>File Storage</td><td>File share dùng giao thức SMB/NFS</td><td>Shared folder, app cần file share giữa nhiều server</td></tr>
+                <tr><td>Archive Storage</td><td>Lưu lâu dài, ít truy cập, chi phí thấp nhất</td><td>Hồ sơ lâu năm, log compliance, backup dài hạn</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cat-sales-note">💬 <strong>Sales note:</strong> Object Storage (Azure Blob, AWS S3) thường là điểm bắt đầu migrate dễ nhất — backup và log lên Cloud trước, giảm rủi ro và chi phí storage on-premises ngay.</div>
+        </div>
+      </div>
+
+      <!-- 03 DATABASE -->
+      <div class="cat-tile" data-cat="database">
+        <div class="cat-header">
+          <div class="cat-icon">🗄️</div>
+          <div class="cat-num">03 · Database</div>
+          <div class="cat-name">Database — Quản lý dữ liệu</div>
+          <div class="cat-brief">SQL, NoSQL, Managed DB, Data Warehouse — tự vận hành hay thuê managed?</div>
+        </div>
+        <div class="cat-expand-hint">▼ Xem chi tiết</div>
+        <div class="cat-detail">
+          <div class="cat-table-wrap">
+            <table class="cat-table">
+              <thead><tr><th>Loại</th><th>Cách hiểu</th><th>Use case điển hình</th></tr></thead>
+              <tbody>
+                <tr><td>DB on VM</td><td>Cài SQL Server/MySQL trên máy ảo — tự quản lý</td><td>App legacy, yêu cầu kiểm soát tuyệt đối</td></tr>
+                <tr><td>Managed Relational DB</td><td>Cloud lo patching, backup, HA — chỉ quản lý data</td><td>Web app, ERP, hệ thống giao dịch — Azure SQL, RDS</td></tr>
+                <tr><td>NoSQL Database</td><td>Dữ liệu phi quan hệ, scale cao</td><td>App mobile, IoT, catalog, session, gaming</td></tr>
+                <tr><td>Data Warehouse</td><td>Phân tích dữ liệu lớn, BI, báo cáo</td><td>Báo cáo tổng hợp, dashboard, analytics — Synapse, Redshift</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cat-sales-note">💬 <strong>Sales note:</strong> "Đội IT của anh/chị đang mất bao nhiêu giờ/tuần để patch database và xử lý backup?" — Managed DB giải phóng thời gian đó.</div>
+        </div>
+      </div>
+
+      <!-- 04 NETWORKING -->
+      <div class="cat-tile" data-cat="networking">
+        <div class="cat-header">
+          <div class="cat-icon">🌐</div>
+          <div class="cat-num">04 · Networking</div>
+          <div class="cat-name">Networking — Kết nối &amp; phân luồng traffic</div>
+          <div class="cat-brief">VNet, VPN, Load Balancer, CDN, DNS, Firewall — lớp kết nối toàn hệ thống</div>
+        </div>
+        <div class="cat-expand-hint">▼ Xem chi tiết</div>
+        <div class="cat-detail">
+          <div class="cat-table-wrap">
+            <table class="cat-table">
+              <thead><tr><th>Thành phần</th><th>Chức năng</th><th>Khi nào cần</th></tr></thead>
+              <tbody>
+                <tr><td>Virtual Network / VPC</td><td>Mạng riêng ảo cho workload trên Cloud</td><td>Luôn cần — là nền tảng kết nối</td></tr>
+                <tr><td>VPN / Direct Connect</td><td>Kết nối bảo mật từ on-premises lên Cloud</td><td>Hybrid Cloud, migration, private access</td></tr>
+                <tr><td>Load Balancer</td><td>Phân tải traffic cho nhiều server</td><td>Web app có lượng truy cập lớn, HA</td></tr>
+                <tr><td>CDN</td><td>Cache nội dung gần người dùng cuối</td><td>Website, media, phân phối toàn cầu</td></tr>
+                <tr><td>DNS</td><td>Phân giải tên miền, traffic routing</td><td>Tất cả hệ thống có domain</td></tr>
+                <tr><td>Firewall / WAF</td><td>Lọc traffic độc hại, bảo vệ ứng dụng web</td><td>Ứng dụng public, compliance, security</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cat-sales-note">💬 <strong>Sales note:</strong> Networking thường bị bỏ qua trong giai đoạn đầu tư vấn — nhưng đây là nơi phát sinh chi phí ẩn (data transfer, bandwidth). Hỏi sớm về yêu cầu kết nối on-premises và lưu lượng mạng.</div>
+        </div>
+      </div>
+
+      <!-- 05 IAM -->
+      <div class="cat-tile" data-cat="iam">
+        <div class="cat-header">
+          <div class="cat-icon">🔐</div>
+          <div class="cat-num">05 · IAM</div>
+          <div class="cat-name">Identity &amp; Access Management</div>
+          <div class="cat-brief">Ai được truy cập gì, với quyền gì — nền tảng bảo mật của mọi hệ thống Cloud</div>
+        </div>
+        <div class="cat-expand-hint">▼ Xem chi tiết</div>
+        <div class="cat-detail">
+          <div class="cat-table-wrap">
+            <table class="cat-table">
+              <thead><tr><th>Khái niệm</th><th>Ý nghĩa</th><th>Tại sao quan trọng</th></tr></thead>
+              <tbody>
+                <tr><td>User / Group / Role</td><td>Đơn vị cơ bản của định danh và phân quyền</td><td>Kiểm soát ai được làm gì trong Cloud</td></tr>
+                <tr><td>MFA (Multi-Factor Auth)</td><td>Xác thực nhiều bước — password + thiết bị/biometric</td><td>Giảm thiểu rủi ro bị chiếm tài khoản</td></tr>
+                <tr><td>SSO (Single Sign-On)</td><td>Đăng nhập một lần, dùng nhiều ứng dụng</td><td>Giảm ma sát cho người dùng, tập trung quản lý</td></tr>
+                <tr><td>RBAC</td><td>Phân quyền theo vai trò — không cho phép thừa quyền</td><td>Principle of Least Privilege — bảo mật chuẩn</td></tr>
+                <tr><td>Privileged Access</td><td>Quản lý tài khoản đặc quyền — admin, root, service account</td><td>Kiểm soát rủi ro từ tài khoản có quyền cao nhất</td></tr>
+                <tr><td>Conditional Access</td><td>Kiểm soát truy cập theo điều kiện (thiết bị, vị trí, risk)</td><td>Zero Trust — không tin tưởng mặc định</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cat-sales-note">💬 <strong>Sales note:</strong> IAM là layer bảo mật quan trọng nhất — hầu hết các sự cố Cloud đều do cấu hình IAM sai. Hỏi khách hàng: "Hiện tại anh/chị quản lý quyền truy cập hệ thống như thế nào?" để uncovering nhu cầu.</div>
+        </div>
+      </div>
+
+      <!-- 06 SECURITY -->
+      <div class="cat-tile" data-cat="security">
+        <div class="cat-header">
+          <div class="cat-icon">🛡️</div>
+          <div class="cat-num">06 · Security</div>
+          <div class="cat-name">Security — Bảo mật workload</div>
+          <div class="cat-brief">Shared responsibility — Cloud bảo vệ nền tảng, khách hàng bảo vệ cấu hình &amp; dữ liệu</div>
+        </div>
+        <div class="cat-expand-hint">▼ Xem chi tiết</div>
+        <div class="cat-detail">
+          <div class="cat-table-wrap">
+            <table class="cat-table">
+              <thead><tr><th>Bên chịu trách nhiệm</th><th>Phạm vi bảo mật</th></tr></thead>
+              <tbody>
+                <tr><td>☁️ Nhà cung cấp Cloud<br><em>(Security OF the Cloud)</em></td><td>Data Center vật lý · Physical security · Hardware · Hypervisor · Cloud platform nền tảng</td></tr>
+                <tr><td>🏢 Khách hàng<br><em>(Security IN the Cloud)</em></td><td>Cấu hình tài khoản · Phân quyền · Dữ liệu · Ứng dụng · Network security policy · Logging &amp; Monitoring</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cat-table-wrap" style="margin-top:1px">
+            <table class="cat-table">
+              <thead><tr><th>Security Service</th><th>Chức năng</th></tr></thead>
+              <tbody>
+                <tr><td>Defender / Security Hub</td><td>Trung tâm giám sát và phát hiện mối đe dọa</td></tr>
+                <tr><td>WAF (Web App Firewall)</td><td>Lọc tấn công vào ứng dụng web (SQLi, XSS, DDoS)</td></tr>
+                <tr><td>DDoS Protection</td><td>Bảo vệ hệ thống khỏi tấn công từ chối dịch vụ</td></tr>
+                <tr><td>Key Vault / HSM</td><td>Quản lý khóa mã hóa và bí mật an toàn</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cat-sales-note">💬 <strong>Sales note:</strong> Khi khách hàng nói "Cloud không an toàn" — hãy hỏi: "Hiện tại ai đang lo bảo mật vật lý data center cho anh/chị? Có đội bảo mật 24/7 không?" Nhà cung cấp Cloud lớn đầu tư hàng tỷ USD/năm vào security.</div>
+        </div>
+      </div>
+
+      <!-- 07 MONITORING -->
+      <div class="cat-tile" data-cat="monitoring">
+        <div class="cat-header">
+          <div class="cat-icon">📊</div>
+          <div class="cat-num">07 · Monitoring</div>
+          <div class="cat-name">Monitoring &amp; Management</div>
+          <div class="cat-brief">Giám sát toàn bộ hệ thống — performance, cost, health, compliance</div>
+        </div>
+        <div class="cat-expand-hint">▼ Xem chi tiết</div>
+        <div class="cat-detail">
+          <div class="cat-table-wrap">
+            <table class="cat-table">
+              <thead><tr><th>Loại</th><th>Cách hiểu</th><th>Giá trị cho khách hàng</th></tr></thead>
+              <tbody>
+                <tr><td>Performance Metrics</td><td>CPU, RAM, disk, network — real-time và lịch sử</td><td>Phát hiện bottleneck, right-size tài nguyên</td></tr>
+                <tr><td>Log Management</td><td>Thu thập và phân tích log từ toàn hệ thống</td><td>Debug nhanh, audit trail, compliance</td></tr>
+                <tr><td>Alert &amp; Notification</td><td>Tự động cảnh báo khi có vấn đề</td><td>Phản ứng nhanh, giảm downtime</td></tr>
+                <tr><td>Cost Management</td><td>Theo dõi, phân bổ và tối ưu chi phí Cloud</td><td>Tránh bill shock, phân bổ chi phí theo phòng ban</td></tr>
+                <tr><td>Policy Compliance</td><td>Kiểm tra tài nguyên có tuân thủ chính sách không</td><td>Governance, audit, security baseline</td></tr>
+                <tr><td>Health Status</td><td>Theo dõi trạng thái sẵn sàng của từng dịch vụ Cloud</td><td>Biết sớm khi Cloud provider có sự cố ảnh hưởng đến workload</td></tr>
+                <tr><td>Automation</td><td>Tự động hóa tác vụ vận hành định kỳ</td><td>Giảm manual work, tăng nhất quán</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cat-sales-note">💬 <strong>Sales note:</strong> "Hiện tại khi hệ thống chậm hoặc có vấn đề, đội IT mất bao lâu để phát hiện ra?" — Cloud monitoring giúp phát hiện và alert tự động, giảm MTTR đáng kể.</div>
+        </div>
+      </div>
+
+      <!-- 08 BACKUP/DR -->
+      <div class="cat-tile" data-cat="backup">
+        <div class="cat-header">
+          <div class="cat-icon">🔄</div>
+          <div class="cat-num">08 · Backup &amp; DR</div>
+          <div class="cat-name">Backup &amp; Disaster Recovery</div>
+          <div class="cat-brief">Bảo vệ dữ liệu và đảm bảo hệ thống phục hồi khi sự cố xảy ra</div>
+        </div>
+        <div class="cat-expand-hint">▼ Xem chi tiết</div>
+        <div class="cat-detail">
+          <div class="cat-table-wrap">
+            <table class="cat-table">
+              <thead><tr><th>Khái niệm</th><th>Định nghĩa</th><th>Ý nghĩa với kinh doanh</th></tr></thead>
+              <tbody>
+                <tr><td>Backup</td><td>Sao chép dữ liệu theo lịch, khôi phục khi cần</td><td>Bảo vệ khi bị xóa nhầm, ransomware, lỗi phần mềm</td></tr>
+                <tr><td>Snapshot</td><td>Ảnh chụp trạng thái tại một thời điểm</td><td>Rollback nhanh sau thay đổi cấu hình hoặc update</td></tr>
+                <tr><td>Replication</td><td>Sao chép dữ liệu real-time sang region khác</td><td>Giảm mất dữ liệu khi có sự cố vùng</td></tr>
+                <tr><td>RPO (Recovery Point Objective)</td><td>Mất tối đa bao nhiêu dữ liệu được chấp nhận?</td><td>Quyết định tần suất backup/replication</td></tr>
+                <tr><td>RTO (Recovery Time Objective)</td><td>Hệ thống phải phục hồi trong bao lâu?</td><td>Quyết định kiến trúc DR — warm/hot standby</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cat-sales-note">💬 <strong>Sales note:</strong> "Nếu sáng mai hệ thống bị sập, doanh nghiệp chịu được bao lâu mà không mất doanh thu?" — Câu hỏi này giúp khách hàng tự nhận ra tầm quan trọng của DR và sẵn sàng đầu tư.</div>
+        </div>
+      </div>
+
+      <!-- 09 AI/DATA -->
+      <div class="cat-tile" data-cat="ai">
+        <div class="cat-header">
+          <div class="cat-icon">🤖</div>
+          <div class="cat-num">09 · AI &amp; DevOps</div>
+          <div class="cat-name">AI, Data, IoT &amp; DevOps</div>
+          <div class="cat-brief">Điểm khác biệt của Cloud — những gì hạ tầng truyền thống không thể làm được</div>
+        </div>
+        <div class="cat-expand-hint">▼ Xem chi tiết</div>
+        <div class="cat-detail">
+          <div class="cat-table-wrap">
+            <table class="cat-table">
+              <thead><tr><th>Nhóm</th><th>Dịch vụ tiêu biểu</th><th>Use case thực tế</th></tr></thead>
+              <tbody>
+                <tr><td>AI / ML</td><td>Azure AI, AWS SageMaker, Vertex AI</td><td>Chatbot, nhận diện ảnh, phân tích văn bản, fraud detection</td></tr>
+                <tr><td>Data Analytics</td><td>Azure Synapse, AWS Redshift, BigQuery</td><td>Data warehouse, dashboard BI, báo cáo real-time</td></tr>
+                <tr><td>Data Lake</td><td>Azure Data Lake, AWS S3 + Glue</td><td>Lưu và xử lý dữ liệu thô quy mô lớn trước khi phân tích</td></tr>
+                <tr><td>IoT</td><td>Azure IoT Hub, AWS IoT Core</td><td>Thu thập dữ liệu từ thiết bị, sensor, máy móc nhà máy</td></tr>
+                <tr><td>DevOps / CI/CD</td><td>Azure DevOps, AWS CodePipeline, GitHub Actions</td><td>Tự động build-test-deploy, giảm thời gian release</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cat-sales-note">💬 <strong>Sales note:</strong> Đây là nhóm dịch vụ giúp Cloud <strong>khác hẳn</strong> so với việc chỉ thuê server. Khi khách hàng muốn ứng dụng AI hay analytics, hãy nhấn mạnh: "On-premises mất 6-12 tháng để build infrastructure cho AI — trên Cloud, bắt đầu được trong ngày."</div>
+        </div>
+      </div>
+
+    </div><!-- end cat-grid -->
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav reveal">
+    <a href="section3.html" class="bnav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 03: Mô hình dịch vụ</a>
+    <span class="bnav-center">Module 04 / 11</span>
+    <a href="section5.html" class="bnav-btn next">Module 05: Vì sao chuyển lên Cloud? <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+  </div>
+
+</main>
+
+  <!-- LIGHTBOX OVERLAY -->
+  <div class="lightbox-overlay" id="lightboxOverlay">
+    <div class="lightbox-img-wrap">
+      <button class="lightbox-close" onclick="closeLightbox()" aria-label="Đóng">✕</button>
+      <img src="" alt="" id="lbImg">
+      <div class="lightbox-caption" id="lbCaption"></div>
+    </div>
+  </div>
+
+<script>
+// Scroll reveal
+const io = new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);io.unobserve(e.target);}});},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// Category tiles — click to expand, collapse others
+document.querySelectorAll('.cat-tile').forEach(tile => {
+  tile.addEventListener('click', function () {
+    if (this.classList.contains('active')) {
+      this.classList.remove('active');
+    } else {
+      document.querySelectorAll('.cat-tile').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      setTimeout(() => this.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 120);
+    }
+  });
+});
+
+    // ===== LIGHTBOX =====
+    const lbOverlay = document.getElementById('lightboxOverlay');
+    const lbImg     = document.getElementById('lbImg');
+    const lbCaption = document.getElementById('lbCaption');
+    function openLightbox(src, alt) {
+      lbImg.src = src;
+      lbCaption.textContent = alt || '';
+      lbOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      lbOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+      setTimeout(() => { lbImg.src = ''; }, 350);
+    }
+    document.querySelectorAll('.section-img-block img, .module-img-wrap img').forEach(img => {
+      img.addEventListener('click', () => openLightbox(img.src, img.alt));
+    });
+    if (lbOverlay) {
+      lbOverlay.addEventListener('click', e => { if (e.target === lbOverlay) closeLightbox(); });
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+  </script>
+</body>
+</html>

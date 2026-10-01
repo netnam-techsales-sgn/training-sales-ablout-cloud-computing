@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mô hình dịch vụ & triển khai Cloud | Module 03</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#0078D4;--primary-dark:#005A9E;--primary-light:#50B0F0;
+  --secondary:#00BCF2;--accent:#FFB900;--success:#107C10;--danger:#D83B01;
+  --iaas-color:#E67E22;--paas-color:#0078D4;--saas-color:#107C10;
+  --public-color:#0078D4;--private-color:#8764B8;--hybrid-color:#107C10;
+  --dark:#050F1E;--dark-2:#0D1F3C;--white:#fff;
+  --gray-1:#F5F8FC;--gray-2:#EEF2F7;--gray-3:#D1DCE8;
+  --text:#1A202C;--text-light:#4A5568;--text-muted:#718096;
+  --shadow-sm:0 2px 12px rgba(0,120,212,.07);
+  --shadow-md:0 8px 32px rgba(0,120,212,.13);
+  --shadow-lg:0 20px 60px rgba(0,0,0,.15);
+  --glow:0 0 0 4px rgba(0,120,212,.12);
+  --radius:16px;--radius-sm:10px;
+  --tr:all .3s cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--gray-1);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── NAV ── */
+.top-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(5,15,30,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.07);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-left{display:flex;align-items:center;gap:12px}
+.nav-back{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.6);text-decoration:none;font-size:14px;font-weight:500;padding:6px 12px;border-radius:8px;transition:var(--tr)}
+.nav-back:hover{color:white;background:rgba(255,255,255,.08)}
+.nav-sep{color:rgba(255,255,255,.2)}
+.nav-title{color:rgba(255,255,255,.75);font-size:14px;font-weight:600}
+.nav-right{display:flex;gap:8px}
+.nav-btn{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.55);text-decoration:none;font-size:13px;font-weight:500;padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);transition:var(--tr)}
+.nav-btn:hover{color:white;border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.07)}
+.nav-btn.prim{background:var(--primary);border-color:var(--primary);color:white}
+.nav-btn.prim:hover{background:var(--primary-dark)}
+
+/* ── HERO ── */
+.hero{position:relative;background:linear-gradient(140deg,#050F1E 0%,#0D1F3C 50%,#0A3070 100%);padding:100px 24px 72px;overflow:hidden;text-align:center}
+.hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,120,212,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,120,212,.05) 1px,transparent 1px);background-size:50px 50px}
+.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 600px 400px at 60% 40%,rgba(0,120,212,.22) 0%,transparent 70%),radial-gradient(ellipse 400px 300px at 20% 65%,rgba(0,188,242,.13) 0%,transparent 60%);pointer-events:none}
+.hero-inner{position:relative;z-index:2;max-width:760px;margin:0 auto}
+.module-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,120,212,.2);border:1px solid rgba(0,188,242,.4);border-radius:50px;padding:7px 18px;font-size:12px;font-weight:700;letter-spacing:1px;color:#7DD3FC;margin-bottom:28px;text-transform:uppercase;animation:fadeUp .6s ease both}
+.hero h1{font-size:clamp(28px,4.5vw,52px);font-weight:900;letter-spacing:-1.5px;line-height:1.1;margin-bottom:20px;background:linear-gradient(90deg,#fff 0%,#A8D4F5 60%,#00BCF2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:fadeUp .6s ease .1s both}
+.hero .subtitle{font-size:17px;color:rgba(255,255,255,.6);line-height:1.65;margin-bottom:40px;animation:fadeUp .6s ease .2s both}
+.hero-meta{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;animation:fadeUp .6s ease .3s both}
+.meta-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:50px;padding:8px 18px;font-size:13px;color:rgba(255,255,255,.7);font-weight:500}
+
+/* ── LAYOUT ── */
+.page{max-width:1020px;margin:0 auto;padding:60px 24px 90px}
+.block{margin-bottom:56px}
+.block-title{font-size:22px;font-weight:800;color:var(--text);margin-bottom:8px;letter-spacing:-.5px;display:flex;align-items:center;gap:10px}
+.block-sub{font-size:14px;color:var(--text-muted);margin-bottom:24px;line-height:1.65}
+
+/* ── TWO-CONCEPT TABLE ── */
+.concept-table-wrap{background:white;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
+.concept-table{width:100%;border-collapse:collapse}
+.concept-table th{background:var(--dark-2);color:white;padding:14px 20px;text-align:left;font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+.concept-table th:first-child{color:var(--secondary);width:200px}
+.concept-table td{padding:16px 20px;font-size:14px;color:var(--text-light);line-height:1.65;vertical-align:top;border-bottom:1px solid var(--gray-2)}
+.concept-table tr:last-child td{border-bottom:none}
+.concept-table td:first-child{font-weight:700;color:var(--text)}
+.concept-table tr:hover td{background:rgba(0,120,212,.025)}
+.concept-quote{margin-top:20px;padding:18px 24px;background:var(--dark-2);border-radius:var(--radius-sm);border-left:4px solid var(--secondary);color:rgba(255,255,255,.8);font-size:14px;line-height:1.7;font-style:italic}
+
+/* ── SERVICE MODEL TABS ── */
+.model-tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.model-tab{padding:11px 22px;border-radius:50px;border:2px solid var(--gray-3);background:white;cursor:pointer;font-size:14px;font-weight:700;color:var(--text-muted);transition:var(--tr);display:flex;align-items:center;gap:8px}
+.model-tab:hover{border-color:var(--primary);color:var(--primary)}
+.model-tab[data-tab="iaas"].active{background:#FFF3E0;border-color:var(--iaas-color);color:var(--iaas-color)}
+.model-tab[data-tab="paas"].active{background:#EBF3FB;border-color:var(--paas-color);color:var(--paas-color)}
+.model-tab[data-tab="saas"].active{background:#E8F5E9;border-color:var(--saas-color);color:var(--saas-color)}
+.model-panel{display:none;animation:fadeUp .35s ease}
+.model-panel.active{display:block}
+
+/* ── ISP ANALOGY BOX ── */
+.isp-box{border-radius:var(--radius-sm);padding:20px 24px;margin-bottom:20px;display:flex;gap:16px;align-items:flex-start}
+.isp-box.iaas{background:#FFF8F0;border:1px solid rgba(230,126,34,.25)}
+.isp-box.paas{background:#EBF3FB;border:1px solid rgba(0,120,212,.2)}
+.isp-box.saas{background:#E8F5E9;border:1px solid rgba(16,124,16,.2)}
+.isp-box .isp-icon{font-size:28px;flex-shrink:0;margin-top:2px}
+.isp-box .isp-content{}
+.isp-box .isp-label{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.isp-box.iaas .isp-label{color:var(--iaas-color)}
+.isp-box.paas .isp-label{color:var(--paas-color)}
+.isp-box.saas .isp-label{color:var(--saas-color)}
+.isp-box .isp-text{font-size:14px;line-height:1.7;color:var(--text);font-style:italic}
+
+/* ── RESPONSIBILITY STACK ── */
+.stack-legend{display:flex;gap:20px;margin-bottom:12px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--text-light);font-weight:500}
+.legend-dot{width:12px;height:12px;border-radius:3px}
+.resp-stack{display:flex;flex-direction:column;gap:0;border-radius:var(--radius-sm);overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:20px}
+.stack-layer{padding:13px 20px;display:flex;align-items:center;gap:12px;font-size:13.5px;font-weight:600}
+.stack-layer .sl-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;color:white}
+.stack-layer .sl-name{flex:1}
+.stack-layer .sl-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:50px;white-space:nowrap}
+/* provider = dark blue */
+.layer-prov{background:#EBF3FB;color:#1A3A5C}
+.layer-prov .sl-icon{background:#1A5276}
+.layer-prov .sl-badge{background:#1A5276;color:white}
+/* customer IaaS = orange */
+.layer-cust-i{background:#FFF3E0;color:#7D4A0A}
+.layer-cust-i .sl-icon{background:var(--iaas-color)}
+.layer-cust-i .sl-badge{background:var(--iaas-color);color:white}
+/* customer PaaS = blue */
+.layer-cust-p{background:#D6EAF8;color:#1A3A5C}
+.layer-cust-p .sl-icon{background:var(--paas-color)}
+.layer-cust-p .sl-badge{background:var(--paas-color);color:white}
+/* customer SaaS = green */
+.layer-cust-s{background:#D5F5E3;color:#1A4A2A}
+.layer-cust-s .sl-icon{background:var(--saas-color)}
+.layer-cust-s .sl-badge{background:var(--saas-color);color:white}
+
+/* ── MODEL DETAIL 2-COL ── */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.detail-card{background:white;border-radius:var(--radius-sm);padding:20px;box-shadow:var(--shadow-sm)}
+.detail-card h4{font-size:13px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.detail-card ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.detail-card li{font-size:13.5px;color:var(--text-light);display:flex;align-items:flex-start;gap:8px;line-height:1.45}
+.detail-card li::before{content:'→';color:var(--primary);font-weight:800;flex-shrink:0;margin-top:1px}
+.examples-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:white;border-radius:var(--radius-sm);padding:14px 20px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.examples-row .ex-label{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text-muted);flex-shrink:0}
+.ex-tag{font-size:12px;font-weight:600;padding:5px 12px;border-radius:6px;background:var(--gray-2);color:var(--text)}
+.positioning{border-radius:var(--radius-sm);padding:16px 20px;margin-bottom:16px;font-size:14px;line-height:1.7;border-left:4px solid}
+.positioning.iaas{background:#FFF8F0;border-color:var(--iaas-color);color:#7D4A0A}
+.positioning.paas{background:#EBF3FB;border-color:var(--paas-color);color:#1A3A5C}
+.positioning.saas{background:#E8F5E9;border-color:var(--saas-color);color:#1A4A2A}
+
+/* ── COMPARISON TABLE (generic) ── */
+.table-wrap{background:white;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);overflow-x:auto}
+.data-table{width:100%;border-collapse:collapse;min-width:580px}
+.data-table thead th{background:var(--dark-2);color:white;padding:13px 16px;text-align:left;font-size:12px;font-weight:700;letter-spacing:.5px}
+.data-table thead th:first-child{color:var(--secondary)}
+.data-table tbody tr{border-bottom:1px solid var(--gray-2);transition:background .2s}
+.data-table tbody tr:last-child{border-bottom:none}
+.data-table tbody tr:hover{background:rgba(0,120,212,.03)}
+.data-table td{padding:13px 16px;font-size:13.5px;color:var(--text-light);vertical-align:top;line-height:1.55}
+.data-table td:first-child{font-weight:700;color:var(--text)}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px}
+.b-high{background:#FFF3E0;color:#784212}
+.b-mid{background:#EBF3FB;color:#1A5276}
+.b-low{background:#E8F5E9;color:#1D4A26}
+.b-warn{background:#FDEDEC;color:#922B21}
+
+.tip-box{margin-top:16px;padding:16px 20px;background:var(--dark-2);border-radius:var(--radius-sm);border-left:4px solid var(--accent)}
+.tip-box p{font-size:13.5px;color:rgba(255,255,255,.8);line-height:1.65}
+.tip-box strong{color:var(--accent)}
+
+/* ── DEPLOYMENT MODEL CARDS ── */
+.deploy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.deploy-card{background:white;border-radius:var(--radius);box-shadow:var(--shadow-sm);cursor:pointer;transition:var(--tr);border:2px solid transparent;overflow:hidden}
+.deploy-card::before{content:'';display:block;height:5px}
+.deploy-card[data-d="public"]::before{background:var(--public-color)}
+.deploy-card[data-d="private"]::before{background:var(--private-color)}
+.deploy-card[data-d="hybrid"]::before{background:var(--hybrid-color)}
+.deploy-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-md)}
+.deploy-card.active[data-d="public"]{border-color:var(--public-color);box-shadow:var(--shadow-md),0 0 0 4px rgba(0,120,212,.1)}
+.deploy-card.active[data-d="private"]{border-color:var(--private-color);box-shadow:var(--shadow-md),0 0 0 4px rgba(135,100,184,.1)}
+.deploy-card.active[data-d="hybrid"]{border-color:var(--hybrid-color);box-shadow:var(--shadow-md),0 0 0 4px rgba(16,124,16,.1)}
+.dc-head{padding:22px 20px 0}
+.dc-icon{font-size:38px;margin-bottom:12px}
+.dc-title{font-size:17px;font-weight:800;color:var(--text);margin-bottom:6px}
+.dc-brief{font-size:13px;color:var(--text-muted);line-height:1.55;margin-bottom:14px}
+.dc-toggle{padding:0 20px 16px;font-size:12px;color:var(--text-muted);font-weight:600;display:flex;align-items:center;gap:4px;transition:color .2s}
+.deploy-card.active .dc-toggle{color:var(--primary)}
+.dc-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1),opacity .35s ease;opacity:0;border-top:0 solid transparent}
+.deploy-card.active .dc-body{max-height:900px;opacity:1;border-top:1px solid var(--gray-2)}
+/* ISP box inside deploy card */
+.dc-isp{margin:16px 20px;padding:14px 18px;border-radius:var(--radius-sm);font-size:13px;line-height:1.65;font-style:italic}
+.deploy-card[data-d="public"] .dc-isp{background:#EBF3FB;border-left:3px solid var(--public-color);color:#1A3A5C}
+.deploy-card[data-d="private"] .dc-isp{background:#EDE7F6;border-left:3px solid var(--private-color);color:#4A148C}
+.deploy-card[data-d="hybrid"] .dc-isp{background:#E8F5E9;border-left:3px solid var(--hybrid-color);color:#1D4A26}
+.dc-isp .isp-label{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-style:normal;opacity:.75}
+.dc-chars{padding:0 20px;margin-bottom:14px}
+.dc-chars h5{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
+.dc-chars ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+.dc-chars li{font-size:13px;color:var(--text-light);display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+.dc-chars li .ck{flex-shrink:0;font-size:12px;margin-top:2px}
+.dc-when{padding:0 20px 20px}
+.dc-when h5{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
+.dc-when-tags{display:flex;flex-direction:column;gap:5px}
+.dc-when-tag{font-size:12.5px;padding:7px 12px;border-radius:7px;font-weight:500;line-height:1.4}
+.deploy-card[data-d="public"] .dc-when-tag{background:#EBF3FB;color:#1A3A5C}
+.deploy-card[data-d="private"] .dc-when-tag{background:#EDE7F6;color:#4A148C}
+.deploy-card[data-d="hybrid"] .dc-when-tag{background:#E8F5E9;color:#1D4A26}
+
+/* ── GOVERNANCE TABLE ── */
+.gov-table-wrap{background:white;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);overflow-x:auto}
+.gov-table{width:100%;border-collapse:collapse;min-width:700px}
+.gov-table thead th{padding:14px 16px;text-align:left;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.gov-table thead th:nth-child(1){background:#2C3E50;color:rgba(255,255,255,.7);width:160px}
+.gov-table thead th:nth-child(2){background:#1A5276;color:white}
+.gov-table thead th:nth-child(3){background:#1A5276;color:white}
+.gov-table tbody tr{border-bottom:1px solid var(--gray-2)}
+.gov-table tbody tr:last-child{border-bottom:none}
+.gov-table tbody tr:hover td{background:rgba(0,120,212,.03)}
+.gov-table td{padding:14px 16px;font-size:13.5px;color:var(--text-light);vertical-align:top;line-height:1.6}
+.gov-table td:first-child{font-weight:700;color:var(--text);background:rgba(0,0,0,.015)}
+
+/* ── TALK TRACKS ── */
+.talktracks{display:flex;flex-direction:column;gap:12px}
+.tt{background:white;border-radius:var(--radius-sm);overflow:hidden;box-shadow:var(--shadow-sm);cursor:pointer;transition:var(--tr)}
+.tt:hover{box-shadow:var(--shadow-md)}
+.tt-head{padding:18px 22px;display:flex;align-items:center;gap:14px}
+.tt-icon{font-size:26px}
+.tt-info{flex:1}
+.tt-title{font-size:15px;font-weight:700;color:var(--text)}
+.tt-sub{font-size:13px;color:var(--text-muted);margin-top:2px}
+.tt-arr{font-size:16px;color:var(--text-muted);transition:transform .3s}
+.tt.open .tt-arr{transform:rotate(180deg)}
+.tt.open .tt-head{border-bottom:1px solid var(--gray-2)}
+.tt-body{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1),opacity .3s ease;opacity:0}
+.tt.open .tt-body{max-height:400px;opacity:1}
+.tt-content{padding:20px 22px}
+.tt-focus-label{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
+.tt-focus ul{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.tt-focus li{font-size:13.5px;color:var(--text-light);display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+.tt-focus li::before{content:'→';color:var(--primary);font-weight:800;flex-shrink:0}
+.tt-quote{padding:14px 18px;background:var(--gray-1);border-radius:8px;border-left:3px solid var(--accent);font-size:14px;color:var(--text);line-height:1.7;font-style:italic}
+
+/* ── TAKEAWAY ── */
+.takeaway{background:linear-gradient(135deg,var(--dark-2),var(--dark));border-radius:var(--radius);padding:36px;border:1px solid rgba(0,188,242,.2)}
+.takeaway h3{font-size:18px;font-weight:800;color:white;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.tl-list{display:flex;flex-direction:column;gap:12px}
+.tl-item{display:flex;align-items:flex-start;gap:14px;padding:16px 20px;background:rgba(255,255,255,.06);border-radius:10px;border:1px solid rgba(255,255,255,.08)}
+.tl-num{width:32px;height:32px;border-radius:8px;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;margin-top:1px}
+.tl-text{font-size:14px;color:rgba(255,255,255,.82);line-height:1.65}
+.tl-text strong{color:var(--secondary)}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{display:flex;justify-content:space-between;align-items:center;padding:24px 0 0;border-top:1px solid var(--gray-3);flex-wrap:wrap;gap:12px;margin-top:48px}
+.bnav-btn{display:flex;align-items:center;gap:10px;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:600;transition:var(--tr);text-decoration:none;border:2px solid var(--gray-3);color:var(--text-light);background:white}
+.bnav-btn:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.bnav-btn.next{background:var(--primary);border-color:var(--primary);color:white}
+.bnav-btn.next:hover{background:var(--primary-dark);border-color:var(--primary-dark);box-shadow:0 6px 20px rgba(0,120,212,.4)}
+.bnav-center{font-size:13px;color:var(--text-muted);font-weight:500}
+
+/* ── UTILS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .5s ease,transform .5s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.section-divider{height:1px;background:var(--gray-3);margin:48px 0}
+
+@media(max-width:900px){
+  .top-nav{padding:0 16px}.nav-title{display:none}
+  .hero{padding:90px 16px 56px}.page{padding:36px 16px 60px}
+  .detail-grid{grid-template-columns:1fr}
+  .deploy-card-h{grid-template-columns:1fr}
+  .bottom-nav{flex-direction:column}.bnav-btn{width:100%;justify-content:center}
+}
+
+/* ===== SECTION IMAGE ===== */
+.section-img-block {
+  text-align: center;
+  margin: 4px 0 8px;
+}
+.section-img-block img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 14px;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.13);
+  display: block;
+  margin: 0 auto;
+}
+.img-caption {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 10px;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+    /* ===== LIGHTBOX ===== */
+    .section-img-block img { cursor:zoom-in; transition:opacity .2s }
+    .section-img-block img:hover { opacity:.88 }
+    .lightbox-overlay {
+      position:fixed; inset:0; z-index:999;
+      background:rgba(5,15,30,.92); backdrop-filter:blur(8px);
+      display:flex; align-items:center; justify-content:center; padding:24px;
+      opacity:0; visibility:hidden;
+      transition:opacity .3s ease, visibility .3s ease;
+    }
+    .lightbox-overlay.open { opacity:1; visibility:visible }
+    .lightbox-img-wrap {
+      position:relative; max-width:90vw; max-height:88vh;
+      transform:scale(.88);
+      transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .lightbox-overlay.open .lightbox-img-wrap { transform:scale(1) }
+    .lightbox-img-wrap img {
+      display:block; max-width:90vw; max-height:82vh;
+      border-radius:12px; box-shadow:0 24px 80px rgba(0,0,0,.6);
+      object-fit:contain; background:#0D1F3C; padding:8px;
+      cursor:default;
+    }
+    .lightbox-caption {
+      text-align:center; margin-top:12px;
+      font-size:13px; color:rgba(255,255,255,.55); font-style:italic;
+    }
+    .lightbox-close {
+      position:absolute; top:-14px; right:-14px;
+      width:36px; height:36px; border-radius:50%;
+      background:rgba(255,255,255,.15); border:none; cursor:pointer;
+      color:white; font-size:18px; display:flex; align-items:center; justify-content:center;
+      transition:background .2s;
+    }
+    .lightbox-close:hover { background:rgba(255,255,255,.28) }
+  </style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav class="top-nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-back"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Trang chủ</a>
+    <span class="nav-sep">/</span>
+    <span class="nav-title">Module 03 · Mô hình dịch vụ &amp; triển khai Cloud</span>
+  </div>
+  <div class="nav-right">
+    <a href="section2.html" class="nav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 02</a>
+    <a href="section4.html" class="nav-btn prim">Module 04 <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="module-badge">MODULE 03 / 11</div>
+    <h1>🏗️ Mô hình dịch vụ & triển khai Cloud</h1>
+    <p class="subtitle">
+      IaaS, PaaS, SaaS — và Public, Private, Hybrid Cloud.<br>
+      Phân biệt rõ hai lớp khái niệm để không tư vấn nhầm và biết cách nói chuyện đúng với từng đối tượng.
+    </p>
+    <div class="hero-meta">
+      <div class="meta-chip">🕐 ~25 phút</div>
+      <div class="meta-chip">🏢 Góc nhìn ISP/DC</div>
+      <div class="meta-chip">🎯 Responsibility Stack tương tác</div>
+      <div class="meta-chip">💬 Talk track CFO / CTO / CEO</div>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- ═══ 3.1 HAI KHÁI NIỆM ═══ -->
+  <div class="block reveal">
+    <div class="block-title">📌 Sales cần phân biệt 2 lớp khái niệm trước khi tư vấn</div>
+    <p class="block-sub">Khách hàng — và đôi khi cả Sales — thường nhầm hai lớp này với nhau. Tách rõ để giải thích đúng và không bị lạc đề.</p>
+    <div class="concept-table-wrap">
+      <table class="concept-table">
+        <thead>
+          <tr>
+            <th>Khái niệm</th>
+            <th>Câu hỏi cần trả lời</th>
+            <th>Ý nghĩa với khách hàng</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🌐 Mô hình Triển khai<br><small style="font-weight:400;color:var(--text-muted)">Public / Private / Hybrid</small></td>
+            <td>Hạ tầng vật lý nằm ở đâu? Ai sở hữu? Có dùng chung phần cứng với khách hàng khác không?</td>
+            <td>Liên quan đến mức độ cô lập hạ tầng, kiểm soát vật lý, compliance, CAPEX/OPEX và chiến lược triển khai tổng thể.</td>
+          </tr>
+          <tr>
+            <td>🛠️ Mô hình Dịch vụ<br><small style="font-weight:400;color:var(--text-muted)">IaaS / PaaS / SaaS</small></td>
+            <td>Khách hàng thuê cái gì? Nhà cung cấp Cloud quản lý đến lớp nào? Khách hàng còn phải tự vận hành phần nào?</td>
+            <td>Liên quan đến trách nhiệm vận hành của đội IT, tốc độ triển khai, mức độ tự động hóa, chi phí nhân sự và khả năng tập trung vào nghiệp vụ.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="concept-quote">
+      ☝️ <strong>Cách nói ngắn gọn cho Sales:</strong> "Mô hình triển khai trả lời câu hỏi <em>hạ tầng đặt ở đâu và dùng riêng hay dùng chung?</em> — Mô hình dịch vụ trả lời câu hỏi <em>khách hàng thuê đến lớp nào và còn phải tự quản lý phần nào?</em>"
+    </div>
+  </div>
+
+  <!-- ═══ 3.2 SERVICE MODELS ═══ -->
+  <div class="block reveal">
+    <div class="block-title">🛠️ Mô hình Dịch vụ: IaaS, PaaS, SaaS</div>
+    <p class="block-sub">Chọn từng mô hình để xem: góc nhìn từ ISP/Data Center, Responsibility Stack, discovery questions và gợi ý định vị bán hàng.</p>
+
+    <div class="section-img-block" style="margin-bottom:24px">
+      <img src="assets/images/from-onpremises-to-saas.png"
+           alt="Hành trình từ On-premises lên IaaS, PaaS, SaaS"
+           loading="lazy">
+      <p class="img-caption">📷 Hành trình chuyển đổi: từ On-premises → IaaS → PaaS → SaaS — mỗi bước lên cao, đội IT tự quản lý càng ít, nhà cung cấp chịu trách nhiệm càng nhiều.</p>
+    </div>
+
+    <div class="model-tabs">
+      <button class="model-tab active" data-tab="iaas">🧱 IaaS — Thuê hạ tầng</button>
+      <button class="model-tab" data-tab="paas">⚙️ PaaS — Thuê nền tảng</button>
+      <button class="model-tab" data-tab="saas">📱 SaaS — Thuê phần mềm</button>
+    </div>
+
+    <!-- ── IaaS PANEL ── -->
+    <div class="model-panel active" id="panel-iaas">
+
+      <!-- ISP Analogy -->
+      <div class="isp-box iaas">
+        <div class="isp-icon">🏢</div>
+        <div class="isp-content">
+          <div class="isp-label">💡 Cách hiểu theo góc nhìn ISP / Data Center</div>
+          <div class="isp-text">"IaaS giống như khách hàng thuê một VPS hoặc VM. Khách hàng không phải mua server vật lý, nhưng vẫn phải tự cài OS, cấu hình ứng dụng, hardening, backup ở lớp hệ điều hành và vận hành workload — y chang như đang quản lý một server vật lý, chỉ là không cần lo phần cứng."</div>
+        </div>
+      </div>
+
+      <!-- Responsibility Stack -->
+      <div class="stack-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#1A5276"></div>Nhà cung cấp Cloud quản lý</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--iaas-color)"></div>Khách hàng tự quản lý</div>
+      </div>
+      <div class="resp-stack">
+        <div class="stack-layer layer-prov"><div class="sl-icon">🏭</div><div class="sl-name">Data Center — Điện, Làm mát, Bảo vệ vật lý</div><div class="sl-badge">Nhà cung cấp</div></div>
+        <div class="stack-layer layer-prov"><div class="sl-icon">🖥️</div><div class="sl-name">Server vật lý, Storage Hardware, Network vật lý</div><div class="sl-badge">Nhà cung cấp</div></div>
+        <div class="stack-layer layer-prov"><div class="sl-icon">☁️</div><div class="sl-name">Lớp ảo hóa (Hypervisor)</div><div class="sl-badge">Nhà cung cấp</div></div>
+        <div class="stack-layer layer-cust-i"><div class="sl-icon">🐧</div><div class="sl-name">Hệ điều hành (OS) — Patching, Hardening, Cấu hình</div><div class="sl-badge">Khách hàng</div></div>
+        <div class="stack-layer layer-cust-i"><div class="sl-icon">⚙️</div><div class="sl-name">Middleware, Runtime — Cài đặt, vận hành thủ công</div><div class="sl-badge">Khách hàng</div></div>
+        <div class="stack-layer layer-cust-i"><div class="sl-icon">💻</div><div class="sl-name">Ứng dụng, Logic nghiệp vụ</div><div class="sl-badge">Khách hàng</div></div>
+        <div class="stack-layer layer-cust-i"><div class="sl-icon">📊</div><div class="sl-name">Dữ liệu — Cấu hình bảo mật trong workload</div><div class="sl-badge">Khách hàng</div></div>
+      </div>
+
+      <div class="examples-row">
+        <span class="ex-label">Ví dụ dịch vụ:</span>
+        <span class="ex-tag">Azure Virtual Machines</span>
+        <span class="ex-tag">Amazon EC2</span>
+        <span class="ex-tag">Google Compute Engine</span>
+        <span class="ex-tag">UCloud UHost</span>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-card">
+          <h4>✅ Sales positioning</h4>
+          <ul>
+            <li>Migrate nhanh workload hiện hữu theo hướng <strong>lift-and-shift</strong> — không cần thay đổi ứng dụng</li>
+            <li>Khách hàng cần quyền kiểm soát cao với hệ điều hành hoặc cài agent đặc thù</li>
+            <li>Ứng dụng legacy khó chuyển đổi ngay sang PaaS</li>
+            <li>Bước đầu migration — tối ưu dần lên PaaS/SaaS sau</li>
+          </ul>
+        </div>
+        <div class="detail-card">
+          <h4>❓ Discovery questions</h4>
+          <ul>
+            <li>Đang chạy bao nhiêu VM/physical server?</li>
+            <li>Ứng dụng có yêu cầu kiểm soát hệ điều hành hoặc cài agent đặc thù không?</li>
+            <li>Muốn migrate nhanh trước rồi tối ưu sau, hay muốn hiện đại hóa ngay?</li>
+            <li>Đội IT có đủ năng lực vận hành OS, patching, backup, monitoring trên Cloud không?</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="positioning iaas">
+        🎯 <strong>Cách định vị nhanh:</strong> "IaaS là bước đầu tiên lên Cloud — không cần thay đổi ứng dụng, không cần đào tạo lại đội IT ngay. Sau khi ổn định, chúng ta có thể dần tối ưu lên PaaS để giảm tải vận hành."
+      </div>
+    </div>
+
+    <!-- ── PaaS PANEL ── -->
+    <div class="model-panel" id="panel-paas">
+
+      <div class="isp-box paas">
+        <div class="isp-icon">🏗️</div>
+        <div class="isp-content">
+          <div class="isp-label">💡 Cách hiểu theo góc nhìn ISP / Data Center</div>
+          <div class="isp-text">"PaaS giống như khách hàng không thuê một server trống, mà thuê một môi trường đã được chuẩn bị sẵn để chạy ứng dụng hoặc database. Khách hàng chỉ cần đưa ứng dụng hoặc dữ liệu lên, nhà cung cấp lo toàn bộ phần nền tảng bên dưới — không cần cài OS, không cần patch, không cần cấu hình runtime."</div>
+        </div>
+      </div>
+
+      <div class="stack-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#1A5276"></div>Nhà cung cấp Cloud quản lý</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--paas-color)"></div>Khách hàng tự quản lý</div>
+      </div>
+      <div class="resp-stack">
+        <div class="stack-layer layer-prov"><div class="sl-icon">🏭</div><div class="sl-name">Data Center — Điện, Làm mát, Bảo vệ vật lý</div><div class="sl-badge">Nhà cung cấp</div></div>
+        <div class="stack-layer layer-prov"><div class="sl-icon">🖥️</div><div class="sl-name">Server vật lý, Storage Hardware, Network vật lý</div><div class="sl-badge">Nhà cung cấp</div></div>
+        <div class="stack-layer layer-prov"><div class="sl-icon">☁️</div><div class="sl-name">Lớp ảo hóa (Hypervisor)</div><div class="sl-badge">Nhà cung cấp</div></div>
+        <div class="stack-layer layer-prov"><div class="sl-icon">🐧</div><div class="sl-name">Hệ điều hành — OS patching tự động, không cần IT can thiệp</div><div class="sl-badge">Nhà cung cấp</div></div>
+        <div class="stack-layer layer-prov"><div class="sl-icon">⚙️</div><div class="sl-name">Runtime, Middleware, HA, Scaling nền tảng, Monitoring cơ sở</div><div class="sl-badge">Nhà cung cấp</div></div>
+        <div class="stack-layer layer-cust-p"><div class="sl-icon">💻</div><div class="sl-name">Source code / App package — Cấu hình dịch vụ, Scaling policy</div><div class="sl-badge">Khách hàng</div></div>
+        <div class="stack-layer layer-cust-p"><div class="sl-icon">📊</div><div class="sl-name">Dữ liệu — Tài khoản, Phân quyền, Chính sách truy cập</div><div class="sl-badge">Khách hàng</div></div>
+      </div>
+
+      <div class="examples-row">
+        <span class="ex-label">Ví dụ dịch vụ:</span>
+        <span class="ex-tag">Azure App Service</span>
+        <span class="ex-tag">Azure SQL Database</span>
+        <span class="ex-tag">AWS Elastic Beanstalk</span>
+        <span class="ex-tag">Amazon RDS</span>
+        <span class="ex-tag">Google App Engine</span>
+        <span class="ex-tag">Cloud SQL</span>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-card">
+          <h4>✅ Sales positioning</h4>
+          <ul>
+            <li>Khách hàng muốn <strong>giảm tải vận hành</strong> — không muốn đội IT lo OS, patching, runtime</li>
+            <li>Tăng tốc phát triển ứng dụng mới — deploy nhanh hơn IaaS</li>
+            <li>Giảm phụ thuộc vào đội system admin truyền thống</li>
+            <li>Chuẩn hóa môi trường triển khai — tránh "works on my machine"</li>
+          </ul>
+        </div>
+        <div class="detail-card">
+          <h4>❓ Discovery questions</h4>
+          <ul>
+            <li>Đội IT đang tốn bao nhiêu % thời gian để patch OS và database engine?</li>
+            <li>Ứng dụng có thể chạy trên managed platform không?</li>
+            <li>Database hiện tại có thể chuyển sang managed database không?</li>
+            <li>Muốn kiểm soát tuyệt đối hay ưu tiên vận hành nhẹ hơn?</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="positioning paas">
+        🎯 <strong>Cách định vị nhanh:</strong> "PaaS giải phóng đội IT khỏi công việc vá lỗi và cài đặt nền tảng — để họ tập trung 100% vào ứng dụng và tạo giá trị cho nghiệp vụ thay vì bảo trì infrastructure."
+      </div>
+    </div>
+
+    <!-- ── SaaS PANEL ── -->
+    <div class="model-panel" id="panel-saas">
+
+      <div class="isp-box saas">
+        <div class="isp-icon">📱</div>
+        <div class="isp-content">
+          <div class="isp-label">💡 Cách hiểu theo góc nhìn ISP / Data Center</div>
+          <div class="isp-text">"SaaS giống như khách hàng không thuê server, cũng không thuê nền tảng để cài ứng dụng. Khách hàng thuê luôn phần mềm hoàn chỉnh để dùng ngay — ví dụ email, CRM, ticketing, collaboration. Đội IT chỉ cần quản lý người dùng, phân quyền và dữ liệu nhập vào, không cần động vào bất kỳ lớp hạ tầng nào."</div>
+        </div>
+      </div>
+
+      <div class="stack-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#1A5276"></div>Nhà cung cấp SaaS quản lý</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--saas-color)"></div>Khách hàng tự quản lý</div>
+      </div>
+      <div class="resp-stack">
+        <div class="stack-layer layer-prov"><div class="sl-icon">🏭</div><div class="sl-name">Data Center — Điện, Làm mát, Bảo vệ vật lý</div><div class="sl-badge">Nhà cung cấp</div></div>
+        <div class="stack-layer layer-prov"><div class="sl-icon">🖥️</div><div class="sl-name">Server vật lý, Storage, Network, Virtualization</div><div class="sl-badge">Nhà cung cấp</div></div>
+        <div class="stack-layer layer-prov"><div class="sl-icon">🐧</div><div class="sl-name">OS, Runtime, Middleware — Patching hoàn toàn tự động</div><div class="sl-badge">Nhà cung cấp</div></div>
+        <div class="stack-layer layer-prov"><div class="sl-icon">💻</div><div class="sl-name">Ứng dụng, Database nền tảng, Nâng cấp phiên bản, Bản vá</div><div class="sl-badge">Nhà cung cấp</div></div>
+        <div class="stack-layer layer-prov"><div class="sl-icon">🔐</div><div class="sl-name">Availability, Backup nền tảng, Bảo mật hạ tầng</div><div class="sl-badge">Nhà cung cấp</div></div>
+        <div class="stack-layer layer-cust-s"><div class="sl-icon">👥</div><div class="sl-name">Người dùng — Phân quyền — Cấu hình nghiệp vụ — MFA/SSO — Dữ liệu nhập vào</div><div class="sl-badge">Khách hàng</div></div>
+      </div>
+
+      <div class="examples-row">
+        <span class="ex-label">Ví dụ dịch vụ:</span>
+        <span class="ex-tag">Microsoft 365</span>
+        <span class="ex-tag">Salesforce</span>
+        <span class="ex-tag">Google Workspace</span>
+        <span class="ex-tag">ServiceNow</span>
+        <span class="ex-tag">Zoom</span>
+        <span class="ex-tag">SAP S/4HANA Cloud</span>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-card">
+          <h4>✅ Sales positioning</h4>
+          <ul>
+            <li>Triển khai nhanh chức năng nghiệp vụ hoàn chỉnh — email, CRM, ticketing, HRM</li>
+            <li>Không cần đội IT vận hành phần mềm — nhà cung cấp lo tất cả</li>
+            <li>Luôn dùng phiên bản mới nhất — không cần lên lịch upgrade</li>
+            <li>Trả theo user/tháng — dễ tính toán chi phí, dễ scale</li>
+          </ul>
+        </div>
+        <div class="detail-card">
+          <h4>❓ Discovery questions</h4>
+          <ul>
+            <li>Muốn tự xây hệ thống hay dùng phần mềm có sẵn chạy ngay?</li>
+            <li>Quy trình nghiệp vụ có thể thích nghi với SaaS tiêu chuẩn không?</li>
+            <li>Có yêu cầu tích hợp SSO, phân quyền, backup dữ liệu, audit log không?</li>
+            <li>Dữ liệu có yêu cầu lưu trữ trong quốc gia/khu vực cụ thể không?</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="positioning saas">
+        🎯 <strong>Cách định vị nhanh:</strong> "SaaS cho phép doanh nghiệp dùng ngay phần mềm chuyên nghiệp mà không cần đội IT vận hành — giống như thuê dịch vụ kế toán thay vì tuyển kế toán viên tự xây hệ thống."
+      </div>
+    </div>
+
+    <!-- BẢNG SO SÁNH NHANH -->
+    <div style="margin-top:28px">
+      <div style="font-size:16px;font-weight:800;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px">📊 Bảng so sánh nhanh IaaS / PaaS / SaaS</div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Tiêu chí</th>
+              <th>🧱 IaaS</th>
+              <th>⚙️ PaaS</th>
+              <th>📱 SaaS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Cách hiểu đơn giản</td><td>Thuê hạ tầng (server, disk...)</td><td>Thuê nền tảng chạy app/DB</td><td>Thuê phần mềm dùng ngay</td></tr>
+            <tr><td>Giống on-premises nhất</td><td><span class="badge b-high">Cao nhất</span></td><td><span class="badge b-mid">Trung bình</span></td><td><span class="badge b-low">Thấp nhất</span></td></tr>
+            <tr><td>Khách hàng tự quản lý</td><td><span class="badge b-high">Nhiều</span> — OS trở lên</td><td><span class="badge b-mid">Trung bình</span> — App &amp; Data</td><td><span class="badge b-low">Ít nhất</span> — User &amp; Config</td></tr>
+            <tr><td>Nhà cung cấp quản lý</td><td>Phần cứng + Ảo hóa</td><td>Phần cứng + OS + Runtime</td><td>Gần như toàn bộ</td></tr>
+            <tr><td>Kiểm soát hệ điều hành</td><td>✅ Có</td><td>❌ Không / rất hạn chế</td><td>❌ Không</td></tr>
+            <tr><td>Tốc độ triển khai</td><td>Nhanh hơn mua server vật lý</td><td>Nhanh hơn IaaS</td><td>Nhanh nhất — dùng ngay</td></tr>
+            <tr><td>Phù hợp với</td><td>Legacy app, lift-and-shift, workload cần custom OS</td><td>Web app, API, managed DB, app hiện đại</td><td>Email, CRM, ticketing, ERP/HRM thuê bao</td></tr>
+            <tr><td>⚠️ Rủi ro Sales cần lưu ý</td><td>IT vẫn phải vận hành OS, patching, backup, security</td><td>Kiểm tra compatibility ứng dụng trước khi migrate</td><td>Kiểm tra tính năng, tích hợp, data residency, compliance</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tip-box" style="margin-top:16px">
+        <p><strong>💡 Cách tư vấn theo mức độ "nhàn" của đội IT khách hàng:</strong> Muốn kiểm soát nhiều, chấp nhận vận hành nhiều → ưu tiên <strong>IaaS</strong>. Muốn giảm vận hành nền tảng, tập trung vào app/data → ưu tiên <strong>PaaS</strong>. Muốn dùng chức năng nghiệp vụ ngay, ít tự vận hành nhất → ưu tiên <strong>SaaS</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 3.4 DEPLOYMENT MODELS ═══ -->
+  <div class="block reveal">
+    <div class="block-title">🌐 Mô hình Triển khai: Public, Private, Hybrid Cloud</div>
+    <p class="block-sub">Nhấp vào từng mô hình để xem định nghĩa, góc nhìn ISP/DC, đặc điểm và khi nào nên đề xuất.</p>
+    <div class="deploy-grid">
+
+      <!-- PUBLIC -->
+      <div class="deploy-card-h reveal" data-d="public">
+        <div class="dc-h-left">
+          <div>
+            <div class="dc-icon">🌍</div>
+            <div class="dc-title">Public Cloud</div>
+            <div class="dc-brief">Đám mây công cộng — nhà cung cấp sở hữu hạ tầng, nhiều khách hàng dùng chung phần cứng, dữ liệu cách ly bằng phần mềm.</div>
+          </div>
+          <div class="dc-isp">
+            <div class="isp-label">💡 Góc nhìn ISP / Data Center</div>
+            "Public Cloud giống như khách hàng thuê VPS/VM trên một cụm server lớn của nhà cung cấp. Khách hàng không sở hữu server vật lý, không quản lý data center, không thay ổ cứng, không vận hành điện và làm mát — nhà cung cấp lo tất cả."
+          </div>
+        </div>
+        <div class="dc-h-right">
+          <div class="dc-chars">
+            <h5>Đặc điểm chính</h5>
+            <ul>
+              <li><span class="ck">✓</span>Dùng bao nhiêu trả bấy nhiêu — không đầu tư phần cứng ban đầu</li>
+              <li><span class="ck">✓</span>Mở rộng tài nguyên nhanh — tăng giảm theo nhu cầu thực tế</li>
+              <li><span class="ck">✓</span>Nhiều managed services: AI, database, analytics, security, backup</li>
+              <li><span class="ck">✓</span>Phù hợp workload có traffic biến động mạnh</li>
+              <li><span class="ck">⚠️</span>"Public" không có nghĩa dữ liệu bị public — vẫn có subnet riêng, IAM riêng, mã hóa</li>
+            </ul>
+          </div>
+          <div class="dc-when">
+            <h5>Nên chọn khi</h5>
+            <div class="dc-when-tags">
+              <div class="dc-when-tag">🚀 Startup, SME, e-commerce, web app, mobile backend</div>
+              <div class="dc-when-tag">💰 Muốn chuyển CAPEX sang OPEX — không đầu tư phần cứng</div>
+              <div class="dc-when-tag">⚡ Dự án cần triển khai nhanh, time-to-market ngắn</div>
+              <div class="dc-when-tag">🤖 Cần tiếp cận ngay AI / Data Analytics / DevOps service</div>
+              <div class="dc-when-tag">📈 Hệ thống có traffic biến động mạnh theo mùa vụ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRIVATE -->
+      <div class="deploy-card-h reveal" data-d="private">
+        <div class="dc-h-left">
+          <div>
+            <div class="dc-icon">🔒</div>
+            <div class="dc-title">Private Cloud</div>
+            <div class="dc-brief">Đám mây dùng riêng — hạ tầng dành riêng cho một tổ chức, có thể đặt tại DC của khách hàng hoặc dedicated do nhà cung cấp vận hành.</div>
+          </div>
+          <div class="dc-isp">
+            <div class="isp-label">💡 Góc nhìn ISP / Data Center</div>
+            "Private Cloud giống như khách hàng thuê nguyên tủ rack, thuê server vật lý dedicated hoặc đặt server riêng tại data center, sau đó triển khai ảo hóa như VMware, OpenStack để chia thành nhiều VM/service nội bộ — dùng riêng, không chia sẻ phần cứng với ai."
+          </div>
+        </div>
+        <div class="dc-h-right">
+          <div class="dc-chars">
+            <h5>Đặc điểm chính</h5>
+            <ul>
+              <li><span class="ck">✓</span>Mức độ cô lập phần cứng cao — không dùng chung với khách hàng khác</li>
+              <li><span class="ck">✓</span>Kiểm soát vật lý và kiến trúc tốt hơn Public Cloud</li>
+              <li><span class="ck">✓</span>Phù hợp yêu cầu compliance và data residency nghiêm ngặt</li>
+              <li><span class="ck">⚠️</span>Chi phí đầu tư và vận hành thường cao hơn Public Cloud</li>
+              <li><span class="ck">⚠️</span>Khả năng mở rộng phụ thuộc vào phần cứng đã đầu tư trước</li>
+            </ul>
+          </div>
+          <div class="dc-when">
+            <h5>Nên chọn khi</h5>
+            <div class="dc-when-tags">
+              <div class="dc-when-tag">🏦 Ngân hàng, tài chính, chính phủ, y tế — quy định dữ liệu nghiêm ngặt</div>
+              <div class="dc-when-tag">🔧 Cần tùy biến sâu về hạ tầng, network, security</div>
+              <div class="dc-when-tag">🏢 Core system có tải ổn định, yêu cầu kiểm soát cao</div>
+              <div class="dc-when-tag">🚫 Chưa thể đưa dữ liệu nhạy cảm lên Public Cloud</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HYBRID -->
+      <div class="deploy-card-h reveal" data-d="hybrid">
+        <div class="dc-h-left">
+          <div>
+            <div class="dc-icon">🔀</div>
+            <div class="dc-title">Hybrid Cloud</div>
+            <div class="dc-brief">Đám mây lai — kết hợp on-premises/private cloud với public cloud, kết nối qua VPN, leased line, direct connect hoặc private interconnect.</div>
+          </div>
+          <div class="dc-isp">
+            <div class="isp-label">💡 Góc nhìn ISP / Data Center</div>
+            "Hybrid Cloud giống như khách hàng vẫn giữ một phần server/tủ rack hiện tại tại data center, đồng thời dùng thêm Public Cloud — hai bên kết nối với nhau bằng đường truyền riêng hoặc VPN để ứng dụng và dữ liệu có thể trao đổi qua lại."
+          </div>
+        </div>
+        <div class="dc-h-right">
+          <div class="dc-chars">
+            <h5>Đặc điểm chính</h5>
+            <ul>
+              <li><span class="ck">✓</span>Kết hợp kiểm soát của on-premises/private với tính linh hoạt của public</li>
+              <li><span class="ck">✓</span>Cho phép đặt dữ liệu nhạy cảm ở private, web/app layer ở public cloud</li>
+              <li><span class="ck">✓</span>Lý tưởng cho giai đoạn migration từng bước — không cần "big bang"</li>
+              <li><span class="ck">⚠️</span>Cần thiết kế kỹ về network, security, routing, latency, identity, vận hành</li>
+            </ul>
+          </div>
+          <div class="dc-when">
+            <h5>Nên chọn khi</h5>
+            <div class="dc-when-tags">
+              <div class="dc-when-tag">🔄 Đang trong quá trình chuyển đổi Cloud — không migrate toàn bộ một lần</div>
+              <div class="dc-when-tag">🛡️ Core DB ở on-premises, web/app/API layer ở Public Cloud</div>
+              <div class="dc-when-tag">💡 Cần DR lên Cloud trong khi production vẫn ở DC hiện tại</div>
+              <div class="dc-when-tag">📈 Cần burst lên Cloud khi có peak traffic, thu hẹp lại sau</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- IMAGE: 3D Data Center Floor Diagram -->
+  <div class="block reveal">
+    <div class="section-img-block">
+      <img src="assets/images/3d-datacenter-floor.png"
+           alt="Sơ đồ 3D tầng data center — minh họa hạ tầng Public, Private, Hybrid Cloud"
+           loading="lazy">
+      <p class="img-caption">📷 Sơ đồ 3D tầng data center — hình dung trực quan về hạ tầng vật lý đằng sau Public Cloud, Private Cloud và Hybrid Cloud</p>
+    </div>
+  </div>
+
+  <!-- ═══ 3.5 PHÂN BIỆT 2 LỚP ═══ -->
+  <div class="block reveal">
+    <div class="block-title">🔄 Bảng phân biệt: Mô hình triển khai vs Mô hình dịch vụ</div>
+    <p class="block-sub">Hai lớp này độc lập nhau — Public Cloud vẫn có thể cung cấp cả IaaS, PaaS, SaaS; Private Cloud cũng vậy.</p>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Tiêu chí</th>
+            <th>🌐 Mô hình Triển khai (Public / Private / Hybrid)</th>
+            <th>🛠️ Mô hình Dịch vụ (IaaS / PaaS / SaaS)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Bản chất</td>
+            <td>Cách sắp xếp vị trí, quyền sở hữu và mức độ chia sẻ hạ tầng vật lý</td>
+            <td>Cách đóng gói năng lực CNTT thành dịch vụ để khách hàng sử dụng</td>
+          </tr>
+          <tr>
+            <td>Câu hỏi chính</td>
+            <td>Hạ tầng này của ai, đặt ở đâu, dùng riêng hay dùng chung?</td>
+            <td>Khách hàng thuê cái gì, nhà cung cấp quản lý đến lớp nào?</td>
+          </tr>
+          <tr>
+            <td>Quyết định chính</td>
+            <td>Cô lập phần cứng, compliance, kết nối, data residency, CAPEX/OPEX</td>
+            <td>Trách nhiệm vận hành, tốc độ triển khai, mức tự động hóa, kỹ năng IT cần thiết</td>
+          </tr>
+          <tr>
+            <td>Ví dụ theo ISP/DC</td>
+            <td>Thuê VPS public, thuê server dedicated/private, hoặc kết nối server riêng với Cloud</td>
+            <td>Thuê server trống (IaaS), thuê DB/app platform managed (PaaS), hoặc thuê phần mềm dùng ngay (SaaS)</td>
+          </tr>
+          <tr>
+            <td>⚠️ Lưu ý quan trọng</td>
+            <td>Public Cloud vẫn có network riêng, subnet riêng, IAM riêng — "public" <strong>không có nghĩa là dữ liệu bị public</strong></td>
+            <td>Một Public Cloud có thể cung cấp đủ IaaS, PaaS, SaaS — một Private Cloud cũng có thể cung cấp IaaS/PaaS nội bộ</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ 3.6 GOVERNANCE TABLE ═══ -->
+  <div class="block reveal">
+    <div class="block-title">🏛️ Góc nhìn quản trị: CIO, CTO, CFO nhìn Cloud như thế nào?</div>
+    <p class="block-sub">Cloud không chỉ là lựa chọn kỹ thuật — đây là quyết định về tài chính, vận hành, bảo mật, tốc độ và năng lực cạnh tranh.</p>
+    <div class="gov-table-wrap">
+      <table class="gov-table">
+        <thead>
+          <tr>
+            <th>Tiêu chí quản trị</th>
+            <th>Nhìn theo Mô hình Triển khai (Public / Private / Hybrid)</th>
+            <th>Nhìn theo Mô hình Dịch vụ (IaaS / PaaS / SaaS)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🎯 Mục tiêu quản trị</td>
+            <td>Quản lý ranh giới vật lý và tài sản: server nằm ở đâu, ai sở hữu, có chia sẻ phần cứng không</td>
+            <td>Quản lý lớp phần mềm và dữ liệu: đội IT còn phải tự cấu hình đến lớp nào, phần nào giao nhà cung cấp</td>
+          </tr>
+          <tr>
+            <td>💰 Mô hình tài chính</td>
+            <td>Private/on-premises gắn với CAPEX lớn; Public Cloud giúp chuyển sang OPEX — dùng đến đâu trả đến đó</td>
+            <td>IaaS linh hoạt nhưng vẫn cần chi phí vận hành OS/license; PaaS/SaaS giảm nhiều chi phí vận hành nền tảng</td>
+          </tr>
+          <tr>
+            <td>👥 Trách nhiệm đội IT</td>
+            <td>Với on-premises/private: IT lo data center, điện, làm mát, phần cứng, network vật lý</td>
+            <td>IaaS: IT quản lý từ OS trở lên; PaaS: IT tập trung app/data; SaaS: IT chủ yếu quản lý user, quyền và dữ liệu</td>
+          </tr>
+          <tr>
+            <td>🔒 Bảo mật &amp; Compliance</td>
+            <td>Private/Hybrid giải quyết bài toán cô lập dữ liệu, kiểm soát vị trí dữ liệu, yêu cầu pháp lý đặc thù</td>
+            <td>Service model giải quyết shared responsibility: nhà cung cấp bảo vệ nền tảng, khách hàng bảo vệ cấu hình, dữ liệu và ứng dụng</td>
+          </tr>
+          <tr>
+            <td>⚡ Time-to-market</td>
+            <td>Public Cloud giảm thời gian mua sắm, lắp đặt, nghiệm thu phần cứng</td>
+            <td>PaaS/SaaS giảm thời gian cài đặt OS, middleware, database — đưa dịch vụ ra thị trường nhanh hơn</td>
+          </tr>
+          <tr>
+            <td>🚀 Năng lực đổi mới</td>
+            <td>Public Cloud giúp tiếp cận nhanh AI, Analytics, IoT, DevOps, Security service</td>
+            <td>PaaS/SaaS giúp đội kỹ thuật tập trung vào giá trị nghiệp vụ thay vì vận hành nền tảng</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ 3.7 TALK TRACKS ═══ -->
+  <div class="block reveal">
+    <div class="block-title">💬 Talk Track theo từng đối tượng khách hàng</div>
+    <p class="block-sub">Nhấp để mở — điểm nhấn và câu nói mẫu cho từng cấp quản lý</p>
+    <div class="talktracks">
+
+      <div class="tt open">
+        <div class="tt-head">
+          <div class="tt-icon">💰</div>
+          <div class="tt-info">
+            <div class="tt-title">CFO / Giám đốc Tài chính</div>
+            <div class="tt-sub">Tập trung: CAPEX → OPEX, chi phí linh hoạt, tránh over-provisioning</div>
+          </div>
+          <div class="tt-arr">▲</div>
+        </div>
+        <div class="tt-body">
+          <div class="tt-content">
+            <div class="tt-focus">
+              <div class="tt-focus-label">Điểm cần nhấn mạnh</div>
+              <ul>
+                <li>Chuyển từ CAPEX sang OPEX — không đầu tư trước lượng lớn phần cứng</li>
+                <li>Dùng đến đâu trả đến đó — tránh mua dư tài nguyên cho 3-5 năm</li>
+                <li>Có công cụ theo dõi và phân bổ chi phí theo phòng ban/dự án</li>
+                <li>Giảm chi phí server, storage, data center, license đầu tư ban đầu</li>
+              </ul>
+            </div>
+            <div class="tt-quote">"Với Cloud, doanh nghiệp không cần đầu tư trước một lượng lớn phần cứng. Chi phí được chuyển thành chi phí vận hành theo mức sử dụng thực tế — đặc biệt linh hoạt với hệ thống có nhu cầu tăng giảm theo mùa vụ hoặc theo dự án."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tt">
+        <div class="tt-head">
+          <div class="tt-icon">🔧</div>
+          <div class="tt-info">
+            <div class="tt-title">CIO / CTO / IT Manager</div>
+            <div class="tt-sub">Tập trung: Giảm tải vận hành, chuẩn hóa, tập trung vào nghiệp vụ</div>
+          </div>
+          <div class="tt-arr">▼</div>
+        </div>
+        <div class="tt-body">
+          <div class="tt-content">
+            <div class="tt-focus">
+              <div class="tt-focus-label">Điểm cần nhấn mạnh</div>
+              <ul>
+                <li>Giảm tải vận hành phần cứng và nền tảng cho đội IT</li>
+                <li>Chuẩn hóa môi trường triển khai — tăng tốc provisioning</li>
+                <li>Tăng khả năng backup, DR, monitoring tự động</li>
+                <li>Chuyển đội IT từ "vận hành hạ tầng" sang "tạo giá trị cho nghiệp vụ"</li>
+              </ul>
+            </div>
+            <div class="tt-quote">"Nếu dùng IaaS, đội IT vẫn kiểm soát tốt hệ điều hành và ứng dụng — phù hợp cho migration nhanh. Nếu tiến lên PaaS hoặc SaaS, đội IT sẽ giảm đáng kể công việc vá lỗi, cài đặt nền tảng, duy trì runtime — từ đó tập trung nhiều hơn vào ứng dụng và trải nghiệm người dùng."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tt">
+        <div class="tt-head">
+          <div class="tt-icon">📈</div>
+          <div class="tt-info">
+            <div class="tt-title">Business Owner / CEO / Giám đốc Kinh doanh</div>
+            <div class="tt-sub">Tập trung: Ra mắt nhanh, thử nghiệm, mở rộng, cạnh tranh</div>
+          </div>
+          <div class="tt-arr">▼</div>
+        </div>
+        <div class="tt-body">
+          <div class="tt-content">
+            <div class="tt-focus">
+              <div class="tt-focus-label">Điểm cần nhấn mạnh</div>
+              <ul>
+                <li>Ra mắt sản phẩm mới nhanh hơn đối thủ</li>
+                <li>Dễ mở rộng khi có chiến dịch bán hàng hoặc sự kiện lớn</li>
+                <li>Thử nghiệm nhanh, thất bại nhanh, tối ưu nhanh</li>
+                <li>Tiếp cận AI, data analytics để ra quyết định dựa trên dữ liệu</li>
+              </ul>
+            </div>
+            <div class="tt-quote">"Cloud giúp doanh nghiệp thử nghiệm dịch vụ mới nhanh hơn. Thay vì chờ mua server và triển khai hạ tầng nhiều tuần, đội kỹ thuật có thể tạo môi trường trong vài phút hoặc vài giờ — giúp business phản ứng nhanh hơn với thị trường."</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ 3.8 TAKEAWAY ═══ -->
+  <div class="block reveal">
+    <div class="takeaway">
+      <h3>🎯 3 lớp thông điệp Sales cần nhớ (kết luận module)</h3>
+      <div class="tl-list">
+        <div class="tl-item">
+          <div class="tl-num">1</div>
+          <div class="tl-text"><strong>Deployment model</strong> trả lời câu hỏi: hạ tầng đặt ở đâu, dùng riêng hay dùng chung? → Public / Private / Hybrid — quyết định bởi compliance, budget và chiến lược IT.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-num">2</div>
+          <div class="tl-text"><strong>Service model</strong> trả lời câu hỏi: khách hàng thuê đến lớp nào, nhà cung cấp quản lý phần nào? → IaaS / PaaS / SaaS — quyết định bởi năng lực đội IT và mức độ kiểm soát cần thiết.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-num">3</div>
+          <div class="tl-text"><strong>Business value</strong> trả lời câu hỏi: khách hàng tiết kiệm gì, nhanh hơn ở đâu, giảm rủi ro nào và đội IT được giải phóng khỏi công việc vận hành nào? → Đây là thứ Sales cần nhấn mạnh trong mọi cuộc tư vấn.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav reveal">
+    <a href="section2.html" class="bnav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 02: Cloud là gì?</a>
+    <span class="bnav-center">Module 03 / 11</span>
+    <a href="section4.html" class="bnav-btn next">Module 04: Services trên Cloud <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+  </div>
+
+</main>
+
+  <!-- LIGHTBOX OVERLAY -->
+  <div class="lightbox-overlay" id="lightboxOverlay">
+    <div class="lightbox-img-wrap">
+      <button class="lightbox-close" onclick="closeLightbox()" aria-label="Đóng">✕</button>
+      <img src="" alt="" id="lbImg">
+      <div class="lightbox-caption" id="lbCaption"></div>
+    </div>
+  </div>
+
+<script>
+// Scroll reveal
+const io = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.07 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// Service model tabs
+document.querySelectorAll('.model-tab').forEach(tab => {
+  tab.addEventListener('click', function () {
+    document.querySelectorAll('.model-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.model-panel').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('panel-' + this.dataset.tab).classList.add('active');
+  });
+});
+
+// Deployment cards: always visible, no accordion needed
+
+// Talk Track accordion (.tt)
+document.querySelectorAll('.tt').forEach(tt => {
+  tt.querySelector('.tt-head').addEventListener('click', () => {
+    tt.classList.toggle('open');
+  });
+});
+
+    // ===== LIGHTBOX =====
+    const lbOverlay = document.getElementById('lightboxOverlay');
+    const lbImg     = document.getElementById('lbImg');
+    const lbCaption = document.getElementById('lbCaption');
+    function openLightbox(src, alt) {
+      lbImg.src = src;
+      lbCaption.textContent = alt || '';
+      lbOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      lbOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+      setTimeout(() => { lbImg.src = ''; }, 350);
+    }
+    document.querySelectorAll('.section-img-block img, .module-img-wrap img').forEach(img => {
+      img.addEventListener('click', () => openLightbox(img.src, img.alt));
+    });
+    if (lbOverlay) {
+      lbOverlay.addEventListener('click', e => { if (e.target === lbOverlay) closeLightbox(); });
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+  </script>
+</body>
+</html>

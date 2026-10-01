@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud Computing là gì? | Module 02</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --primary: #0078D4; --primary-dark: #005A9E; --primary-light: #50B0F0;
+  --secondary: #00BCF2; --accent: #FFB900; --success: #107C10;
+  --danger: #D83B01; --purple: #8764B8;
+  --dark: #050F1E; --dark-2: #0D1F3C; --white: #fff;
+  --gray-1: #F5F8FC; --gray-2: #EEF2F7; --gray-3: #D1DCE8;
+  --text: #1A202C; --text-light: #4A5568; --text-muted: #718096;
+  --shadow-sm: 0 2px 12px rgba(0,120,212,.07);
+  --shadow-md: 0 8px 32px rgba(0,120,212,.13);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,.15);
+  --glow: 0 0 0 4px rgba(0,120,212,.12);
+  --radius: 16px; --radius-sm: 10px;
+  --tr: all .3s cubic-bezier(.4,0,.2,1);
+}
+html { scroll-behavior: smooth; }
+body { font-family:'Inter',sans-serif; background:var(--gray-1); color:var(--text); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+
+/* NAV */
+.top-nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(5,15,30,.9); backdrop-filter:blur(20px); border-bottom:1px solid rgba(255,255,255,.07); padding:0 32px; height:60px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.nav-back { display:flex; align-items:center; gap:8px; color:rgba(255,255,255,.6); text-decoration:none; font-size:14px; font-weight:500; padding:6px 12px; border-radius:8px; transition:var(--tr); }
+.nav-back:hover { color:white; background:rgba(255,255,255,.08); }
+.nav-sep { color:rgba(255,255,255,.2); font-size:18px; }
+.nav-module-title { color:rgba(255,255,255,.75); font-size:14px; font-weight:600; }
+.nav-right { display:flex; align-items:center; gap:8px; }
+.nav-btn { display:flex; align-items:center; gap:6px; color:rgba(255,255,255,.55); text-decoration:none; font-size:13px; font-weight:500; padding:7px 14px; border-radius:8px; border:1px solid rgba(255,255,255,.1); transition:var(--tr); }
+.nav-btn:hover { color:white; border-color:rgba(255,255,255,.25); background:rgba(255,255,255,.07); }
+.nav-btn.prim { background:var(--primary); border-color:var(--primary); color:white; }
+.nav-btn.prim:hover { background:var(--primary-dark); }
+
+/* HERO */
+.section-hero { position:relative; background:linear-gradient(140deg,#050F1E 0%,#0D1F3C 50%,#0A3070 100%); padding:100px 24px 72px; overflow:hidden; text-align:center; }
+.section-hero::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(0,120,212,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,120,212,.05) 1px,transparent 1px); background-size:50px 50px; }
+.section-hero::after { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 600px 400px at 60% 40%,rgba(0,120,212,.2) 0%,transparent 70%),radial-gradient(ellipse 400px 300px at 20% 60%,rgba(0,188,242,.12) 0%,transparent 60%); pointer-events:none; }
+.hero-inner { position:relative; z-index:2; max-width:720px; margin:0 auto; }
+.module-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(0,120,212,.2); border:1px solid rgba(0,188,242,.4); border-radius:50px; padding:7px 18px; font-size:12px; font-weight:700; letter-spacing:1px; color:#7DD3FC; margin-bottom:28px; text-transform:uppercase; animation:fadeUp .6s ease both; }
+.section-hero h1 { font-size:clamp(32px,5.5vw,58px); font-weight:900; letter-spacing:-1.5px; line-height:1.1; margin-bottom:20px; background:linear-gradient(90deg,#fff 0%,#A8D4F5 60%,#00BCF2 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation:fadeUp .6s ease .1s both; }
+.section-hero .subtitle { font-size:17px; color:rgba(255,255,255,.6); line-height:1.65; margin-bottom:40px; animation:fadeUp .6s ease .2s both; }
+.hero-meta { display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; animation:fadeUp .6s ease .3s both; }
+.meta-chip { display:flex; align-items:center; gap:7px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius:50px; padding:8px 18px; font-size:13px; color:rgba(255,255,255,.7); font-weight:500; backdrop-filter:blur(8px); }
+
+/* PAGE */
+.page { max-width:960px; margin:0 auto; padding:56px 24px 80px; }
+
+/* BLOCKS */
+.block { margin-bottom:48px; }
+.block-title { font-size:22px; font-weight:800; color:var(--text); margin-bottom:8px; letter-spacing:-.5px; display:flex; align-items:center; gap:10px; }
+.block-sub { font-size:14px; color:var(--text-muted); margin-bottom:24px; line-height:1.6; }
+
+/* KEY DEF CARD */
+.def-card { background:white; border-radius:var(--radius); padding:36px; box-shadow:var(--shadow-sm); border-left:5px solid var(--primary); position:relative; overflow:hidden; }
+.def-card::before { content:''; position:absolute; top:0; right:0; width:200px; height:200px; background:radial-gradient(circle,rgba(0,120,212,.06),transparent 70%); pointer-events:none; }
+.def-card p { font-size:16px; color:var(--text-light); line-height:1.75; }
+.def-card .quote-block { margin-top:20px; padding:20px 24px; background:var(--gray-1); border-radius:var(--radius-sm); border-left:3px solid var(--secondary); font-size:15px; color:var(--text); line-height:1.7; font-style:italic; }
+
+/* ANALOGY CARDS */
+.analogy-grid { display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:center; margin-bottom:32px; }
+.analogy-card { background:white; border-radius:var(--radius); padding:28px; box-shadow:var(--shadow-sm); transition:var(--tr); }
+.analogy-card:hover { box-shadow:var(--shadow-md); transform:translateY(-4px); }
+.analogy-card.old { border-top:3px solid #E53E3E; }
+.analogy-card.new { border-top:3px solid var(--success); }
+.analogy-card .a-label { font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:12px; }
+.analogy-card.old .a-label { color:#E53E3E; }
+.analogy-card.new .a-label { color:var(--success); }
+.analogy-card .a-title { font-size:22px; font-weight:800; color:var(--text); margin-bottom:8px; }
+.analogy-card .a-desc { font-size:14px; color:var(--text-light); line-height:1.6; }
+.analogy-card ul { list-style:none; margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+.analogy-card li { display:flex; align-items:flex-start; gap:8px; font-size:13.5px; color:var(--text-light); line-height:1.4; }
+.analogy-card li .dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:6px; }
+.analogy-card.old li .dot { background:#E53E3E; }
+.analogy-card.new li .dot { background:var(--success); }
+.arrow-middle { font-size:32px; text-align:center; color:var(--gray-3); }
+
+/* COMPARISON TABLE */
+.comp-table-wrap { background:white; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-sm); }
+.comp-table { width:100%; border-collapse:collapse; }
+.comp-table thead th { background:var(--dark-2); color:white; padding:14px 20px; text-align:left; font-size:13px; font-weight:700; letter-spacing:.5px; }
+.comp-table thead th:first-child { width:120px; color:var(--secondary); }
+.comp-table tbody tr { transition:var(--tr); cursor:pointer; border-bottom:1px solid var(--gray-2); }
+.comp-table tbody tr:last-child { border-bottom:none; }
+.comp-table tbody tr:hover { background:rgba(0,120,212,.04); }
+.comp-table tbody tr.active { background:rgba(0,120,212,.08); box-shadow:inset 4px 0 0 var(--primary); }
+.comp-table td { padding:16px 20px; font-size:14px; vertical-align:top; line-height:1.55; }
+.comp-table td:first-child { font-weight:700; color:var(--text); white-space:nowrap; }
+.comp-table .old-way { color:#C53030; }
+.comp-table .new-way { color:#276749; }
+.comp-table .tag { display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px; margin-bottom:4px; }
+.comp-table .tag.red { background:#FFF5F5; color:#C53030; }
+.comp-table .tag.green { background:#F0FFF4; color:#276749; }
+
+/* CLICK HINT */
+.click-hint { display:inline-flex; align-items:center; gap:6px; background:rgba(0,120,212,.07); border:1px solid rgba(0,120,212,.15); border-radius:50px; padding:5px 14px; font-size:12px; color:var(--primary); font-weight:500; margin-bottom:16px; animation:subtlePulse 2.5s ease-in-out infinite; }
+@keyframes subtlePulse { 0%,100%{opacity:.7} 50%{opacity:1} }
+
+/* KEY MESSAGE */
+.key-msg { background:linear-gradient(135deg,var(--dark-2),var(--dark)); border-radius:var(--radius); padding:36px; border:1px solid rgba(0,188,242,.2); }
+.key-msg h3 { font-size:18px; font-weight:800; color:white; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+.key-msg p { color:rgba(255,255,255,.75); font-size:15px; line-height:1.75; }
+.key-msg .highlight { color:var(--secondary); font-weight:600; }
+.key-msg .pills { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+.key-msg .pill-item { background:rgba(0,188,242,.12); border:1px solid rgba(0,188,242,.25); border-radius:8px; padding:8px 16px; font-size:13px; color:rgba(255,255,255,.8); font-weight:500; }
+
+/* SALES QUOTE */
+.sales-quote { background:white; border-radius:var(--radius); padding:28px 32px; box-shadow:var(--shadow-sm); border:2px solid rgba(255,185,0,.3); position:relative; overflow:hidden; }
+.sales-quote::before { content:'💬'; position:absolute; top:-10px; right:20px; font-size:60px; opacity:.06; }
+.sales-quote .sq-label { font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+.sales-quote blockquote { font-size:16px; color:var(--text); line-height:1.7; font-style:italic; font-weight:500; }
+
+/* BOTTOM NAV */
+.bottom-nav { display:flex; justify-content:space-between; align-items:center; padding:24px 0 0; border-top:1px solid var(--gray-3); flex-wrap:wrap; gap:12px; margin-top:48px; }
+.bnav-btn { display:flex; align-items:center; gap:10px; padding:12px 22px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; transition:var(--tr); text-decoration:none; border:2px solid var(--gray-3); color:var(--text-light); background:white; }
+.bnav-btn:hover { border-color:var(--primary); color:var(--primary); transform:translateY(-2px); box-shadow:var(--shadow-sm); }
+.bnav-btn.next { background:var(--primary); border-color:var(--primary); color:white; }
+.bnav-btn.next:hover { background:var(--primary-dark); border-color:var(--primary-dark); box-shadow:0 6px 20px rgba(0,120,212,.4); }
+.bnav-center { font-size:13px; color:var(--text-muted); font-weight:500; }
+
+/* REVEAL & ANIM */
+@keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+.reveal { opacity:0; transform:translateY(22px); transition:opacity .5s ease,transform .5s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+
+/* RESPONSIVE */
+@media(max-width:768px) {
+  .top-nav{padding:0 16px;} .nav-module-title{display:none;}
+  .section-hero{padding:90px 16px 56px;} .page{padding:36px 16px 60px;}
+  .analogy-grid{grid-template-columns:1fr;} .arrow-middle{transform:rotate(90deg);}
+  .comp-table thead th:nth-child(2),.comp-table td:nth-child(2){display:none;}
+  .bottom-nav{flex-direction:column;} .bnav-btn{width:100%;justify-content:center;}
+}
+
+/* ===== SECTION IMAGE ===== */
+.section-img-block {
+  text-align: center;
+  margin: 4px 0 8px;
+}
+.section-img-block img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 14px;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.13);
+  display: block;
+  margin: 0 auto;
+}
+.img-caption {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 10px;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+    /* ===== LIGHTBOX ===== */
+    .section-img-block img { cursor:zoom-in; transition:opacity .2s }
+    .section-img-block img:hover { opacity:.88 }
+    .lightbox-overlay {
+      position:fixed; inset:0; z-index:999;
+      background:rgba(5,15,30,.92); backdrop-filter:blur(8px);
+      display:flex; align-items:center; justify-content:center; padding:24px;
+      opacity:0; visibility:hidden;
+      transition:opacity .3s ease, visibility .3s ease;
+    }
+    .lightbox-overlay.open { opacity:1; visibility:visible }
+    .lightbox-img-wrap {
+      position:relative; max-width:90vw; max-height:88vh;
+      transform:scale(.88);
+      transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+    }
+    .lightbox-overlay.open .lightbox-img-wrap { transform:scale(1) }
+    .lightbox-img-wrap img {
+      display:block; max-width:90vw; max-height:82vh;
+      border-radius:12px; box-shadow:0 24px 80px rgba(0,0,0,.6);
+      object-fit:contain; background:#0D1F3C; padding:8px;
+      cursor:default;
+    }
+    .lightbox-caption {
+      text-align:center; margin-top:12px;
+      font-size:13px; color:rgba(255,255,255,.55); font-style:italic;
+    }
+    .lightbox-close {
+      position:absolute; top:-14px; right:-14px;
+      width:36px; height:36px; border-radius:50%;
+      background:rgba(255,255,255,.15); border:none; cursor:pointer;
+      color:white; font-size:18px; display:flex; align-items:center; justify-content:center;
+      transition:background .2s;
+    }
+    .lightbox-close:hover { background:rgba(255,255,255,.28) }
+  </style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div style="display:flex;align-items:center;gap:12px">
+    <a href="index.html" class="nav-back"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Trang chủ</a>
+    <span class="nav-sep">/</span>
+    <span class="nav-module-title">Module 02 · Cloud Computing là gì?</span>
+  </div>
+  <div class="nav-right">
+    <a href="section1.html" class="nav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 01</a>
+    <a href="section3.html" class="nav-btn prim">Module 03 <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+  </div>
+</nav>
+
+<header class="section-hero">
+  <div class="hero-inner">
+    <div class="module-badge">MODULE 02 / 11</div>
+    <h1>☁️ Cloud Computing là gì?</h1>
+    <p class="subtitle">Hiểu đúng từ gốc rễ — để giải thích được cho khách hàng bằng ngôn ngữ kinh doanh, không phải ngôn ngữ kỹ thuật.</p>
+    <div class="hero-meta">
+      <div class="meta-chip">🕐 ~20 phút đọc</div>
+      <div class="meta-chip">📊 Bảng so sánh tương tác</div>
+      <div class="meta-chip">💬 Sales talk track</div>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- ĐỊNH NGHĨA -->
+  <div class="block reveal">
+    <div class="block-title">📌 Định nghĩa cốt lõi</div>
+    <p class="block-sub">Giải thích ngắn gọn để Sales có thể nói lại cho khách hàng trong 30 giây</p>
+    <div class="def-card">
+      <p><strong>Cloud Computing</strong> là mô hình sử dụng tài nguyên CNTT thông qua Internet hoặc kết nối riêng, thay vì doanh nghiệp phải tự mua, lắp đặt và vận hành toàn bộ hạ tầng tại phòng server hoặc data center của mình.</p>
+      <div class="quote-block">
+        ☝️ Trước đây khách hàng phải <strong>tự mua</strong> server, storage, firewall, database, backup, license, data center và đội ngũ vận hành.<br><br>
+        Với Cloud, khách hàng <strong>thuê</strong> những năng lực đó dưới dạng dịch vụ — dùng bao nhiêu trả bấy nhiêu, mở rộng hoặc thu hẹp theo nhu cầu thực tế.
+      </div>
+    </div>
+  </div>
+
+  <!-- IMAGE: Compare On-premises vs Cloud -->
+  <div class="block reveal">
+    <div class="section-img-block">
+      <img src="assets/images/compare-onpremises-cloud.png"
+           alt="So sánh mô hình On-premises truyền thống và Cloud Computing"
+           loading="lazy">
+      <p class="img-caption">📷 So sánh tổng quan: On-premises truyền thống và Cloud Computing</p>
+    </div>
+  </div>
+
+  <!-- SO SÁNH TRỰC QUAN -->
+  <div class="block reveal">
+    <div class="block-title">⚖️ Trước và Sau khi có Cloud</div>
+    <p class="block-sub">Hình dung đơn giản nhất về sự thay đổi mà Cloud mang lại</p>
+    <div class="analogy-grid">
+      <div class="analogy-card old">
+        <div class="a-label">🏢 On-Premises truyền thống</div>
+        <div class="a-title">Tự xây, tự vận hành</div>
+        <div class="a-desc">Như tự mua đất, xây nhà, lo điện nước, sửa chữa...</div>
+        <ul>
+          <li><span class="dot"></span>Mua server vật lý → lắp rack → cáp điện</li>
+          <li><span class="dot"></span>Đầu tư lớn ban đầu (CAPEX)</li>
+          <li><span class="dot"></span>3-5 năm mới nâng cấp phần cứng</li>
+          <li><span class="dot"></span>Phải mua dư tài nguyên cho peak</li>
+          <li><span class="dot"></span>Đội IT lo từ phần cứng đến ứng dụng</li>
+          <li><span class="dot"></span>DR site = đầu tư thêm 1 cơ sở vật lý</li>
+        </ul>
+      </div>
+      <div class="arrow-middle">→</div>
+      <div class="analogy-card new">
+        <div class="a-label">☁️ Cloud Computing</div>
+        <div class="a-title">Thuê, dùng linh hoạt</div>
+        <div class="a-desc">Như thuê văn phòng — chỉ lo việc kinh doanh, không lo cơ sở vật chất</div>
+        <ul>
+          <li><span class="dot"></span>Tạo máy ảo trong vài phút qua portal</li>
+          <li><span class="dot"></span>Không tốn CAPEX, chuyển sang OPEX</li>
+          <li><span class="dot"></span>Nâng cấp tài nguyên ngay khi cần</li>
+          <li><span class="dot"></span>Chỉ trả cho tài nguyên thực sự dùng</li>
+          <li><span class="dot"></span>Đội IT tập trung vào ứng dụng & nghiệp vụ</li>
+          <li><span class="dot"></span>DR = chọn region khác trên cùng Cloud</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- BẢNG SO SÁNH CHI TIẾT -->
+  <div class="block reveal">
+    <div class="block-title">📋 Bảng so sánh chi tiết: On-premises vs Cloud</div>
+    <div class="click-hint">👆 Nhấp vào từng dòng để xem chi tiết</div>
+    <div class="comp-table-wrap">
+      <table class="comp-table" id="compTable">
+        <thead>
+          <tr>
+            <th>Thành phần</th>
+            <th>🏢 On-Premises (Truyền thống)</th>
+            <th>☁️ Cloud Computing</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-detail="server">
+            <td>🖥️ Server</td>
+            <td><span class="tag red">CAPEX</span><br>Mua máy chủ vật lý, lắp vào rack, cáp điện — mất vài tuần đến vài tháng</td>
+            <td><span class="tag green">OPEX</span><br>Tạo máy ảo (VM) trong vài phút, chọn cấu hình phù hợp, dùng đến đâu trả đến đó</td>
+          </tr>
+          <tr data-detail="storage">
+            <td>💾 Storage</td>
+            <td><span class="tag red">Cứng nhắc</span><br>Mua SAN/NAS, gắn disk, mở rộng thủ công — phải mua dư cho tương lai</td>
+            <td><span class="tag green">Linh hoạt</span><br>Object / File / Block storage theo nhu cầu — mở rộng ngay không cần đặt hàng phần cứng</td>
+          </tr>
+          <tr data-detail="database">
+            <td>🗄️ Database</td>
+            <td><span class="tag red">Tự quản lý</span><br>Cài SQL Server/MySQL trên server, tự patching, tự backup, tự HA</td>
+            <td><span class="tag green">Managed</span><br>Dùng managed database service — nhà cung cấp Cloud lo phần nền tảng, patch, backup, HA</td>
+          </tr>
+          <tr data-detail="backup">
+            <td>🔄 Backup</td>
+            <td><span class="tag red">Tốn kém</span><br>Mua thiết bị backup, phần mềm, băng từ, storage backup riêng — vận hành phức tạp</td>
+            <td><span class="tag green">Đơn giản</span><br>Dùng dịch vụ backup, snapshot, replication — cấu hình policy, Cloud tự động chạy</td>
+          </tr>
+          <tr data-detail="dr">
+            <td>🛡️ DR Site</td>
+            <td><span class="tag red">Rất tốn kém</span><br>Đầu tư site dự phòng riêng biệt — server, network, licensing, nhân sự vận hành hai nơi</td>
+            <td><span class="tag green">Tiết kiệm</span><br>Dùng vùng/region thứ hai của Cloud — chỉ trả thêm cho tài nguyên DR, không xây thêm data center</td>
+          </tr>
+          <tr data-detail="security">
+            <td>🔒 Security</td>
+            <td><span class="tag red">Tự đảm bảo</span><br>Tự mua firewall, WAF, SIEM, IAM, Key Management — cập nhật và vận hành thủ công</td>
+            <td><span class="tag green">Chia sẻ</span><br>Dùng security service của Cloud kết hợp chính sách nội bộ — Cloud lo bảo mật nền tảng vật lý</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- detail panel -->
+    <div id="detailPanel" style="display:none; margin-top:16px; padding:20px 24px; background:white; border-radius:var(--radius-sm); border-left:4px solid var(--primary); box-shadow:var(--shadow-sm); animation:fadeUp .3s ease;">
+      <div id="detailText" style="font-size:14px; color:var(--text-light); line-height:1.7;"></div>
+    </div>
+  </div>
+
+  <!-- KEY MESSAGE CHO SALES -->
+  <div class="block reveal">
+    <div class="block-title">🚀 Thông điệp Sales cần nhớ</div>
+    <div class="key-msg">
+      <h3>☁️ Cloud không chỉ là "đưa server lên Internet"</h3>
+      <p>
+        Cloud là cách doanh nghiệp <span class="highlight">tiêu thụ CNTT như một dịch vụ</span> — giúp tăng tốc triển khai, giảm đầu tư ban đầu, tăng khả năng mở rộng và tiếp cận nhanh các công nghệ mới mà không cần xây dựng hạ tầng từ đầu.
+      </p>
+      <div class="pills">
+        <div class="pill-item">⚡ Tăng tốc triển khai</div>
+        <div class="pill-item">💰 Giảm CAPEX</div>
+        <div class="pill-item">📈 Mở rộng linh hoạt</div>
+        <div class="pill-item">🤖 Tiếp cận AI &amp; Analytics</div>
+        <div class="pill-item">🔒 Bảo mật nền tảng</div>
+        <div class="pill-item">🌍 Hiện diện toàn cầu</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SALES QUOTE -->
+  <div class="block reveal">
+    <div class="block-title">💬 Khi gặp khách hàng, bạn có thể nói...</div>
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <div class="sales-quote">
+        <div class="sq-label">💬 Với CFO / Giám đốc tài chính</div>
+        <blockquote>"Cloud giống như thuê văn phòng thay vì mua tòa nhà — anh/chị chỉ trả cho không gian thực sự sử dụng, không phải đầu tư trước hàng tỷ đồng cho phần cứng mà 2 năm sau có thể lỗi thời."</blockquote>
+      </div>
+      <div class="sales-quote">
+        <div class="sq-label">💬 Với CTO / IT Manager</div>
+        <blockquote>"Thay vì mất 2-3 tuần để mua server, chờ giao hàng, lắp rack, cài OS — với Cloud đội kỹ thuật có thể tạo môi trường mới trong 10 phút. Điều đó ảnh hưởng trực tiếp đến tốc độ ra sản phẩm của công ty."</blockquote>
+      </div>
+      <div class="sales-quote">
+        <div class="sq-label">💬 Với Business Owner / CEO</div>
+        <blockquote>"Cloud giúp anh/chị thử nghiệm sản phẩm mới với chi phí thấp, thất bại nhanh và tối ưu nhanh — thay vì phải đầu tư lớn trước khi biết thị trường phản hồi như thế nào."</blockquote>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav reveal">
+    <a href="section1.html" class="bnav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 01: Mục tiêu</a>
+    <span class="bnav-center">Module 02 / 11</span>
+    <a href="section3.html" class="bnav-btn next">Module 03: Mô hình dịch vụ <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+  </div>
+
+</main>
+
+  <!-- LIGHTBOX OVERLAY -->
+  <div class="lightbox-overlay" id="lightboxOverlay">
+    <div class="lightbox-img-wrap">
+      <button class="lightbox-close" onclick="closeLightbox()" aria-label="Đóng">✕</button>
+      <img src="" alt="" id="lbImg">
+      <div class="lightbox-caption" id="lbCaption"></div>
+    </div>
+  </div>
+
+<script>
+// Scroll reveal
+const io = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => { if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'),i*90); io.unobserve(e.target); } });
+}, {threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// Interactive comparison table
+const details = {
+  server: "🖥️ <strong>Server</strong>: Trong mô hình on-premises, doanh nghiệp phải đặt hàng server, chờ giao hàng (có thể vài tuần), lắp rack, kéo cáp điện, cáp mạng, cài hệ điều hành rồi mới dùng được. Với Cloud, người dùng chỉ cần chọn cấu hình VM trên portal, click Deploy — trong 5-10 phút đã có server sẵn sàng. Không cần nhập khẩu hardware, không cần kho lưu trữ, không cần kỹ thuật viên vật lý.",
+  storage: "💾 <strong>Storage</strong>: On-premises phải tính toán dung lượng cho 3-5 năm tới và mua dư — tốn tiền nhưng vẫn lo thiếu. Cloud storage tính theo GB/TB thực dùng, tăng/giảm không cần thủ tục. Đặc biệt Object Storage như Azure Blob, AWS S3 có thể lưu petabyte dữ liệu mà không cần lo infrastructure.",
+  database: "🗄️ <strong>Database</strong>: Tự vận hành database on-premises nghĩa là đội IT phải: cài đặt, patching, backup định kỳ, cấu hình replication, xử lý khi disk đầy, upgrade phiên bản... Managed Database Service trên Cloud (như Azure SQL, AWS RDS) lo toàn bộ phần đó — đội IT chỉ cần quản lý schema, query và dữ liệu.",
+  backup: "🔄 <strong>Backup</strong>: Backup truyền thống cần đầu tư: thiết bị backup chuyên dụng, phần mềm backup có license, băng từ hoặc storage offline, lịch backup thủ công. Cloud backup cho phép đặt policy một lần, hệ thống tự chạy — dữ liệu được snapshot và replicate tự động theo lịch, có thể restore về bất kỳ thời điểm nào trong retention period.",
+  dr: "🛡️ <strong>DR Site</strong>: Xây DR site truyền thống nghĩa là đầu tư gần như double: thêm một tập server, storage, network, license, không gian datacenter và nhân sự vận hành. Cloud DR chỉ cần replicate workload sang region thứ hai — chỉ trả chi phí storage/VM khi cần failover, không cần xây cơ sở vật chất riêng.",
+  security: "🔒 <strong>Security</strong>: On-premises phải tự mua và vận hành từng lớp bảo mật: firewall vật lý, WAF, SIEM, IDS/IPS, IAM platform, HSM cho key management... Cloud cung cấp nhiều service bảo mật sẵn có theo mô hình shared responsibility: nhà cung cấp Cloud bảo vệ nền tảng vật lý và hypervisor, khách hàng chịu trách nhiệm cấu hình quyền truy cập, mã hóa dữ liệu và bảo mật ứng dụng chạy trên đó."
+};
+
+// Table row click handler
+const rows = document.querySelectorAll('#compTable tbody tr[data-detail]');
+rows.forEach(row => {
+  row.addEventListener('click', function() {
+    const key = this.dataset.detail;
+    rows.forEach(r => r.classList.remove('active'));
+    this.classList.add('active');
+    const panel = document.getElementById('detailPanel');
+    const text  = document.getElementById('detailText');
+    if (panel && text && details[key]) {
+      text.innerHTML = details[key];
+      panel.style.display = 'block';
+    }
+  });
+});
+
+    // ===== LIGHTBOX =====
+    const lbOverlay = document.getElementById('lightboxOverlay');
+    const lbImg     = document.getElementById('lbImg');
+    const lbCaption = document.getElementById('lbCaption');
+    function openLightbox(src, alt) {
+      lbImg.src = src;
+      lbCaption.textContent = alt || '';
+      lbOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      lbOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+      setTimeout(() => { lbImg.src = ''; }, 350);
+    }
+    document.querySelectorAll('.section-img-block img, .module-img-wrap img').forEach(img => {
+      img.addEventListener('click', () => openLightbox(img.src, img.alt));
+    });
+    if (lbOverlay) {
+      lbOverlay.addEventListener('click', e => { if (e.target === lbOverlay) closeLightbox(); });
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+  </script>
+</body>
+</html>                                                                                                                                                                                                                                                                                                                                      

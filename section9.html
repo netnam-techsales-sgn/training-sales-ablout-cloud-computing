@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cấu trúc trình bày 15 phút | Module 09</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      --primary: #0078D4;
+      --primary-dark: #005A9E;
+      --primary-light: #50B0F0;
+      --secondary: #00BCF2;
+      --accent: #FFB900;
+      --success: #107C10;
+      --danger: #D83B01;
+      --dark: #050F1E;
+      --dark-2: #0D1F3C;
+      --white: #fff;
+      --gray-1: #F5F8FC;
+      --gray-2: #EEF2F7;
+      --gray-3: #D1DCE8;
+      --text: #1A202C;
+      --text-light: #4A5568;
+      --text-muted: #718096;
+      --shadow-sm: 0 2px 12px rgba(0,120,212,.07);
+      --shadow-md: 0 8px 32px rgba(0,120,212,.13);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --tr: all .3s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ===== RESET ===== */
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box }
+    html { scroll-behavior:smooth }
+    body {
+      font-family:'Inter',sans-serif;
+      background:var(--gray-1);
+      color:var(--text);
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    /* ===== TOP NAV ===== */
+    .top-nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      background:rgba(5,15,30,.92);
+      backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(255,255,255,.07);
+      padding:0 32px; height:60px;
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+    }
+    .nav-left { display:flex; align-items:center; gap:12px }
+    .nav-back {
+      display:flex; align-items:center; gap:8px;
+      color:rgba(255,255,255,.6); text-decoration:none;
+      font-size:14px; font-weight:500; padding:6px 12px; border-radius:8px;
+      transition:var(--tr);
+    }
+    .nav-back:hover { color:white; background:rgba(255,255,255,.08) }
+    .nav-sep { color:rgba(255,255,255,.2) }
+    .nav-title { color:rgba(255,255,255,.75); font-size:14px; font-weight:600 }
+    .nav-right { display:flex; gap:8px }
+    .nav-btn {
+      display:flex; align-items:center; gap:6px;
+      color:rgba(255,255,255,.55); text-decoration:none;
+      font-size:13px; font-weight:500; padding:7px 14px; border-radius:8px;
+      border:1px solid rgba(255,255,255,.1); transition:var(--tr);
+    }
+    .nav-btn:hover { color:white; border-color:rgba(255,255,255,.25); background:rgba(255,255,255,.07) }
+    .nav-btn.prim { background:var(--primary); border-color:var(--primary); color:white }
+    .nav-btn.prim:hover { background:var(--primary-dark) }
+
+    /* ===== HERO ===== */
+    .hero {
+      position:relative;
+      background:linear-gradient(140deg,#050F1E 0%,#0D1F3C 50%,#0A3070 100%);
+      padding:100px 24px 72px; overflow:hidden; text-align:center;
+    }
+    .hero::before {
+      content:''; position:absolute; inset:0;
+      background-image:linear-gradient(rgba(0,120,212,.05) 1px,transparent 1px),
+                       linear-gradient(90deg,rgba(0,120,212,.05) 1px,transparent 1px);
+      background-size:50px 50px;
+    }
+    .hero::after {
+      content:''; position:absolute; inset:0;
+      background:radial-gradient(ellipse 600px 400px at 60% 40%,rgba(0,120,212,.22) 0%,transparent 70%),
+                 radial-gradient(ellipse 400px 300px at 20% 65%,rgba(0,188,242,.13) 0%,transparent 60%);
+      pointer-events:none;
+    }
+    .hero-inner { position:relative; z-index:2; max-width:760px; margin:0 auto }
+    .module-badge {
+      display:inline-flex; align-items:center; gap:8px;
+      background:rgba(0,120,212,.2); border:1px solid rgba(0,188,242,.4);
+      border-radius:50px; padding:7px 18px; font-size:12px; font-weight:700;
+      letter-spacing:1px; color:#7DD3FC; margin-bottom:28px; text-transform:uppercase;
+      animation:fadeUp .6s ease both;
+    }
+    .hero h1 {
+      font-size:clamp(28px,4.5vw,52px); font-weight:900; letter-spacing:-1.5px;
+      line-height:1.1; margin-bottom:20px;
+      background:linear-gradient(90deg,#fff 0%,#A8D4F5 60%,#00BCF2 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      animation:fadeUp .6s ease .1s both;
+    }
+    .hero .subtitle {
+      font-size:17px; color:rgba(255,255,255,.6); line-height:1.65;
+      margin-bottom:40px; animation:fadeUp .6s ease .2s both;
+    }
+    .hero-meta {
+      display:flex; align-items:center; justify-content:center;
+      gap:12px; flex-wrap:wrap; animation:fadeUp .6s ease .3s both;
+    }
+    .meta-chip {
+      display:flex; align-items:center; gap:7px;
+      background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);
+      border-radius:50px; padding:8px 18px; font-size:13px;
+      color:rgba(255,255,255,.7); font-weight:500;
+    }
+
+    /* ===== PAGE CONTAINER ===== */
+    .page { max-width:1100px; margin:0 auto; padding:56px 24px 80px }
+    .block { margin-bottom:52px }
+    .block-label {
+      font-size:11px; font-weight:800; letter-spacing:1.2px;
+      text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;
+    }
+    .block-title { font-size:22px; font-weight:800; color:var(--text); margin-bottom:8px; letter-spacing:-.5px }
+    .block-sub { font-size:14px; color:var(--text-muted); margin-bottom:24px; line-height:1.6 }
+
+    /* ===== INTRO BOX ===== */
+    .intro-box {
+      background:white; border-radius:var(--radius); padding:28px 32px;
+      box-shadow:var(--shadow-sm); border-left:5px solid var(--primary);
+      margin-bottom:36px;
+    }
+    .intro-box p { font-size:15px; color:var(--text-light); line-height:1.75; margin-bottom:20px }
+    .intro-box p:last-child { margin-bottom:0 }
+    .intro-box strong { color:var(--primary-dark) }
+
+    /* Timeline bar */
+    .timeline-bar {
+      display:flex; align-items:center; gap:0;
+      background:var(--gray-2); border-radius:50px;
+      padding:6px 8px; overflow:hidden;
+    }
+    .tl-node {
+      flex:1; display:flex; flex-direction:column; align-items:center;
+      gap:4px; padding:6px 4px; border-radius:8px;
+      cursor:pointer; transition:background .2s;
+      position:relative;
+    }
+    .tl-node:hover { background:rgba(0,120,212,.08) }
+    .tl-dot {
+      width:28px; height:28px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:11px; font-weight:800; color:white; flex-shrink:0;
+    }
+    .tl-label {
+      font-size:10px; font-weight:600; color:var(--text-muted);
+      text-align:center; line-height:1.3;
+    }
+    .tl-time {
+      font-size:10px; font-weight:700; color:var(--text-muted);
+    }
+    /* Connector line between nodes */
+    .tl-line {
+      width:16px; height:2px; background:var(--gray-3); flex-shrink:0;
+    }
+
+    /* ===== SLIDE CARDS (Driver style) ===== */
+    .slides-grid { display:flex; flex-direction:column; gap:14px }
+
+    .slide-card {
+      background:white; border-radius:var(--radius); box-shadow:var(--shadow-sm);
+      overflow:hidden; border:2px solid transparent;
+      transition:box-shadow .3s, border-color .3s;
+    }
+    .slide-card.active { box-shadow:var(--shadow-md) }
+
+    .slide-header {
+      display:flex; align-items:center; gap:18px;
+      padding:20px 28px; cursor:pointer; user-select:none;
+      transition:background .2s;
+    }
+    .slide-header:hover { background:var(--gray-1) }
+    .slide-card.active .slide-header { background:var(--gray-1) }
+
+    .slide-num-box {
+      width:54px; height:54px; border-radius:14px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      flex-shrink:0; color:white; gap:1px;
+    }
+    .slide-num-label { font-size:9px; font-weight:700; letter-spacing:.5px; opacity:.8; text-transform:uppercase }
+    .slide-num-val { font-size:22px; font-weight:900; line-height:1 }
+
+    /* Slide colors */
+    .slide-card[data-slide="1"] .slide-num-box { background:linear-gradient(135deg,#0078D4,#00BCF2) }
+    .slide-card[data-slide="2"] .slide-num-box { background:linear-gradient(135deg,#E67E22,#F39C12) }
+    .slide-card[data-slide="3"] .slide-num-box { background:linear-gradient(135deg,#107C10,#16A34A) }
+    .slide-card[data-slide="4"] .slide-num-box { background:linear-gradient(135deg,#8764B8,#A78BFA) }
+    .slide-card[data-slide="5"] .slide-num-box { background:linear-gradient(135deg,#D83B01,#F97316) }
+    .slide-card[data-slide="6"] .slide-num-box { background:linear-gradient(135deg,#00897B,#2DD4BF) }
+    .slide-card[data-slide="7"] .slide-num-box { background:linear-gradient(135deg,#FFB900,#FBBF24) }
+
+    .slide-meta { flex:1 }
+    .slide-tag {
+      font-size:11px; font-weight:800; letter-spacing:.8px;
+      text-transform:uppercase; margin-bottom:4px;
+    }
+    .slide-card[data-slide="1"] .slide-tag { color:#0078D4 }
+    .slide-card[data-slide="2"] .slide-tag { color:#C05621 }
+    .slide-card[data-slide="3"] .slide-tag { color:#107C10 }
+    .slide-card[data-slide="4"] .slide-tag { color:#8764B8 }
+    .slide-card[data-slide="5"] .slide-tag { color:#D83B01 }
+    .slide-card[data-slide="6"] .slide-tag { color:#00897B }
+    .slide-card[data-slide="7"] .slide-tag { color:#8a6000 }
+
+    .slide-title { font-size:17px; font-weight:800; color:var(--text); line-height:1.3 }
+    .slide-brief { font-size:13px; color:var(--text-muted); margin-top:3px }
+
+    .slide-time-badge {
+      background:var(--gray-2); border-radius:20px; padding:5px 12px;
+      font-size:12px; font-weight:700; color:var(--text-muted); flex-shrink:0;
+    }
+    .slide-toggle { font-size:18px; color:var(--text-muted); transition:transform .3s; flex-shrink:0 }
+    .slide-card.active .slide-toggle { transform:rotate(180deg) }
+
+    /* Slide body */
+    .slide-body {
+      max-height:0; overflow:hidden;
+      transition:max-height .5s cubic-bezier(.4,0,.2,1), opacity .35s ease;
+      opacity:0;
+    }
+    .slide-card.active .slide-body { max-height:1400px; opacity:1 }
+    .slide-body-inner { padding:0 28px 28px }
+
+    /* Key message box */
+    .key-msg {
+      background:rgba(0,120,212,.06); border:1px solid rgba(0,120,212,.15);
+      border-left:4px solid var(--primary);
+      border-radius:10px; padding:14px 18px; margin-bottom:18px;
+    }
+    .key-msg-label {
+      font-size:11px; font-weight:800; letter-spacing:.8px;
+      text-transform:uppercase; color:var(--primary-dark); margin-bottom:8px;
+      display:flex; align-items:center; gap:6px;
+    }
+    .key-msg p { font-size:14px; color:var(--text); line-height:1.7; font-style:italic; font-weight:500 }
+
+    /* Content points */
+    .content-points { margin-bottom:18px }
+    .content-points-label {
+      font-size:11px; font-weight:800; letter-spacing:.8px;
+      text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;
+    }
+    .point-list { display:flex; flex-direction:column; gap:8px }
+    .point-item {
+      display:flex; align-items:flex-start; gap:10px;
+      padding:10px 14px; background:var(--gray-1); border-radius:8px;
+      font-size:14px; color:var(--text-light); line-height:1.5;
+    }
+    .point-icon { flex-shrink:0; margin-top:1px }
+
+    /* Compare row (for slide 2) */
+    .compare-row {
+      display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px;
+    }
+    .cmp-col { border-radius:10px; padding:16px 18px }
+    .cmp-col.onprem { background:#FEF2F2; border:1px solid #FCA5A5 }
+    .cmp-col.cloud  { background:#F0FDF4; border:1px solid #86EFAC }
+    .cmp-col-title {
+      font-size:11px; font-weight:800; letter-spacing:.8px;
+      text-transform:uppercase; margin-bottom:10px;
+      display:flex; align-items:center; gap:6px;
+    }
+    .cmp-col.onprem .cmp-col-title { color:#991B1B }
+    .cmp-col.cloud  .cmp-col-title { color:#166534 }
+    .cmp-list { list-style:none; display:flex; flex-direction:column; gap:7px }
+    .cmp-list li {
+      display:flex; align-items:flex-start; gap:7px;
+      font-size:13px; color:var(--text-light); line-height:1.5;
+    }
+    .cmp-list li::before { flex-shrink:0; margin-top:1px; font-size:12px }
+    .cmp-col.onprem .cmp-list li::before { content:'✕'; color:#DC2626 }
+    .cmp-col.cloud  .cmp-list li::before { content:'✓'; color:#16A34A }
+
+    /* Service model grid (slide 3) */
+    .svc-model-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:18px }
+    .svc-model-card { border-radius:10px; padding:16px; text-align:center }
+    .svc-model-card.iaas { background:rgba(230,126,34,.08); border:1px solid rgba(230,126,34,.25) }
+    .svc-model-card.paas { background:rgba(0,120,212,.08); border:1px solid rgba(0,120,212,.25) }
+    .svc-model-card.saas { background:rgba(16,124,16,.08); border:1px solid rgba(16,124,16,.25) }
+    .svc-model-icon { font-size:28px; margin-bottom:8px }
+    .svc-model-name { font-size:18px; font-weight:900; margin-bottom:4px }
+    .svc-model-card.iaas .svc-model-name { color:#C05621 }
+    .svc-model-card.paas .svc-model-name { color:#0078D4 }
+    .svc-model-card.saas .svc-model-name { color:#107C10 }
+    .svc-model-full { font-size:12px; font-weight:700; color:var(--text-muted); margin-bottom:6px }
+    .svc-model-desc { font-size:13px; color:var(--text-light); line-height:1.5 }
+
+    /* Layer grid (slide 4) */
+    .layer-grid { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px }
+    .layer-chip {
+      display:flex; align-items:center; gap:7px;
+      background:white; border:1px solid var(--gray-3);
+      border-radius:8px; padding:8px 14px;
+      font-size:13px; font-weight:600; color:var(--text-light);
+    }
+
+    /* Mapping table (slide 6) */
+    .map-table-wrap { overflow-x:auto; margin-bottom:18px }
+    .map-table { width:100%; border-collapse:collapse; font-size:13px; min-width:500px }
+    .map-table thead th {
+      padding:10px 14px; text-align:left; font-size:11px; font-weight:800;
+      letter-spacing:.6px; text-transform:uppercase;
+      color:var(--text-muted); background:var(--gray-1); border-bottom:1px solid var(--gray-2);
+    }
+    .map-table thead th:first-child { width:20% }
+    .map-table thead th:nth-child(2) { width:27%; color:#0078D4 }
+    .map-table thead th:nth-child(3) { width:27%; color:#E67E22 }
+    .map-table thead th:nth-child(4) { width:26%; color:#107C10 }
+    .map-table tbody tr { border-bottom:1px solid var(--gray-2); transition:background .2s }
+    .map-table tbody tr:hover { background:rgba(0,120,212,.03) }
+    .map-table td { padding:10px 14px; vertical-align:middle; line-height:1.5; color:var(--text-light) }
+    .map-table td:first-child { font-weight:700; color:var(--text); font-size:13px }
+
+    /* ISP Box */
+
+    /* Sales Tip */
+    .sales-tip {
+      background:linear-gradient(135deg,rgba(255,185,0,.10),rgba(255,185,0,.05));
+      border:1px solid rgba(255,185,0,.3); border-left:4px solid var(--accent);
+      border-radius:10px; padding:16px 20px;
+    }
+    .sales-tip-label {
+      font-size:11px; font-weight:800; letter-spacing:.8px;
+      text-transform:uppercase; color:#8a6000; margin-bottom:8px;
+      display:flex; align-items:center; gap:6px;
+    }
+    .sales-tip p { font-size:14px; color:var(--text); line-height:1.7 }
+    .sales-tip strong { color:var(--primary-dark) }
+
+    /* Discovery question highlight (slide 7) */
+    .discovery-q {
+      background:linear-gradient(135deg,rgba(0,120,212,.08),rgba(0,188,242,.05));
+      border:2px solid rgba(0,120,212,.2);
+      border-radius:12px; padding:20px 24px; margin-bottom:18px; text-align:center;
+    }
+    .discovery-q-label {
+      font-size:11px; font-weight:800; letter-spacing:.8px;
+      text-transform:uppercase; color:var(--primary-dark); margin-bottom:12px;
+    }
+    .discovery-q blockquote {
+      font-size:16px; font-weight:600; color:var(--text); line-height:1.7; font-style:italic;
+    }
+
+    /* ===== SUMMARY CARD ===== */
+    .summary-card {
+      background:linear-gradient(135deg,var(--dark) 0%,var(--dark-2) 100%);
+      border-radius:var(--radius); padding:40px; color:white;
+      border:1px solid rgba(255,255,255,.07);
+    }
+    .summary-card h3 { font-size:20px; font-weight:800; margin-bottom:8px; letter-spacing:-.3px }
+    .summary-sub { font-size:14px; color:rgba(255,255,255,.55); margin-bottom:28px; line-height:1.6 }
+    .slide-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:28px }
+    .slide-chip {
+      display:flex; align-items:center; gap:8px;
+      background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);
+      border-radius:50px; padding:7px 14px; font-size:13px; color:rgba(255,255,255,.8);
+      font-weight:500;
+    }
+    .slide-chip .chip-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0 }
+    .summary-takeaway {
+      background:rgba(0,120,212,.2); border:1px solid rgba(0,188,242,.25);
+      border-radius:10px; padding:16px 20px;
+      font-size:14px; color:rgba(255,255,255,.75); line-height:1.7; font-style:italic;
+    }
+
+    /* ===== BOTTOM NAV ===== */
+    .bottom-nav {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:24px 0 0; border-top:1px solid var(--gray-3);
+      flex-wrap:wrap; gap:12px; margin-top:48px;
+    }
+    .bnav-btn {
+      display:flex; align-items:center; gap:10px; padding:12px 22px;
+      border-radius:10px; font-size:14px; font-weight:600; cursor:pointer;
+      transition:var(--tr); text-decoration:none;
+      border:2px solid var(--gray-3); color:var(--text-light); background:white;
+    }
+    .bnav-btn:hover { border-color:var(--primary); color:var(--primary); transform:translateY(-2px); box-shadow:var(--shadow-sm) }
+    .bnav-btn.next { background:var(--primary); border-color:var(--primary); color:white }
+    .bnav-btn.next:hover { background:var(--primary-dark); box-shadow:0 6px 20px rgba(0,120,212,.4) }
+    .bnav-center { font-size:13px; color:var(--text-muted); font-weight:500 }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(18px) }
+      to   { opacity:1; transform:translateY(0) }
+    }
+    .reveal { opacity:0; transform:translateY(22px); transition:opacity .5s ease,transform .5s ease }
+    .reveal.visible { opacity:1; transform:translateY(0) }
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:768px) {
+      .top-nav { padding:0 16px }
+      .nav-title { display:none }
+      .hero { padding:90px 16px 56px }
+      .page { padding:36px 16px 60px }
+      .slide-header { padding:16px 18px }
+      .slide-body-inner { padding:0 18px 20px }
+      .compare-row { grid-template-columns:1fr }
+      .svc-model-grid { grid-template-columns:1fr }
+      .slide-time-badge { display:none }
+      .tl-label { display:none }
+      .bottom-nav { flex-direction:column }
+      .bnav-btn { width:100%; justify-content:center }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAV -->
+  <nav class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-back"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Trang chủ</a>
+      <span class="nav-sep">/</span>
+      <span class="nav-title">Module 09 · Cấu trúc trình bày 15 phút</span>
+    </div>
+    <div class="nav-right">
+      <a href="section8.html" class="nav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 08</a>
+      <a href="section10.html" class="nav-btn prim">Module 10 <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="module-badge">MODULE 09 / 11</div>
+      <h1>🎤 Cấu trúc trình bày 15 phút</h1>
+      <p class="subtitle">
+        Một bài pitch Cloud hiệu quả không cần 50 slide — chỉ cần 7 slide đúng thứ tự,
+        đúng thông điệp và kết thúc bằng câu hỏi khơi gợi nhu cầu.
+      </p>
+      <div class="hero-meta">
+        <span class="meta-chip">⏱ 15 phút · 7 slides</span>
+        <span class="meta-chip">🎯 Dùng cho buổi gặp đầu tiên</span>
+        <span class="meta-chip">💬 Kèm Sales tip cho từng slide</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="page">
+
+    <!-- INTRO BOX với timeline -->
+    <div class="intro-box reveal">
+      <p>
+        Đây là <strong>cấu trúc 7 slide cho buổi gặp đầu tiên với khách hàng</strong> — phù hợp khi
+        khách hàng chưa hiểu rõ Cloud hoặc đang ở giai đoạn khảo sát. Mục tiêu không phải
+        là bán ngay, mà là <strong>tạo sự hiểu biết chung và mở ra cuộc trò chuyện về nhu cầu cụ thể</strong>.
+      </p>
+      <!-- Timeline bar -->
+      <div class="timeline-bar">
+        <div class="tl-node" onclick="openSlide(1)">
+          <div class="tl-dot" style="background:#0078D4">1</div>
+          <div class="tl-label">Cloud là gì?</div>
+          <div class="tl-time">~2'</div>
+        </div>
+        <div class="tl-line"></div>
+        <div class="tl-node" onclick="openSlide(2)">
+          <div class="tl-dot" style="background:#E67E22">2</div>
+          <div class="tl-label">On-prem→Cloud</div>
+          <div class="tl-time">~2'</div>
+        </div>
+        <div class="tl-line"></div>
+        <div class="tl-node" onclick="openSlide(3)">
+          <div class="tl-dot" style="background:#107C10">3</div>
+          <div class="tl-label">3 mô hình</div>
+          <div class="tl-time">~2'</div>
+        </div>
+        <div class="tl-line"></div>
+        <div class="tl-node" onclick="openSlide(4)">
+          <div class="tl-dot" style="background:#8764B8">4</div>
+          <div class="tl-label">Các lớp DV</div>
+          <div class="tl-time">~2'</div>
+        </div>
+        <div class="tl-line"></div>
+        <div class="tl-node" onclick="openSlide(5)">
+          <div class="tl-dot" style="background:#D83B01">5</div>
+          <div class="tl-label">Vì sao Cloud?</div>
+          <div class="tl-time">~2'</div>
+        </div>
+        <div class="tl-line"></div>
+        <div class="tl-node" onclick="openSlide(6)">
+          <div class="tl-dot" style="background:#00897B">6</div>
+          <div class="tl-label">Mapping DV</div>
+          <div class="tl-time">~2'</div>
+        </div>
+        <div class="tl-line"></div>
+        <div class="tl-node" onclick="openSlide(7)">
+          <div class="tl-dot" style="background:#FFB900">7</div>
+          <div class="tl-label">Discovery</div>
+          <div class="tl-time">~1'</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE CARDS -->
+    <div class="block reveal">
+      <div class="block-label">7 slides · 15 phút</div>
+      <div class="block-title">Chi tiết từng slide</div>
+      <div class="block-sub">Click vào từng slide để xem nội dung, gợi ý dẫn dắt</div>
+
+      <div class="slides-grid">
+
+        <!-- SLIDE 1: Cloud Computing là gì? -->
+        <div class="slide-card" data-slide="1" id="slide-card-1">
+          <div class="slide-header">
+            <div class="slide-num-box">
+              <span class="slide-num-label">Slide</span>
+              <span class="slide-num-val">1</span>
+            </div>
+            <div class="slide-meta">
+              <div class="slide-tag">Mở đầu · Định nghĩa</div>
+              <div class="slide-title">Cloud Computing là gì?</div>
+              <div class="slide-brief">Đặt nền tảng chung trước khi đi vào chi tiết</div>
+            </div>
+            <span class="slide-time-badge">~2 phút</span>
+            <span class="slide-toggle">▼</span>
+          </div>
+          <div class="slide-body">
+            <div class="slide-body-inner">
+              <div class="key-msg">
+                <div class="key-msg-label">🎯 Thông điệp chính</div>
+                <p>"Cloud là cách tiêu thụ hạ tầng và nền tảng CNTT dưới dạng dịch vụ — dùng theo nhu cầu, mở rộng linh hoạt và thanh toán theo mức sử dụng."</p>
+              </div>
+
+              <div class="content-points">
+                <div class="content-points-label">📌 Điểm truyền đạt</div>
+                <div class="point-list">
+                  <div class="point-item"><span class="point-icon">🔵</span>Cloud không phải một sản phẩm cụ thể — đó là mô hình tiêu thụ CNTT</div>
+                  <div class="point-item"><span class="point-icon">🔵</span>Giống như điện, nước: dùng bao nhiêu trả bấy nhiêu, không cần tự xây nhà máy điện</div>
+                  <div class="point-item"><span class="point-icon">🔵</span>Ba đặc điểm cốt lõi: on-demand, elastic, pay-as-you-go</div>
+                </div>
+              </div>
+
+              <div class="sales-tip">
+                <div class="sales-tip-label">💬 Gợi ý dẫn sang slide tiếp theo</div>
+                <p>"Để hiểu rõ hơn sự khác biệt, mình cùng xem Cloud so sánh với môi trường on-premises hiện tại như thế nào nhé."</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: Từ On-premises sang Cloud -->
+        <div class="slide-card" data-slide="2" id="slide-card-2">
+          <div class="slide-header">
+            <div class="slide-num-box">
+              <span class="slide-num-label">Slide</span>
+              <span class="slide-num-val">2</span>
+            </div>
+            <div class="slide-meta">
+              <div class="slide-tag">So sánh · CAPEX vs OPEX</div>
+              <div class="slide-title">Từ On-premises sang Cloud</div>
+              <div class="slide-brief">Làm rõ sự khác biệt cốt lõi giữa hai mô hình vận hành</div>
+            </div>
+            <span class="slide-time-badge">~2 phút</span>
+            <span class="slide-toggle">▼</span>
+          </div>
+          <div class="slide-body">
+            <div class="slide-body-inner">
+              <div class="key-msg">
+                <div class="key-msg-label">🎯 Thông điệp chính</div>
+                <p>"On-premises: mua trước, triển khai lâu, tự vận hành toàn bộ. Cloud: thuê dịch vụ, triển khai nhanh, mở rộng linh hoạt, có nhiều dịch vụ managed sẵn."</p>
+              </div>
+
+              <div class="compare-row">
+                <div class="cmp-col onprem">
+                  <div class="cmp-col-title">🏢 On-premises</div>
+                  <ul class="cmp-list">
+                    <li>Mua phần cứng trước khi dùng</li>
+                    <li>Triển khai mất nhiều tuần đến nhiều tháng</li>
+                    <li>Tự quản lý OS, bảo mật, cập nhật</li>
+                    <li>Tài nguyên cố định, khó scale nhanh</li>
+                    <li>Chi phí vận hành liên tục (điện, nhân sự, DC)</li>
+                  </ul>
+                </div>
+                <div class="cmp-col cloud">
+                  <div class="cmp-col-title">☁️ Cloud</div>
+                  <ul class="cmp-list">
+                    <li>Thuê dịch vụ, provisioning trong vài phút</li>
+                    <li>Triển khai nhanh, go-live đúng deadline</li>
+                    <li>Nhiều dịch vụ managed: DB, monitoring, backup</li>
+                    <li>Scale up/down theo nhu cầu thực tế</li>
+                    <li>Chỉ trả cho những gì thực sự dùng</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="sales-tip">
+                <div class="sales-tip-label">💬 Gợi ý dẫn sang slide tiếp theo</div>
+                <p>"Trong Cloud có nhiều cách 'thuê dịch vụ' ở các mức độ khác nhau — từ thuê hạ tầng thuần túy đến thuê phần mềm hoàn chỉnh. Đó là 3 mô hình dịch vụ chúng ta sẽ xem tiếp."</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 3: Ba mô hình dịch vụ -->
+        <div class="slide-card" data-slide="3" id="slide-card-3">
+          <div class="slide-header">
+            <div class="slide-num-box">
+              <span class="slide-num-label">Slide</span>
+              <span class="slide-num-val">3</span>
+            </div>
+            <div class="slide-meta">
+              <div class="slide-tag">Kiến thức nền · IaaS / PaaS / SaaS</div>
+              <div class="slide-title">Ba mô hình dịch vụ Cloud</div>
+              <div class="slide-brief">Phân biệt mức độ quản lý và trách nhiệm của từng mô hình</div>
+            </div>
+            <span class="slide-time-badge">~2 phút</span>
+            <span class="slide-toggle">▼</span>
+          </div>
+          <div class="slide-body">
+            <div class="slide-body-inner">
+              <div class="key-msg">
+                <div class="key-msg-label">🎯 Thông điệp chính</div>
+                <p>"IaaS — thuê hạ tầng. PaaS — thuê nền tảng. SaaS — dùng phần mềm hoàn chỉnh. Mô hình càng cao, càng ít phải tự quản lý."</p>
+              </div>
+
+              <div class="svc-model-grid">
+                <div class="svc-model-card iaas">
+                  <div class="svc-model-icon">🖥️</div>
+                  <div class="svc-model-name">IaaS</div>
+                  <div class="svc-model-full">Infrastructure as a Service</div>
+                  <div class="svc-model-desc">Thuê VM, storage, network. Tự quản lý OS trở lên. Linh hoạt nhất, kiểm soát cao nhất.</div>
+                </div>
+                <div class="svc-model-card paas">
+                  <div class="svc-model-icon">🏗️</div>
+                  <div class="svc-model-name">PaaS</div>
+                  <div class="svc-model-full">Platform as a Service</div>
+                  <div class="svc-model-desc">Thuê nền tảng để deploy ứng dụng. Cloud lo OS, runtime, scaling. Dev tập trung vào code.</div>
+                </div>
+                <div class="svc-model-card saas">
+                  <div class="svc-model-icon">📦</div>
+                  <div class="svc-model-name">SaaS</div>
+                  <div class="svc-model-full">Software as a Service</div>
+                  <div class="svc-model-desc">Dùng phần mềm qua trình duyệt. Cloud lo toàn bộ. Người dùng chỉ cần tài khoản.</div>
+                </div>
+              </div>
+
+              <div class="sales-tip">
+                <div class="sales-tip-label">💬 Gợi ý dẫn sang slide tiếp theo</div>
+                <p>"Bất kể IaaS, PaaS hay SaaS — phía sau đều chạy trên các lớp dịch vụ. Hiểu các lớp này giúp Sales nhận diện được đúng nhu cầu của khách hàng."</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 4: Cloud service chạy như thế nào? -->
+        <div class="slide-card" data-slide="4" id="slide-card-4">
+          <div class="slide-header">
+            <div class="slide-num-box">
+              <span class="slide-num-label">Slide</span>
+              <span class="slide-num-val">4</span>
+            </div>
+            <div class="slide-meta">
+              <div class="slide-tag">Kiến trúc · 9 lớp dịch vụ</div>
+              <div class="slide-title">Cloud service chạy như thế nào?</div>
+              <div class="slide-brief">Các nhóm dịch vụ cấu thành một hệ thống Cloud hoàn chỉnh</div>
+            </div>
+            <span class="slide-time-badge">~2 phút</span>
+            <span class="slide-toggle">▼</span>
+          </div>
+          <div class="slide-body">
+            <div class="slide-body-inner">
+              <div class="key-msg">
+                <div class="key-msg-label">🎯 Thông điệp chính</div>
+                <p>"Cloud không chỉ là máy chủ ảo — đó là một hệ sinh thái gồm 9 lớp dịch vụ, từ Compute đến AI/Data, giúp doanh nghiệp vận hành toàn diện trên Cloud."</p>
+              </div>
+
+              <div class="content-points">
+                <div class="content-points-label">📌 9 lớp dịch vụ cốt lõi</div>
+                <div class="layer-grid">
+                  <div class="layer-chip">🖥️ Compute</div>
+                  <div class="layer-chip">💾 Storage</div>
+                  <div class="layer-chip">🗃️ Database</div>
+                  <div class="layer-chip">🌐 Network</div>
+                  <div class="layer-chip">🔒 Security</div>
+                  <div class="layer-chip">👤 Identity</div>
+                  <div class="layer-chip">📊 Monitoring</div>
+                  <div class="layer-chip">🔄 Backup / DR</div>
+                  <div class="layer-chip">🤖 AI / Data / IoT / DevOps</div>
+                </div>
+              </div>
+
+              <div class="sales-tip">
+                <div class="sales-tip-label">💬 Gợi ý dẫn sang slide tiếp theo</div>
+                <p>"Vậy tại sao ngày càng nhiều doanh nghiệp quyết định chuyển sang dùng các lớp dịch vụ này từ Cloud thay vì tự xây? Đây là 6 lý do chính."</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 5: Vì sao khách hàng chuyển lên Cloud? -->
+        <div class="slide-card" data-slide="5" id="slide-card-5">
+          <div class="slide-header">
+            <div class="slide-num-box">
+              <span class="slide-num-label">Slide</span>
+              <span class="slide-num-val">5</span>
+            </div>
+            <div class="slide-meta">
+              <div class="slide-tag">Business Value · 6 lý do</div>
+              <div class="slide-title">Vì sao khách hàng chuyển lên Cloud?</div>
+              <div class="slide-brief">6 động lực kinh doanh thúc đẩy quyết định chuyển dịch</div>
+            </div>
+            <span class="slide-time-badge">~2 phút</span>
+            <span class="slide-toggle">▼</span>
+          </div>
+          <div class="slide-body">
+            <div class="slide-body-inner">
+              <div class="key-msg">
+                <div class="key-msg-label">🎯 Thông điệp chính</div>
+                <p>"Mỗi doanh nghiệp có lý do riêng để chuyển lên Cloud — Sales cần nhận diện đúng lý do của khách hàng mình đang gặp."</p>
+              </div>
+
+              <div class="content-points">
+                <div class="content-points-label">📌 6 lý do chính</div>
+                <div class="point-list">
+                  <div class="point-item"><span class="point-icon">⚡</span><strong>Tăng tốc triển khai</strong> — từ tuần/tháng xuống còn giờ/ngày</div>
+                  <div class="point-item"><span class="point-icon">💰</span><strong>Giảm đầu tư ban đầu</strong> — chuyển CAPEX sang OPEX, không mua dư tài nguyên</div>
+                  <div class="point-item"><span class="point-icon">📈</span><strong>Scale linh hoạt</strong> — tăng tài nguyên theo mùa vụ, giảm khi không cần</div>
+                  <div class="point-item"><span class="point-icon">🛡️</span><strong>Tăng availability và DR</strong> — nhiều AZ, Region, backup tự động</div>
+                  <div class="point-item"><span class="point-icon">🤖</span><strong>Tiếp cận công nghệ mới</strong> — AI/ML, Data Analytics, IoT, Serverless</div>
+                  <div class="point-item"><span class="point-icon">🔄</span><strong>Hỗ trợ chuyển đổi số</strong> — nền tảng cho digital transformation</div>
+                </div>
+              </div>
+
+              <div class="sales-tip">
+                <div class="sales-tip-label">💬 Gợi ý dẫn sang slide tiếp theo</div>
+                <p>"Để minh họa cụ thể hơn, đây là bảng mapping nhanh — hệ thống on-premises hiện tại của khách hàng tương đương với dịch vụ nào trên Azure, AWS và GCP."</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 6: Mapping dịch vụ -->
+        <div class="slide-card" data-slide="6" id="slide-card-6">
+          <div class="slide-header">
+            <div class="slide-num-box">
+              <span class="slide-num-label">Slide</span>
+              <span class="slide-num-val">6</span>
+            </div>
+            <div class="slide-meta">
+              <div class="slide-tag">Reference · Cheat Sheet</div>
+              <div class="slide-title">Mapping dịch vụ Cloud</div>
+              <div class="slide-brief">Bảng quy đổi nhanh từ on-premises sang các nền tảng Cloud lớn</div>
+            </div>
+            <span class="slide-time-badge">~2 phút</span>
+            <span class="slide-toggle">▼</span>
+          </div>
+          <div class="slide-body">
+            <div class="slide-body-inner">
+              <div class="key-msg">
+                <div class="key-msg-label">🎯 Thông điệp chính</div>
+                <p>"Mọi thành phần hạ tầng on-premises đều có dịch vụ tương đương trên Cloud — giúp khách hàng hình dung rõ lộ trình chuyển dịch."</p>
+              </div>
+
+              <div class="map-table-wrap">
+                <table class="map-table">
+                  <thead>
+                    <tr>
+                      <th>On-premises</th>
+                      <th>☁️ Azure</th>
+                      <th>🟠 AWS</th>
+                      <th>🟢 GCP</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Server / VM</td>
+                      <td>Azure Virtual Machines</td>
+                      <td>Amazon EC2</td>
+                      <td>Compute Engine</td>
+                    </tr>
+                    <tr>
+                      <td>Object Storage</td>
+                      <td>Azure Blob Storage</td>
+                      <td>Amazon S3</td>
+                      <td>Cloud Storage</td>
+                    </tr>
+                    <tr>
+                      <td>SQL Database</td>
+                      <td>Azure SQL Database</td>
+                      <td>Amazon RDS</td>
+                      <td>Cloud SQL</td>
+                    </tr>
+                    <tr>
+                      <td>Virtual Network</td>
+                      <td>Azure VNet</td>
+                      <td>Amazon VPC</td>
+                      <td>VPC</td>
+                    </tr>
+                    <tr>
+                      <td>IAM / Phân quyền</td>
+                      <td>Microsoft Entra ID</td>
+                      <td>AWS IAM</td>
+                      <td>Cloud IAM</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="sales-tip">
+                <div class="sales-tip-label">💬 Gợi ý dẫn sang slide cuối</div>
+                <p>"Bảng này chỉ là tham chiếu ban đầu. Để đề xuất đúng nhất cho anh/chị, mình cần hiểu thêm về workload cụ thể — slide tiếp theo là câu hỏi mình muốn hỏi."</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 7: Sales Discovery -->
+        <div class="slide-card" data-slide="7" id="slide-card-7">
+          <div class="slide-header">
+            <div class="slide-num-box">
+              <span class="slide-num-label">Slide</span>
+              <span class="slide-num-val">7</span>
+            </div>
+            <div class="slide-meta">
+              <div class="slide-tag">Chốt · Discovery Question</div>
+              <div class="slide-title">Sales Discovery — Câu hỏi chốt nhu cầu</div>
+              <div class="slide-brief">Kết thúc pitch bằng câu hỏi mở — chuyển từ trình bày sang lắng nghe</div>
+            </div>
+            <span class="slide-time-badge">~1 phút</span>
+            <span class="slide-toggle">▼</span>
+          </div>
+          <div class="slide-body">
+            <div class="slide-body-inner">
+              <div class="key-msg">
+                <div class="key-msg-label">🎯 Mục đích slide</div>
+                <p>"Kết thúc 15 phút bằng câu hỏi — không phải bằng lời chào hàng. Để khách hàng tự liên kết bài trình bày với bài toán thực tế của họ."</p>
+              </div>
+
+              <div class="discovery-q">
+                <div class="discovery-q-label">💬 Câu hỏi chốt</div>
+                <blockquote>
+                  "Workload nào của khách hàng đang cần triển khai nhanh, mở rộng nhanh,
+                  tối ưu chi phí hoặc tăng khả năng dự phòng?"
+                </blockquote>
+              </div>
+
+              <div class="content-points">
+                <div class="content-points-label">📌 Sau khi đặt câu hỏi</div>
+                <div class="point-list">
+                  <div class="point-item"><span class="point-icon">👂</span>Lắng nghe — đừng ngắt lời, để khách hàng nói hết</div>
+                  <div class="point-item"><span class="point-icon">📝</span>Ghi chú các keyword: tên workload, pain point, timeline, ngân sách</div>
+                  <div class="point-item"><span class="point-icon">🔗</span>Map câu trả lời về các tình huống đã học ở Module 07</div>
+                  <div class="point-item"><span class="point-icon">📅</span>Đề xuất bước tiếp theo: workshop kỹ thuật, assessment, demo, hoặc PoC</div>
+                </div>
+              </div>
+
+              <div class="sales-tip">
+                <div class="sales-tip-label">💬 Lưu ý quan trọng</div>
+                <p>Câu hỏi này <strong>không nhất thiết phải trả lời ngay trong buổi gặp</strong>. Mục tiêu là mở ra cuộc trò chuyện tiếp theo — một buổi technical discovery hoặc workshop chuyên sâu hơn. <strong>Kết thúc bằng việc đề xuất bước tiếp theo cụ thể.</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end slides-grid -->
+    </div><!-- end block -->
+
+    <!-- SUMMARY CARD -->
+    <div class="summary-card reveal">
+      <h3>🎤 Cấu trúc 15 phút — 7 slides</h3>
+      <p class="summary-sub">Trình tự được thiết kế để xây dựng hiểu biết từ nền tảng đến ứng dụng, kết thúc bằng discovery</p>
+
+      <div class="slide-chips">
+        <div class="slide-chip"><span class="chip-dot" style="background:#0078D4"></span>1 · Cloud là gì? (~2')</div>
+        <div class="slide-chip"><span class="chip-dot" style="background:#E67E22"></span>2 · On-prem vs Cloud (~2')</div>
+        <div class="slide-chip"><span class="chip-dot" style="background:#107C10"></span>3 · IaaS/PaaS/SaaS (~2')</div>
+        <div class="slide-chip"><span class="chip-dot" style="background:#8764B8"></span>4 · Các lớp dịch vụ (~2')</div>
+        <div class="slide-chip"><span class="chip-dot" style="background:#D83B01"></span>5 · Vì sao Cloud? (~2')</div>
+        <div class="slide-chip"><span class="chip-dot" style="background:#00897B"></span>6 · Mapping DV (~2')</div>
+        <div class="slide-chip"><span class="chip-dot" style="background:#FFB900"></span>7 · Discovery (~1')</div>
+      </div>
+
+      <div class="summary-takeaway">
+        💡 <strong style="font-style:normal; color:rgba(255,255,255,.9)">Nguyên tắc:</strong>
+        15 phút đầu là để <em>tạo nền tảng chung</em> — không phải để bán. Kết thúc bằng câu hỏi
+        discovery mở ra cuộc trò chuyện thực sự về nhu cầu. Pitch tốt = khách hàng muốn nói chuyện tiếp.
+      </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+      <a href="section8.html" class="bnav-btn"><i class="ti ti-circle-arrow-left" style="font-size:15px;vertical-align:-2px;margin-right:3px" aria-hidden="true"></i> Module 08: Câu hỏi khai thác nhu cầu</a>
+      <span class="bnav-center">Module 09 / 11</span>
+      <a href="section10.html" class="bnav-btn next">Module 10: Những hiểu nhầm cần tránh <i class="ti ti-circle-arrow-right" style="font-size:15px;vertical-align:-2px;margin-left:3px" aria-hidden="true"></i></a>
+    </div>
+
+  </main>
+
+  <script>
+    // Scroll reveal
+    const io = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // Slide card accordion
+    document.querySelectorAll('.slide-card').forEach(card => {
+      card.querySelector('.slide-header').addEventListener('click', () => {
+        const wasActive = card.classList.contains('active');
+        document.querySelectorAll('.slide-card').forEach(c => c.classList.remove('active'));
+        if (!wasActive) {
+          card.classList.add('active');
+          setTimeout(() => card.scrollIntoView({ behavior:'smooth', block:'nearest' }), 100);
+        }
+      });
+    });
+
+    // Timeline node click → open corresponding slide
+    function openSlide(num) {
+      document.querySelectorAll('.slide-card').forEach(c => c.classList.remove('active'));
+      const target = document.getElementById('slide-card-' + num);
+      if (target) {
+        target.classList.add('active');
+        setTimeout(() => target.scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+      }
+    }
+
+    // Auto-open slide 1
+    setTimeout(() => {
+      document.querySelector('.slide-card').classList.add('active');
+    }, 700);
+  </script>
+
+</body>
+</html>
